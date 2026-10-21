@@ -13,7 +13,7 @@ interface PlanningProps {
   selectedTask?: NimoraTask;
 }
 
-// 7. Home Dashboard
+// 5. Home Dashboard
 export function Screen07HomeDashboard({ tasks, onNavigate, onToggleTask, onSelectTask }: PlanningProps) {
   const [activeTab, setActiveTab] = useState<'today' | 'upcoming' | 'overdue'>('today');
   const completedCount = tasks.filter((t) => t.status === 'completed').length;
@@ -24,7 +24,7 @@ export function Screen07HomeDashboard({ tasks, onNavigate, onToggleTask, onSelec
       {/* Top Header */}
       <div className="p-5 pb-3 bg-white border-b border-gray-100">
         <div className="flex justify-between items-center text-xs text-gray-400 mb-3">
-          <span>9:41</span>
+          <span className="font-semibold">9:41</span>
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500" />
             <span>5G</span>
@@ -37,12 +37,12 @@ export function Screen07HomeDashboard({ tasks, onNavigate, onToggleTask, onSelec
               S
             </div>
             <div>
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Good Morning,</p>
               <h2 className="text-sm font-bold text-gray-900">Sudarshan</h2>
-              <p className="text-[11px] text-gray-400">Tue, 20 Oct 2026</p>
             </div>
           </div>
           <button
-            onClick={() => onNavigate?.(18)}
+            onClick={() => onNavigate?.(16)}
             className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 text-sm"
           >
             ⚙️
@@ -53,11 +53,11 @@ export function Screen07HomeDashboard({ tasks, onNavigate, onToggleTask, onSelec
       {/* Main Scroll Content */}
       <div className="flex-1 overflow-y-auto p-5 space-y-4">
         {/* Quote Card */}
-        <div className="bg-gradient-to-r from-amber-50 to-orange-50/60 border border-amber-200/80 rounded-2xl p-3.5 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <span className="text-base">✨</span>
-            <p className="text-xs font-medium text-amber-900">
-              A well planned day creates a better tomorrow.
+        <div className="bg-gradient-to-r from-amber-50 to-orange-50/60 border border-amber-200/80 rounded-2xl p-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-sm">✨</span>
+            <p className="text-xs font-semibold text-amber-900">
+              A focused day creates bigger opportunities.
             </p>
           </div>
           <span className="text-xs text-amber-700/60">✕</span>
@@ -120,7 +120,7 @@ export function Screen07HomeDashboard({ tasks, onNavigate, onToggleTask, onSelec
               key={task.id}
               onClick={() => {
                 onSelectTask?.(task);
-                onNavigate?.(10);
+                onNavigate?.(8);
               }}
               className="p-3.5 bg-white border border-gray-100 rounded-2xl flex items-center justify-between hover:border-emerald-300 transition-all shadow-sm cursor-pointer"
             >
@@ -158,7 +158,7 @@ export function Screen07HomeDashboard({ tasks, onNavigate, onToggleTask, onSelec
 
         {/* Voice Trigger Banner */}
         <div
-          onClick={() => onNavigate?.(13)}
+          onClick={() => onNavigate?.(11)}
           className="p-3 bg-gradient-to-r from-emerald-900 to-teal-900 rounded-2xl text-white flex items-center justify-between cursor-pointer shadow-md hover:brightness-105"
         >
           <div className="flex items-center gap-2.5">
@@ -178,19 +178,19 @@ export function Screen07HomeDashboard({ tasks, onNavigate, onToggleTask, onSelec
           <span className="text-base">🏠</span>
           <span>Home</span>
         </button>
-        <button onClick={() => onNavigate?.(8)} className="flex flex-col items-center hover:text-gray-900">
+        <button onClick={() => onNavigate?.(6)} className="flex flex-col items-center hover:text-gray-900">
           <span className="text-base">📋</span>
           <span>Tasks</span>
         </button>
-        <button onClick={() => onNavigate?.(11)} className="flex flex-col items-center hover:text-gray-900">
+        <button onClick={() => onNavigate?.(9)} className="flex flex-col items-center hover:text-gray-900">
           <span className="text-base">👥</span>
           <span>Contacts</span>
         </button>
-        <button onClick={() => onNavigate?.(14)} className="flex flex-col items-center hover:text-gray-900">
+        <button onClick={() => onNavigate?.(12)} className="flex flex-col items-center hover:text-gray-900">
           <span className="text-base">✨</span>
           <span>AI</span>
         </button>
-        <button onClick={() => onNavigate?.(18)} className="flex flex-col items-center hover:text-gray-900">
+        <button onClick={() => onNavigate?.(16)} className="flex flex-col items-center hover:text-gray-900">
           <span className="text-base">⋯</span>
           <span>More</span>
         </button>
@@ -199,7 +199,7 @@ export function Screen07HomeDashboard({ tasks, onNavigate, onToggleTask, onSelec
   );
 }
 
-// 8. Daily Planner View (Time-Blocked Day Schedule)
+// 6. Daily Planner Timeline
 export function Screen08DailyPlanner({ tasks, onNavigate, onSelectTask }: PlanningProps) {
   const colorMap = {
     blue: 'bg-blue-50 border-blue-200 text-blue-900',
@@ -213,7 +213,7 @@ export function Screen08DailyPlanner({ tasks, onNavigate, onSelectTask }: Planni
     <div className="w-full h-full min-h-[680px] bg-[#F9F8F5] text-gray-900 flex flex-col justify-between select-none rounded-[38px] overflow-hidden relative">
       {/* Top Header */}
       <div className="p-5 pb-3 bg-white border-b border-gray-100 flex items-center justify-between">
-        <button onClick={() => onNavigate?.(7)} className="text-gray-600 hover:text-gray-900 text-xs font-semibold">
+        <button onClick={() => onNavigate?.(5)} className="text-gray-600 hover:text-gray-900 text-xs font-semibold">
           ‹ Back
         </button>
         <div className="text-center">
@@ -221,7 +221,7 @@ export function Screen08DailyPlanner({ tasks, onNavigate, onSelectTask }: Planni
           <p className="text-[10px] text-gray-400">Tue, 20 Oct 2026</p>
         </div>
         <button
-          onClick={() => onNavigate?.(9)}
+          onClick={() => onNavigate?.(7)}
           className="w-7 h-7 rounded-full bg-emerald-800 text-white flex items-center justify-center text-sm font-bold shadow-sm"
         >
           +
@@ -235,7 +235,7 @@ export function Screen08DailyPlanner({ tasks, onNavigate, onSelectTask }: Planni
             key={task.id}
             onClick={() => {
               onSelectTask?.(task);
-              onNavigate?.(10);
+              onNavigate?.(8);
             }}
             className={`p-3.5 rounded-2xl border transition-all cursor-pointer shadow-sm hover:brightness-95 flex items-start justify-between ${
               colorMap[task.color] || colorMap.blue
@@ -261,7 +261,7 @@ export function Screen08DailyPlanner({ tasks, onNavigate, onSelectTask }: Planni
 
       {/* Floating Action Button */}
       <button
-        onClick={() => onNavigate?.(9)}
+        onClick={() => onNavigate?.(7)}
         className="absolute bottom-6 right-6 w-12 h-12 rounded-full bg-[#0F382C] text-white flex items-center justify-center text-xl font-bold shadow-xl hover:scale-105 active:scale-95 transition-all z-10"
       >
         +
@@ -270,7 +270,7 @@ export function Screen08DailyPlanner({ tasks, onNavigate, onSelectTask }: Planni
   );
 }
 
-// 9. Add New Task
+// 7. Create New Task
 export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningProps) {
   const [activeTab, setActiveTab] = useState<'task' | 'followup' | 'call' | 'note'>('task');
   const [title, setTitle] = useState('');
@@ -297,7 +297,7 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
       notes: description.trim(),
     };
     onAddTask?.(newTask);
-    onNavigate?.(8);
+    onNavigate?.(6);
   };
 
   return (
@@ -305,8 +305,8 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
       <div>
         {/* Top bar */}
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-base font-bold text-gray-900">Add New Item</h2>
-          <button onClick={() => onNavigate?.(8)} className="text-gray-400 hover:text-gray-700 text-sm">
+          <h2 className="text-base font-bold text-gray-900">Add New Task</h2>
+          <button onClick={() => onNavigate?.(6)} className="text-gray-400 hover:text-gray-700 text-sm">
             ✕
           </button>
         </div>
@@ -398,7 +398,7 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
               onChange={(e) => setSelectedContact(e.target.value)}
               className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-800 outline-none shadow-sm"
             >
-              <option value="">None</option>
+              <option value="">Search or select contact</option>
               {contacts.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name} ({c.company})
@@ -419,7 +419,7 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
   );
 }
 
-// 10. Task Details
+// 8. Task Details & Edit
 export function Screen10TaskDetails({ tasks, contacts, onNavigate, selectedTask }: PlanningProps) {
   const task = selectedTask || tasks[0];
   const contact = contacts.find((c) => c.id === task?.relatedContactId);
@@ -429,7 +429,7 @@ export function Screen10TaskDetails({ tasks, contacts, onNavigate, selectedTask 
       <div>
         {/* Header */}
         <div className="flex justify-between items-center mb-5">
-          <button onClick={() => onNavigate?.(8)} className="text-gray-600 hover:text-gray-900 text-xs font-semibold">
+          <button onClick={() => onNavigate?.(6)} className="text-gray-600 hover:text-gray-900 text-xs font-semibold">
             ‹ Back
           </button>
           <span className="text-xs font-bold text-gray-900">Task Details</span>
@@ -478,7 +478,7 @@ export function Screen10TaskDetails({ tasks, contacts, onNavigate, selectedTask 
         {/* Related Contact Card */}
         {contact && (
           <div
-            onClick={() => onNavigate?.(12)}
+            onClick={() => onNavigate?.(10)}
             className="bg-white border border-gray-100 rounded-2xl p-3.5 shadow-sm mb-4 cursor-pointer hover:border-emerald-300 transition-colors"
           >
             <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider block mb-2">
@@ -512,17 +512,17 @@ export function Screen10TaskDetails({ tasks, contacts, onNavigate, selectedTask 
 
       <div className="flex gap-2 pt-3">
         <button
-          onClick={() => onNavigate?.(17)}
+          onClick={() => onNavigate?.(15)}
           className="flex-1 py-3 rounded-2xl bg-emerald-100 text-emerald-900 font-semibold text-xs hover:bg-emerald-200 transition-all flex items-center justify-center gap-1.5"
         >
           <span>💬</span>
           <span>WhatsApp</span>
         </button>
         <button
-          onClick={() => onNavigate?.(8)}
+          onClick={() => onNavigate?.(6)}
           className="flex-1 py-3 rounded-2xl bg-[#0F382C] text-white font-semibold text-xs shadow-md hover:bg-[#13493A] transition-all"
         >
-          Done
+          Edit Task
         </button>
       </div>
     </div>

@@ -12,7 +12,7 @@ interface ContactsAndAIProps {
   onAddTask?: (task: NimoraTask) => void;
 }
 
-// 11. Contacts & Follow-ups
+// 9. Contacts & Follow-ups
 export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: ContactsAndAIProps) {
   const [filter, setFilter] = useState<'all' | 'client' | 'lead' | 'team'>('all');
   const [search, setSearch] = useState('');
@@ -73,7 +73,7 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
             key={contact.id}
             onClick={() => {
               onSelectContact?.(contact);
-              onNavigate?.(12);
+              onNavigate?.(10);
             }}
             className="p-3.5 bg-white border border-gray-100 rounded-2xl flex items-center justify-between hover:border-emerald-300 transition-all shadow-sm cursor-pointer"
           >
@@ -92,7 +92,7 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
                   ) : (
                     <span className="text-[9px] text-gray-400">No follow-ups</span>
                   )}
-                  <span className="text-[9px] text-gray-400">• {contact.lastCall}</span>
+                  <span className="text-[9px] text-gray-400">• Last call: {contact.lastCall}</span>
                 </div>
               </div>
             </div>
@@ -104,11 +104,11 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
 
       {/* Bottom Nav Bar */}
       <div className="bg-white border-t border-gray-100 px-5 py-2.5 flex justify-between items-center text-[10px] font-semibold text-gray-400">
-        <button onClick={() => onNavigate?.(7)} className="flex flex-col items-center hover:text-gray-900">
+        <button onClick={() => onNavigate?.(5)} className="flex flex-col items-center hover:text-gray-900">
           <span className="text-base">🏠</span>
           <span>Home</span>
         </button>
-        <button onClick={() => onNavigate?.(8)} className="flex flex-col items-center hover:text-gray-900">
+        <button onClick={() => onNavigate?.(6)} className="flex flex-col items-center hover:text-gray-900">
           <span className="text-base">📋</span>
           <span>Tasks</span>
         </button>
@@ -116,11 +116,11 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
           <span className="text-base">👥</span>
           <span>Contacts</span>
         </button>
-        <button onClick={() => onNavigate?.(14)} className="flex flex-col items-center hover:text-gray-900">
+        <button onClick={() => onNavigate?.(12)} className="flex flex-col items-center hover:text-gray-900">
           <span className="text-base">✨</span>
           <span>AI</span>
         </button>
-        <button onClick={() => onNavigate?.(18)} className="flex flex-col items-center hover:text-gray-900">
+        <button onClick={() => onNavigate?.(16)} className="flex flex-col items-center hover:text-gray-900">
           <span className="text-base">⋯</span>
           <span>More</span>
         </button>
@@ -129,7 +129,7 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
   );
 }
 
-// 12. Contact Details & History
+// 10. Contact Details & History
 export function Screen12ContactDetails({ contacts, onNavigate, selectedContact }: ContactsAndAIProps) {
   const contact = selectedContact || contacts[0];
   const [activeTab, setActiveTab] = useState<'overview' | 'history' | 'followups' | 'notes'>('history');
@@ -139,7 +139,7 @@ export function Screen12ContactDetails({ contacts, onNavigate, selectedContact }
       {/* Header Profile Card */}
       <div className="p-5 bg-white border-b border-gray-100">
         <div className="flex justify-between items-center mb-3">
-          <button onClick={() => onNavigate?.(11)} className="text-gray-600 hover:text-gray-900 text-xs font-semibold">
+          <button onClick={() => onNavigate?.(9)} className="text-gray-600 hover:text-gray-900 text-xs font-semibold">
             ‹ Contacts
           </button>
           <span className="text-gray-400 text-xs">⋯</span>
@@ -161,7 +161,7 @@ export function Screen12ContactDetails({ contacts, onNavigate, selectedContact }
             <span>📞</span> Call
           </button>
           <button
-            onClick={() => onNavigate?.(17)}
+            onClick={() => onNavigate?.(15)}
             className="flex-1 py-1.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs font-medium text-emerald-800 flex items-center justify-center gap-1.5 hover:bg-emerald-100"
           >
             <span>💬</span> WhatsApp
@@ -228,7 +228,7 @@ export function Screen12ContactDetails({ contacts, onNavigate, selectedContact }
 
       <div className="p-4 bg-white border-t border-gray-100">
         <button
-          onClick={() => onNavigate?.(9)}
+          onClick={() => onNavigate?.(7)}
           className="w-full py-3 rounded-2xl bg-[#0F382C] text-white font-semibold text-xs shadow-md hover:bg-[#13493A] transition-all"
         >
           + Add Follow-up
@@ -238,14 +238,14 @@ export function Screen12ContactDetails({ contacts, onNavigate, selectedContact }
   );
 }
 
-// 13. Voice Assistant
+// 11. Voice Assistant
 export function Screen13VoiceAssistant({ onNavigate, onAddTask }: ContactsAndAIProps) {
   const [isSimulating, setIsSimulating] = useState(false);
   const [statusText, setStatusText] = useState('Listening...');
 
-  const handleSimulate = () => {
+  const handleSimulate = (promptText: string) => {
     setIsSimulating(true);
-    setStatusText('“Add a task to call Arun tomorrow at 10 AM”');
+    setStatusText(`“${promptText}”`);
     setTimeout(() => {
       onAddTask?.({
         id: `t_voice_${Date.now()}`,
@@ -265,7 +265,7 @@ export function Screen13VoiceAssistant({ onNavigate, onAddTask }: ContactsAndAIP
       setStatusText('Task Created Successfully! ✓');
       setTimeout(() => {
         setIsSimulating(false);
-        onNavigate?.(8);
+        onNavigate?.(6);
       }, 900);
     }, 1200);
   };
@@ -274,19 +274,21 @@ export function Screen13VoiceAssistant({ onNavigate, onAddTask }: ContactsAndAIP
     <div className="w-full h-full min-h-[680px] bg-gradient-to-b from-[#041610] via-[#09251D] to-[#03120C] text-white flex flex-col justify-between p-7 select-none rounded-[38px] relative overflow-hidden">
       {/* Top bar */}
       <div className="flex justify-between items-center text-xs text-emerald-200/60 pt-2 z-10">
-        <span>9:41</span>
-        <button onClick={() => onNavigate?.(7)} className="text-white hover:text-emerald-300 font-bold text-sm">
+        <span className="font-semibold">9:41</span>
+        <button onClick={() => onNavigate?.(5)} className="text-white hover:text-emerald-300 font-bold text-sm">
           ✕
         </button>
       </div>
 
       {/* Central Visualizer */}
       <div className="my-auto flex flex-col items-center text-center z-10">
-        <h3 className="text-xl font-bold mb-8 text-emerald-100">{statusText}</h3>
+        <span className="text-xs uppercase tracking-widest text-emerald-300/80 font-bold mb-1">
+          NIMORA
+        </span>
+        <h3 className="text-xl font-bold mb-6 text-emerald-100">{statusText}</h3>
 
         {/* Audio Wave Visuals */}
-        <div className="relative w-40 h-40 flex items-center justify-center mb-8">
-          {/* Animated glow rings */}
+        <div className="relative w-40 h-40 flex items-center justify-center mb-6">
           <div className="absolute inset-0 rounded-full bg-emerald-500/10 blur-xl animate-pulse" />
           <div className="absolute inset-4 rounded-full border border-emerald-400/30 animate-ping opacity-30" />
 
@@ -306,7 +308,7 @@ export function Screen13VoiceAssistant({ onNavigate, onAddTask }: ContactsAndAIP
 
           {/* Center Mic Button */}
           <button
-            onClick={handleSimulate}
+            onClick={() => handleSimulate('Add a task to call Arun tomorrow at 10 AM')}
             className={`absolute w-20 h-20 rounded-full flex items-center justify-center text-3xl shadow-2xl transition-all ${
               isSimulating
                 ? 'bg-rose-500 text-white scale-110 shadow-rose-900/50'
@@ -317,25 +319,40 @@ export function Screen13VoiceAssistant({ onNavigate, onAddTask }: ContactsAndAIP
           </button>
         </div>
 
-        <div className="bg-emerald-950/60 border border-emerald-800/40 rounded-2xl p-4 max-w-[260px] text-center backdrop-blur">
-          <p className="text-[11px] text-emerald-300/80 uppercase font-semibold tracking-wider mb-1">
+        {/* Try saying list */}
+        <div className="bg-emerald-950/70 border border-emerald-800/40 rounded-2xl p-4 max-w-[270px] text-left backdrop-blur space-y-2">
+          <p className="text-[10px] text-emerald-300/80 uppercase font-semibold tracking-wider">
             Try saying:
           </p>
-          <p className="text-xs text-white font-medium italic">
-            “Add a task to call Arun tomorrow at 10 AM”
-          </p>
+          <button
+            onClick={() => handleSimulate('Add a task to call Arun tomorrow at 10 AM')}
+            className="text-xs text-white hover:text-emerald-300 block text-left"
+          >
+            • “Add a task to call Arun tomorrow at 10 AM”
+          </button>
+          <button
+            onClick={() => handleSimulate('Show my schedule for today')}
+            className="text-xs text-white hover:text-emerald-300 block text-left"
+          >
+            • “Show my schedule for today”
+          </button>
+          <button
+            onClick={() => handleSimulate('What are my follow-ups?')}
+            className="text-xs text-white hover:text-emerald-300 block text-left"
+          >
+            • “What are my follow-ups?”
+          </button>
         </div>
       </div>
 
-      {/* Bottom hint */}
       <div className="text-center pb-2 z-10">
-        <p className="text-[11px] text-emerald-400/60">Tap microphone to speak or test voice action</p>
+        <p className="text-[11px] text-emerald-400/60">Tap any suggestion or the microphone to test</p>
       </div>
     </div>
   );
 }
 
-// 14. AI Suggestions
+// 12. Smart AI Task Suggestions
 export function Screen14AISuggestions({ suggestions, onNavigate, onAddTask }: ContactsAndAIProps) {
   const [addedIds, setAddedIds] = useState<string[]>([]);
 
@@ -361,7 +378,7 @@ export function Screen14AISuggestions({ suggestions, onNavigate, onAddTask }: Co
     <div className="w-full h-full min-h-[680px] bg-[#F9F8F5] text-gray-900 flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
       {/* Top Header */}
       <div className="p-5 pb-3 bg-white border-b border-gray-100 flex items-center justify-between">
-        <button onClick={() => onNavigate?.(7)} className="text-gray-600 hover:text-gray-900 text-xs font-semibold">
+        <button onClick={() => onNavigate?.(5)} className="text-gray-600 hover:text-gray-900 text-xs font-semibold">
           ‹ Back
         </button>
         <div className="flex items-center gap-1.5 text-emerald-800">
@@ -372,23 +389,20 @@ export function Screen14AISuggestions({ suggestions, onNavigate, onAddTask }: Co
       </div>
 
       {/* Body */}
-      <div className="flex-1 overflow-y-auto p-5 space-y-4">
+      <div className="flex-1 overflow-y-auto p-5 space-y-3.5">
         <p className="text-xs text-gray-500 leading-relaxed">
           Based on your calendar, emails and recent activity, here are some suggestions:
         </p>
 
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {suggestions.map((suggestion) => {
             const isAdded = addedIds.includes(suggestion.id);
             return (
               <div
                 key={suggestion.id}
-                className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm flex items-center justify-between"
+                className="bg-white border border-gray-100 rounded-2xl p-3.5 shadow-sm flex items-center justify-between"
               >
                 <div>
-                  <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full inline-block mb-1.5">
-                    {suggestion.tag}
-                  </span>
                   <h4 className="text-xs font-bold text-gray-900">{suggestion.title}</h4>
                   <p className="text-[11px] text-gray-400 mt-0.5">{suggestion.subtitle}</p>
                 </div>
@@ -396,7 +410,7 @@ export function Screen14AISuggestions({ suggestions, onNavigate, onAddTask }: Co
                 <button
                   onClick={() => handleAdd(suggestion)}
                   disabled={isAdded}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                     isAdded
                       ? 'bg-emerald-100 text-emerald-800'
                       : 'bg-[#0F382C] text-white hover:bg-[#13493A] shadow-sm'
@@ -416,15 +430,15 @@ export function Screen14AISuggestions({ suggestions, onNavigate, onAddTask }: Co
 
       {/* Bottom Nav Bar */}
       <div className="bg-white border-t border-gray-100 px-5 py-2.5 flex justify-between items-center text-[10px] font-semibold text-gray-400">
-        <button onClick={() => onNavigate?.(7)} className="flex flex-col items-center hover:text-gray-900">
+        <button onClick={() => onNavigate?.(5)} className="flex flex-col items-center hover:text-gray-900">
           <span className="text-base">🏠</span>
           <span>Home</span>
         </button>
-        <button onClick={() => onNavigate?.(8)} className="flex flex-col items-center hover:text-gray-900">
+        <button onClick={() => onNavigate?.(6)} className="flex flex-col items-center hover:text-gray-900">
           <span className="text-base">📋</span>
           <span>Tasks</span>
         </button>
-        <button onClick={() => onNavigate?.(11)} className="flex flex-col items-center hover:text-gray-900">
+        <button onClick={() => onNavigate?.(9)} className="flex flex-col items-center hover:text-gray-900">
           <span className="text-base">👥</span>
           <span>Contacts</span>
         </button>
@@ -432,7 +446,7 @@ export function Screen14AISuggestions({ suggestions, onNavigate, onAddTask }: Co
           <span className="text-base">✨</span>
           <span>AI</span>
         </button>
-        <button onClick={() => onNavigate?.(18)} className="flex flex-col items-center hover:text-gray-900">
+        <button onClick={() => onNavigate?.(16)} className="flex flex-col items-center hover:text-gray-900">
           <span className="text-base">⋯</span>
           <span>More</span>
         </button>

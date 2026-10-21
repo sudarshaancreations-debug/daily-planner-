@@ -93,7 +93,7 @@ export const INITIAL_CONTACTS: Contact[] = [
     phone: '+91 98450 11223',
     email: 'rohan@sharmabuilders.in',
     location: 'Bangalore Central',
-    followUpCount: 1,
+    followUpCount: 2,
     lastCall: '1 week ago',
     avatarColor: 'bg-amber-700',
     interactions: [
@@ -108,7 +108,7 @@ export const INITIAL_CONTACTS: Contact[] = [
   {
     id: 'c3',
     name: 'Priya Nair',
-    title: 'Lead Interior Designer',
+    title: 'Interior Designer',
     company: 'Studio Priya Interiors',
     category: 'team',
     phone: '+91 99001 88776',
@@ -136,7 +136,7 @@ export const INITIAL_CONTACTS: Contact[] = [
     email: 'vikram@raodevelopers.com',
     location: 'Hyderabad Tech Zone',
     followUpCount: 0,
-    lastCall: 'No recent calls',
+    lastCall: 'No follow-ups yet',
     avatarColor: 'bg-teal-700',
     interactions: [],
   },
@@ -156,7 +156,7 @@ export const INITIAL_TASKS: NimoraTask[] = [
     status: 'completed',
     color: 'blue',
     relatedContactId: 'c1',
-    notes: 'Discuss new project requirements and timeline. Finalize drawing review schedule.',
+    notes: 'Discuss new project requirements and timeline.',
   },
   {
     id: 't2',
@@ -229,32 +229,6 @@ export const INITIAL_TASKS: NimoraTask[] = [
     relatedContactId: 'c3',
     notes: 'Align with Priya on penthouse living room light fixtures.',
   },
-  {
-    id: 't7',
-    title: 'Budget Allocation Review',
-    subtitle: 'Q4 Capital Allocation',
-    category: 'task',
-    date: 'Tue, 20 Oct 2026',
-    startTime: '4:30 PM',
-    endTime: '5:15 PM',
-    durationMinutes: 45,
-    priority: 'high',
-    status: 'upcoming',
-    color: 'coral',
-  },
-  {
-    id: 't8',
-    title: 'Evening Debrief & Tomorrow Planning',
-    subtitle: 'NIMORA AI Session',
-    category: 'task',
-    date: 'Tue, 20 Oct 2026',
-    startTime: '5:30 PM',
-    endTime: '6:00 PM',
-    durationMinutes: 30,
-    priority: 'low',
-    status: 'upcoming',
-    color: 'green',
-  },
 ];
 
 export const INITIAL_AI_SUGGESTIONS: AISuggestion[] = [
@@ -279,20 +253,27 @@ export const INITIAL_AI_SUGGESTIONS: AISuggestion[] = [
     tag: 'Design',
     actionText: 'Add',
   },
+  {
+    id: 's4',
+    title: 'Schedule team meeting',
+    subtitle: 'Based on recent emails',
+    tag: 'Team Sync',
+    actionText: 'Add',
+  },
 ];
 
 export const INITIAL_NOTIFICATIONS: NimoraNotification[] = [
   {
     id: 'n1',
-    title: 'Time for your next task',
-    body: 'Client Call at 9:00 AM with Arun Mehta',
+    title: 'Client Call starts in 5 minutes',
+    body: 'ABC Constructions with Arun Mehta',
     timeAgo: 'now',
     actions: [{ label: 'Snooze' }, { label: 'Open', primary: true }],
   },
   {
     id: 'n2',
     title: 'Follow up with Rohan',
-    body: 'Material confirmation pending (1 week overdue)',
+    body: 'Material confirmation pending',
     timeAgo: '1h ago',
     actions: [{ label: 'Mark Done', primary: true }],
   },
