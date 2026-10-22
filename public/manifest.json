@@ -1,0 +1,16 @@
+{
+  "name": "NIMORA — Your Day. Intelligently Organized.",
+  "short_name": "NIMORA",
+  "description": "AI-Powered Daily Planning, CRM Follow-ups, and MCP Hub.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#062017",
+  "theme_color": "#0F382C",
+  "icons": [
+    {
+      "src": "/globe.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

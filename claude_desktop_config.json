@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "nimora-planner": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://agile-sirocco-oyrlj9z.tmp.now/api/mcp"
+      ]
+    }
+  }
+}

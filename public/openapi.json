@@ -1,0 +1,86 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "NIMORA Daily Planner & MCP Hub API",
+    "description": "Agent-ready API for managing daily tasks, agendas, contacts, follow-ups, and daily notes.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://agile-sirocco-oyrlj9z.tmp.now",
+      "description": "Live Vercel Production Server"
+    },
+    {
+      "url": "http://localhost:3000",
+      "description": "Local Development Server"
+    }
+  ],
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Health Check Endpoint",
+        "operationId": "getHealth",
+        "responses": {
+          "200": {
+            "description": "Service is operational",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "version": { "type": "string" },
+                    "service": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mcp": {
+      "get": {
+        "summary": "List MCP Tools and Capabilities",
+        "operationId": "getMCPCapabilities",
+        "responses": {
+          "200": {
+            "description": "Returns supported tools and version info"
+          }
+        }
+      },
+      "post": {
+        "summary": "Execute JSON-RPC 2.0 MCP Tool",
+        "operationId": "callMCPTool",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "jsonrpc": { "type": "string", "example": "2.0" },
+                  "method": { "type": "string", "example": "tools/call" },
+                  "params": {
+                    "type": "object",
+                    "properties": {
+                      "name": { "type": "string", "example": "create_task" },
+                      "arguments": { "type": "object" }
+                    }
+                  },
+                  "id": { "type": "number", "example": 1 }
+                },
+                "required": ["jsonrpc", "method", "id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result"
+          }
+        }
+      }
+    }
+  }
+}
