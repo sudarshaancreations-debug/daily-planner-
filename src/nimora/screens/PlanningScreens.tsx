@@ -287,20 +287,50 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [selectedContact, setSelectedContact] = useState(contacts[0]?.id || '');
+  const [date, setDate] = useState('2026-10-20');
   const [time, setTime] = useState('10:00 AM');
+  const [duration, setDuration] = useState('30');
   const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium');
+
+  const formatDisplayDate = (isoDate: string) => {
+    try {
+      const [y, m, d] = isoDate.split('-').map(Number);
+      const dateObj = new Date(y, m - 1, d);
+      return dateObj.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+    } catch {
+      return isoDate;
+    }
+  };
+
+  const calculateEndTime = (startTimeStr: string, durMins: number) => {
+    try {
+      const [t, meridiem] = startTimeStr.split(' ');
+      let [h, m] = (t || '10:00').split(':').map(Number);
+      if (meridiem === 'PM' && h < 12) h += 12;
+      if (meridiem === 'AM' && h === 12) h = 0;
+      const total = h * 60 + (m || 0) + durMins;
+      const endH = Math.floor(total / 60) % 24;
+      const endM = total % 60;
+      const endMeridiem = endH >= 12 ? 'PM' : 'AM';
+      const dispH = endH % 12 || 12;
+      return `${dispH}:${endM.toString().padStart(2, '0')} ${endMeridiem}`;
+    } catch {
+      return '10:30 AM';
+    }
+  };
 
   const handleSubmit = () => {
     if (!title.trim()) return;
+    const durNum = parseInt(duration) || 30;
     const newTask: NimoraTask = {
       id: `t_${Date.now()}`,
       title: title.trim(),
       subtitle: description.trim() || undefined,
       category: activeTab,
-      date: 'Tue, 20 Oct 2026',
+      date: formatDisplayDate(date),
       startTime: time,
-      endTime: '10:30 AM',
-      durationMinutes: 30,
+      endTime: calculateEndTime(time, durNum),
+      durationMinutes: durNum,
       priority,
       status: 'upcoming',
       color: activeTab === 'call' ? 'blue' : activeTab === 'followup' ? 'orange' : 'green',
@@ -367,15 +397,21 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
 
           <div className="grid grid-cols-2 gap-2.5">
             <div className="p-2.5 bg-white border border-gray-200 rounded-xl shadow-sm">
-              <span className="text-[10px] text-gray-400 uppercase font-semibold block">Date</span>
-              <span className="text-xs font-bold text-gray-800">Tue, 20 Oct 2026 ›</span>
+              <span className="text-[10px] text-gray-400 uppercase font-semibold block mb-0.5">Date</span>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="text-xs font-bold text-gray-800 outline-none bg-transparent w-full cursor-pointer"
+              />
             </div>
             <div className="p-2.5 bg-white border border-gray-200 rounded-xl shadow-sm">
-              <span className="text-[10px] text-gray-400 uppercase font-semibold block">Time</span>
+              <span className="text-[10px] text-gray-400 uppercase font-semibold block mb-0.5">Time</span>
               <input
                 type="text"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
+                placeholder="10:00 AM"
                 className="text-xs font-bold text-gray-800 outline-none bg-transparent w-full"
               />
             </div>
@@ -383,11 +419,22 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
 
           <div className="grid grid-cols-2 gap-2.5">
             <div className="p-2.5 bg-white border border-gray-200 rounded-xl shadow-sm">
-              <span className="text-[10px] text-gray-400 uppercase font-semibold block">Duration</span>
-              <span className="text-xs font-bold text-gray-800">30 minutes ›</span>
+              <span className="text-[10px] text-gray-400 uppercase font-semibold block mb-0.5">Duration</span>
+              <select
+                value={duration}
+                onChange={(e) => setDuration(e.target.value)}
+                className="text-xs font-bold text-gray-800 bg-transparent outline-none w-full cursor-pointer"
+              >
+                <option value="15">15 minutes</option>
+                <option value="30">30 minutes</option>
+                <option value="45">45 minutes</option>
+                <option value="60">60 minutes</option>
+                <option value="90">90 minutes</option>
+                <option value="120">2 hours</option>
+              </select>
             </div>
             <div className="p-2.5 bg-white border border-gray-200 rounded-xl shadow-sm">
-              <span className="text-[10px] text-gray-400 uppercase font-semibold block">Priority</span>
+              <span className="text-[10px] text-gray-400 uppercase font-semibold block mb-0.5">Priority</span>
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as any)}
