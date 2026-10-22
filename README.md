@@ -1,29 +1,36 @@
-# 📅 Daily Planner & MCP Hub (v1.0.0)
+# 📅 NIMORA — Your Day. Intelligently Organized. (v1.0.0)
 
-A modern, production-grade Daily Planner and MCP (Model Context Protocol) Hub built with **Next.js (App Router)**, **TypeScript**, and **Tailwind CSS**. Designed for seamless local execution and instant one-click deployment to **Vercel** with zero external dependencies required.
+A modern, production-grade Daily Planner and MCP (Model Context Protocol) Hub built with **Next.js (App Router)**, **TypeScript**, and **Tailwind CSS**.
 
----
-
-## 🌟 Highlights
-
-- **Three-Column Daily Planner UI**:
-  - **Left Sidebar**: Date navigation, quick today jump, category filtering, and hotkey guides.
-  - **Center Workspace**: Task management with live status toggling (To Do ➔ In Progress ➔ Done), search, tag filtering, and time/duration details.
-  - **Right Panel**: Home-screen style widget with completion progress ring, daily statistics, priority goals, and auto-saving daily notes.
-- **Push-to-Talk Voice Interface**:
-  - Voice overlay powered by Web Speech API.
-  - Keyboard shortcut: Press `V` anywhere to trigger voice input.
-- **16-Tool MCP JSON-RPC Server**:
-  - Built-in MCP server at `/api/mcp` supporting JSON-RPC 2.0 protocol.
-  - Tools include: `list_tasks`, `get_task`, `create_task`, `update_task`, `delete_task`, `complete_task`, `search_tasks`, `get_day_plan`, `save_day_plan`, `get_stats`, `get_categories`, `get_tags`, `bulk_create`, `bulk_update_status`, `get_upcoming`, and `clear_completed`.
-- **Health Check API**: `/api/health` returning live JSON status and version info.
-- **Vercel Native**: Fully optimized for Vercel serverless edge deployment with zero configuration.
+- **Live Cloud URL**: [https://agile-sirocco-oyrlj9z.tmp.now](https://agile-sirocco-oyrlj9z.tmp.now)
+- **Claim & Make Permanent**: [Claim on Vercel](https://vercel.com/claim-deployment?code=9ea46908-d7e9-4695-ab7e-e6f19e821ce0)
+- **Health Check**: `GET /api/health`
+- **MCP Hub (16 Tools)**: `POST /api/mcp`
 
 ---
 
-## 🚀 Getting Started
+## 🌟 16-Module Feature Architecture
 
-### 1. Run Locally
+1. **Splash & Welcome**: Luxury emerald & gold brand entry.
+2. **Account Setup & Onboarding**: Value pillars (*Plan smarter, Stay focused, Manage follow-ups, Work/life balance*) + account setup.
+3. **Choose Your AI Assistant**: Integrations with **Claude**, **ChatGPT**, and **Gemini**.
+4. **Connect Your Apps**: Interactive toggles for Google Calendar, Apple Calendar, Contacts, and WhatsApp.
+5. **Home Dashboard**: Sudarshan profile, inspirational quote, 38% circular completion gauge, and timeline tasks.
+6. **Daily Planner Timeline**: Color-coded time-blocked day agenda with floating `+` task action.
+7. **Create New Task**: Multi-type task creator (Task, Follow-up, Call, Note) with related contact linking.
+8. **Task Details & Edit**: Task details, Arun Mehta contact card, notes, and WhatsApp trigger.
+9. **Contacts & Follow-ups**: CRM contacts list with follow-up countdowns and last-call dates.
+10. **Contact Details & History**: Contact profile, interaction timeline, and follow-up logging.
+11. **Voice Assistant**: Dark futuristic audio visualizer with animated sound waves and 3 voice prompt shortcuts.
+12. **Smart AI Task Suggestions**: Proactive suggestions (Rohan materials, Site visit drawings, Call Priya, Team sync) with **+ Add**.
+13. **iOS Home Screen Widget**: Glassmorphic dark iOS widget with NOW focus (*Client Call 9:00 AM*), NEXT item, mic shortcut, and iOS dock.
+14. **Notifications & Snooze**: 9:00 lock screen notifications with time badges and Snooze/Open actions.
+15. **WhatsApp Click-to-Chat**: In-app chat with Arun Mehta, double blue ticks `✓✓`, and green **"Open in WhatsApp"** button.
+16. **Settings & Privacy**: Sudarshan Pro account details + 4 Privacy Pillar cards (*Secure & Private, Connect Only What You Need, Clear Permissions, Data Deletion*).
+
+---
+
+## 🚀 Running Locally
 
 ```bash
 cd /Users/darshaananvekar/.gemini/antgravity/scratch/daily-planner
@@ -33,40 +40,9 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 2. Deploy to Vercel
-
-You have two simple options to deploy to Vercel:
-
-#### Option A: Using Vercel CLI (Installed)
-In your terminal, run:
-```bash
-cd /Users/darshaananvekar/.gemini/antgravity/scratch/daily-planner
-vercel
-```
-Follow the interactive prompts to link or log in to your Vercel account.
-
-#### Option B: Deploy via GitHub
-1. Create a repository on [GitHub](https://github.com/new).
-2. Push your project:
-   ```bash
-   git remote add origin https://github.com/<your-username>/daily-planner.git
-   git branch -M main
-   git push -u origin main --tags
-   ```
-3. Go to [Vercel Dashboard](https://vercel.com/new) and import the repository. Vercel will automatically detect Next.js and deploy!
-
 ---
 
-## 🔌 Connecting Supabase (Optional Database Integration)
-
-The app is currently architected with a local client-side and server-side in-memory DB layer. If you want to connect a persistent remote PostgreSQL database with Supabase:
-1. Create a project at [Supabase](https://supabase.com).
-2. Install the client: `npm install @supabase/supabase-js`.
-3. Add your `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` to your `.env.local` or Vercel environment variables.
-
----
-
-## 🛠 MCP Tools Reference
+## 🛠 16-Tool MCP JSON-RPC Server Reference
 
 Endpoint: `POST /api/mcp`
 
