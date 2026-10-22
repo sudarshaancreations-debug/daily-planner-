@@ -4,47 +4,47 @@ import React, { useState } from 'react';
 import { NimoraTask, Contact } from '../data';
 import { downloadICS } from '@/lib/exportUtils';
 
-interface PlanningProps {
+export interface PlanningProps {
   tasks: NimoraTask[];
   contacts: Contact[];
   onNavigate?: (screenNumber: number) => void;
   onAddTask?: (task: NimoraTask) => void;
   onToggleTask?: (id: string) => void;
   onSelectTask?: (task: NimoraTask) => void;
+  onDeleteTask?: (id: string) => void;
   selectedTask?: NimoraTask;
 }
 
 // 5. Home Dashboard
 export function Screen07HomeDashboard({ tasks, onNavigate, onToggleTask, onSelectTask }: PlanningProps) {
-  const [activeTab, setActiveTab] = useState<'today' | 'upcoming' | 'overdue'>('today');
   const completedCount = tasks.filter((t) => t.status === 'completed').length;
   const progressPercent = Math.round((completedCount / (tasks.length || 1)) * 100);
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#F9F8F5] text-gray-900 flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
+    <div className="w-full h-full min-h-[680px] bg-[#121412] text-[#e3e2e0] flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
       {/* Top Header */}
-      <div className="p-5 pb-3 bg-white border-b border-gray-100">
-        <div className="flex justify-between items-center text-xs text-gray-400 mb-3">
-          <span className="font-semibold">9:41</span>
-          <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+      <div className="p-5 pb-3 bg-[#121412]/80 border-b border-[#414945]/30">
+        <div className="flex justify-between items-center text-xs text-[#c0c8c3] mb-3">
+          <span className="font-semibold font-['Space_Grotesk']">9:41</span>
+          <div className="flex items-center gap-1.5 text-[#e3e2e0]">
+            <span className="w-2 h-2 rounded-full bg-[#10B981]" />
             <span>5G</span>
           </div>
         </div>
 
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-emerald-900 text-amber-200 font-bold flex items-center justify-center text-sm ring-2 ring-emerald-600/20 shadow-sm">
+            <div className="w-10 h-10 rounded-full bg-[#0e3e30] text-[#e9c349] font-bold flex items-center justify-center text-sm ring-2 ring-[#e9c349]/30 shadow-sm font-['Space_Grotesk']">
               S
             </div>
             <div>
-              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Good Morning,</p>
-              <h2 className="text-sm font-bold text-gray-900">Sudarshan</h2>
+              <p className="text-[10px] text-[#e9c349] uppercase tracking-wider font-semibold">Good Morning,</p>
+              <h2 className="text-sm font-bold text-[#e3e2e0] font-['Space_Grotesk']">Sudarshan</h2>
             </div>
           </div>
           <button
             onClick={() => onNavigate?.(16)}
-            className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 text-sm"
+            className="w-8 h-8 rounded-full bg-[#1f201e] hover:bg-[#292a29] flex items-center justify-center text-[#c0c8c3] text-sm border border-[#414945]/30"
           >
             ⚙️
           </button>
@@ -54,21 +54,20 @@ export function Screen07HomeDashboard({ tasks, onNavigate, onToggleTask, onSelec
       {/* Main Scroll Content */}
       <div className="flex-1 overflow-y-auto p-5 space-y-4">
         {/* Quote Card */}
-        <div className="bg-gradient-to-r from-amber-50 to-orange-50/60 border border-amber-200/80 rounded-2xl p-3 flex items-center justify-between">
+        <div className="glass-card specular-border rounded-2xl p-3 flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-2">
             <span className="text-sm">✨</span>
-            <p className="text-xs font-semibold text-amber-900">
-              A focused day creates bigger opportunities.
+            <p className="text-xs font-semibold text-[#e9c349] italic">
+              &ldquo;A focused day creates bigger opportunities.&rdquo;
             </p>
           </div>
-          <span className="text-xs text-amber-700/60">✕</span>
         </div>
 
         {/* Today's Progress Card */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+        <div className="glass-card specular-border rounded-2xl p-4 shadow-sm flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-bold text-gray-900">Today&apos;s Progress</h3>
-            <p className="text-xs text-gray-500 mt-0.5">
+            <h3 className="text-sm font-bold text-[#e3e2e0] font-['Space_Grotesk']">Today&apos;s Progress</h3>
+            <p className="text-xs text-[#c0c8c3] mt-0.5">
               {completedCount} of {tasks.length} tasks completed
             </p>
           </div>
@@ -77,14 +76,14 @@ export function Screen07HomeDashboard({ tasks, onNavigate, onToggleTask, onSelec
           <div className="relative w-14 h-14 flex items-center justify-center">
             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
               <path
-                className="text-gray-100"
+                className="text-[#292a29]"
                 strokeWidth="3.5"
                 stroke="currentColor"
                 fill="none"
                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
               />
               <path
-                className="text-emerald-700"
+                className="text-[#e9c349]"
                 strokeDasharray={`${progressPercent}, 100`}
                 strokeWidth="3.5"
                 strokeLinecap="round"
@@ -93,138 +92,39 @@ export function Screen07HomeDashboard({ tasks, onNavigate, onToggleTask, onSelec
                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
               />
             </svg>
-            <span className="absolute text-xs font-bold text-emerald-800">{progressPercent}%</span>
+            <span className="absolute text-xs font-bold text-[#e3e2e0] font-['Space_Grotesk']">{progressPercent}%</span>
           </div>
         </div>
-
-        {/* Filter Tabs */}
-        <div className="flex items-center gap-2">
-          {(['today', 'upcoming', 'overdue'] as const).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold capitalize transition-all ${
-                activeTab === tab
-                  ? 'bg-emerald-800 text-white shadow-sm'
-                  : 'bg-white text-gray-500 hover:text-gray-900 border border-gray-200'
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-
-        {/* Task Timeline List */}
-        <div className="space-y-2.5">
-          {tasks.slice(0, 4).map((task) => (
-            <div
-              key={task.id}
-              onClick={() => {
-                onSelectTask?.(task);
-                onNavigate?.(8);
-              }}
-              className="p-3.5 bg-white border border-gray-100 rounded-2xl flex items-center justify-between hover:border-emerald-300 transition-all shadow-sm cursor-pointer"
-            >
-              <div className="flex items-center gap-3">
-                <span className="text-[11px] font-bold text-gray-400 w-16">{task.startTime}</span>
-                <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                <div>
-                  <h4
-                    className={`text-xs font-bold text-gray-900 ${
-                      task.status === 'completed' ? 'line-through text-gray-400' : ''
-                    }`}
-                  >
-                    {task.title}
-                  </h4>
-                  {task.subtitle && <p className="text-[10px] text-gray-400">{task.subtitle}</p>}
-                </div>
-              </div>
-
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onToggleTask?.(task.id);
-                }}
-                className={`w-6 h-6 rounded-full flex items-center justify-center text-xs transition-colors ${
-                  task.status === 'completed'
-                    ? 'bg-emerald-600 text-white'
-                    : 'border border-gray-300 text-transparent hover:border-emerald-500'
-                }`}
-              >
-                ✓
-              </button>
-            </div>
-          ))}
-        </div>
-
-        {/* Voice Trigger Banner */}
-        <div
-          onClick={() => onNavigate?.(11)}
-          className="p-3 bg-gradient-to-r from-emerald-900 to-teal-900 rounded-2xl text-white flex items-center justify-between cursor-pointer shadow-md hover:brightness-105"
-        >
-          <div className="flex items-center gap-2.5">
-            <span className="text-lg">🎙️</span>
-            <div>
-              <p className="text-xs font-bold">Voice Assistant</p>
-              <p className="text-[10px] text-emerald-200">Tap to plan by voice</p>
-            </div>
-          </div>
-          <span className="text-xs bg-emerald-800 px-2 py-1 rounded-lg">Try ›</span>
-        </div>
-      </div>
-
-      {/* Bottom Nav Bar */}
-      <div className="bg-white border-t border-gray-100 px-5 py-2.5 flex justify-between items-center text-[10px] font-semibold text-gray-400">
-        <button className="flex flex-col items-center text-emerald-800">
-          <span className="text-base">🏠</span>
-          <span>Home</span>
-        </button>
-        <button onClick={() => onNavigate?.(6)} className="flex flex-col items-center hover:text-gray-900">
-          <span className="text-base">📋</span>
-          <span>Tasks</span>
-        </button>
-        <button onClick={() => onNavigate?.(9)} className="flex flex-col items-center hover:text-gray-900">
-          <span className="text-base">👥</span>
-          <span>Contacts</span>
-        </button>
-        <button onClick={() => onNavigate?.(12)} className="flex flex-col items-center hover:text-gray-900">
-          <span className="text-base">✨</span>
-          <span>AI</span>
-        </button>
-        <button onClick={() => onNavigate?.(16)} className="flex flex-col items-center hover:text-gray-900">
-          <span className="text-base">⋯</span>
-          <span>More</span>
-        </button>
       </div>
     </div>
   );
 }
 
 // 6. Daily Planner Timeline
-export function Screen08DailyPlanner({ tasks, onNavigate, onSelectTask }: PlanningProps) {
-  const colorMap = {
-    blue: 'bg-blue-50 border-blue-200 text-blue-900',
-    green: 'bg-emerald-50 border-emerald-200 text-emerald-900',
-    coral: 'bg-rose-50 border-rose-200 text-rose-900',
-    orange: 'bg-amber-50 border-amber-200 text-amber-900',
-    gray: 'bg-gray-50 border-gray-200 text-gray-900',
+export function Screen08DailyPlanner({ tasks, onNavigate, onSelectTask, onToggleTask }: PlanningProps) {
+  const borderColors: Record<string, string> = {
+    blue: 'border-l-blue-500',
+    green: 'border-l-emerald-500',
+    coral: 'border-l-orange-400',
+    orange: 'border-l-orange-400',
+    gray: 'border-l-gray-400',
   };
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#F9F8F5] text-gray-900 flex flex-col justify-between select-none rounded-[38px] overflow-hidden relative">
+    <div className="w-full h-full min-h-[680px] bg-[#121412] text-[#e3e2e0] flex flex-col justify-between select-none rounded-[38px] overflow-hidden relative">
       {/* Top Header */}
-      <div className="p-5 pb-3 bg-white border-b border-gray-100 flex items-center justify-between">
-        <button onClick={() => onNavigate?.(5)} className="text-gray-600 hover:text-gray-900 text-xs font-semibold">
+      <div className="p-4 bg-[#121412]/90 border-b border-[#414945]/30 flex items-center justify-between">
+        <button onClick={() => onNavigate?.(5)} className="text-[#c0c8c3] hover:text-white text-xs font-semibold flex items-center gap-1">
           ‹ Back
         </button>
         <div className="text-center">
-          <h2 className="text-sm font-bold text-gray-900">Today</h2>
-          <p className="text-[10px] text-gray-400">Tue, 20 Oct 2026</p>
+          <h2 className="text-sm font-bold text-[#e3e2e0] font-['Space_Grotesk']">Daily Schedule</h2>
+          <p className="text-[10px] text-[#e9c349]">Today&apos;s Agenda</p>
         </div>
         <div className="flex items-center gap-1.5">
           <button
-            onClick={() => downloadICS(tasks, 'nimora-daily-agenda-2026-10-20.ics')}
-            className="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[10px] font-bold border border-emerald-200 flex items-center gap-1 shadow-sm transition-colors"
+            onClick={() => downloadICS(tasks, 'nimora-daily-agenda.ics')}
+            className="px-2.5 py-1 rounded-lg bg-[#0e3e30] hover:bg-[#134E3F] text-[#e9c349] text-[10px] font-bold border border-[#e9c349]/30 flex items-center gap-1 shadow-sm transition-colors"
             title="Download Calendar .ics"
           >
             <span>📅</span>
@@ -232,7 +132,7 @@ export function Screen08DailyPlanner({ tasks, onNavigate, onSelectTask }: Planni
           </button>
           <button
             onClick={() => onNavigate?.(7)}
-            className="w-7 h-7 rounded-full bg-emerald-800 text-white flex items-center justify-center text-sm font-bold shadow-sm"
+            className="w-7 h-7 rounded-full bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/40 text-[#e9c349] flex items-center justify-center text-sm font-bold shadow-sm"
           >
             +
           </button>
@@ -241,39 +141,59 @@ export function Screen08DailyPlanner({ tasks, onNavigate, onSelectTask }: Planni
 
       {/* Time blocked schedule list */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {tasks.map((task) => (
-          <div
-            key={task.id}
-            onClick={() => {
-              onSelectTask?.(task);
-              onNavigate?.(8);
-            }}
-            className={`p-3.5 rounded-2xl border transition-all cursor-pointer shadow-sm hover:brightness-95 flex items-start justify-between ${
-              colorMap[task.color] || colorMap.blue
-            }`}
-          >
-            <div>
-              <span className="text-[10px] font-bold opacity-70 block mb-1">
-                {task.startTime} – {task.endTime}
-              </span>
-              <h4 className="text-xs font-bold leading-tight">{task.title}</h4>
-              {task.subtitle && <p className="text-[10px] opacity-75 mt-0.5">{task.subtitle}</p>}
-            </div>
+        {tasks.map((task) => {
+          const isCompleted = task.status === 'completed';
+          return (
+            <div
+              key={task.id}
+              onClick={() => {
+                onSelectTask?.(task);
+                onNavigate?.(8);
+              }}
+              className={`glass-card specular-border p-3.5 rounded-2xl border-l-[3px] ${
+                borderColors[task.color] || 'border-l-emerald-500'
+              } transition-all cursor-pointer shadow-sm hover:brightness-110 flex items-start justify-between ${
+                isCompleted ? 'opacity-50' : ''
+              }`}
+            >
+              <div className="flex items-start gap-3">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleTask?.(task.id);
+                  }}
+                  className={`mt-0.5 w-5 h-5 rounded border border-[#e9c349]/50 flex items-center justify-center hover:bg-[#e9c349]/20 transition-colors ${
+                    isCompleted ? 'bg-[#e9c349] text-gray-950' : ''
+                  }`}
+                >
+                  {isCompleted && <span className="material-symbols-outlined text-[14px] font-bold">check</span>}
+                </button>
+                <div>
+                  <span className="text-[10px] font-bold text-[#a1d1bd] block mb-0.5 font-['Space_Grotesk']">
+                    {task.startTime} – {task.endTime}
+                  </span>
+                  <h4 className={`text-xs font-bold leading-tight font-['Space_Grotesk'] ${isCompleted ? 'line-through text-[#8a938e]' : 'text-[#e3e2e0]'}`}>
+                    {task.title}
+                  </h4>
+                  {task.subtitle && <p className="text-[10px] text-[#c0c8c3] mt-0.5">{task.subtitle}</p>}
+                </div>
+              </div>
 
-            <div className="text-right flex flex-col items-end gap-1">
-              <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/70">
-                {task.priority}
-              </span>
-              <span className="text-[10px] opacity-60">⏱ {task.durationMinutes}m</span>
+              <div className="text-right flex flex-col items-end gap-1">
+                <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#0e3e30] text-[#e9c349] border border-[#e9c349]/30">
+                  {task.priority}
+                </span>
+                <span className="text-[10px] text-[#c0c8c3]">⏱ {task.durationMinutes}m</span>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Floating Action Button */}
       <button
         onClick={() => onNavigate?.(7)}
-        className="absolute bottom-6 right-6 w-12 h-12 rounded-full bg-[#0F382C] text-white flex items-center justify-center text-xl font-bold shadow-xl hover:scale-105 active:scale-95 transition-all z-10"
+        className="absolute bottom-6 right-6 w-12 h-12 rounded-full bg-gradient-to-tr from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/60 text-[#e9c349] flex items-center justify-center text-xl font-bold shadow-2xl hover:scale-105 active:scale-95 transition-all z-10"
       >
         +
       </button>
@@ -287,7 +207,7 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [selectedContact, setSelectedContact] = useState(contacts[0]?.id || '');
-  const [date, setDate] = useState('2026-10-20');
+  const [date, setDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [time, setTime] = useState('10:00 AM');
   const [duration, setDuration] = useState('30');
   const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium');
@@ -342,24 +262,24 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
   };
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#F9F8F5] text-gray-900 flex flex-col justify-between p-6 select-none rounded-[38px]">
+    <div className="w-full h-full min-h-[680px] bg-[#121412] text-[#e3e2e0] flex flex-col justify-between p-5 select-none rounded-[38px]">
       <div>
         {/* Top bar */}
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-base font-bold text-gray-900">Add New Task</h2>
-          <button onClick={() => onNavigate?.(6)} className="text-gray-400 hover:text-gray-700 text-sm">
+          <h2 className="text-base font-bold text-[#e3e2e0] font-['Space_Grotesk']">Add New Task</h2>
+          <button onClick={() => onNavigate?.(6)} className="text-[#c0c8c3] hover:text-white text-sm">
             ✕
           </button>
         </div>
 
         {/* Item type tabs */}
-        <div className="grid grid-cols-4 gap-1 p-1 bg-gray-200/70 rounded-xl mb-4">
+        <div className="grid grid-cols-4 gap-1 p-1 bg-[#1f201e] rounded-xl mb-4 border border-[#414945]/30">
           {(['task', 'followup', 'call', 'note'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`py-1.5 rounded-lg text-[11px] font-semibold capitalize transition-all ${
-                activeTab === tab ? 'bg-white text-emerald-900 shadow-sm' : 'text-gray-600'
+                activeTab === tab ? 'bg-[#0e3e30] text-[#e9c349] shadow-sm border border-[#e9c349]/30' : 'text-[#c0c8c3]'
               }`}
             >
               {tab === 'followup' ? 'Follow-up' : tab}
@@ -370,95 +290,95 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
         {/* Inputs */}
         <div className="space-y-3">
           <div>
-            <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider block mb-1">
+            <label className="text-[10px] font-semibold text-[#c0c8c3] uppercase tracking-wider block mb-1">
               Task Title
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Review drawings"
-              className="w-full bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs text-gray-900 outline-none focus:border-emerald-600 shadow-sm"
+              placeholder="e.g. Review drawings & specs"
+              className="w-full bg-[#1f201e] border border-[#414945]/40 rounded-xl px-3.5 py-2.5 text-xs text-[#e3e2e0] outline-none focus:border-[#e9c349] shadow-sm placeholder-[#8a938e]"
             />
           </div>
 
           <div>
-            <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider block mb-1">
+            <label className="text-[10px] font-semibold text-[#c0c8c3] uppercase tracking-wider block mb-1">
               Description (Optional)
             </label>
             <textarea
               rows={2}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Add details, link or location..."
-              className="w-full bg-white border border-gray-200 rounded-xl px-3.5 py-2 text-xs text-gray-900 outline-none focus:border-emerald-600 resize-none shadow-sm"
+              placeholder="Add details, location or notes..."
+              className="w-full bg-[#1f201e] border border-[#414945]/40 rounded-xl px-3.5 py-2 text-xs text-[#e3e2e0] outline-none focus:border-[#e9c349] resize-none shadow-sm placeholder-[#8a938e]"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-2.5">
-            <div className="p-2.5 bg-white border border-gray-200 rounded-xl shadow-sm">
-              <span className="text-[10px] text-gray-400 uppercase font-semibold block mb-0.5">Date</span>
+            <div className="p-2.5 bg-[#1f201e] border border-[#414945]/40 rounded-xl shadow-sm">
+              <span className="text-[10px] text-[#8a938e] uppercase font-semibold block mb-0.5">Date</span>
               <input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="text-xs font-bold text-gray-800 outline-none bg-transparent w-full cursor-pointer"
+                className="text-xs font-bold text-[#e3e2e0] outline-none bg-transparent w-full cursor-pointer"
               />
             </div>
-            <div className="p-2.5 bg-white border border-gray-200 rounded-xl shadow-sm">
-              <span className="text-[10px] text-gray-400 uppercase font-semibold block mb-0.5">Time</span>
+            <div className="p-2.5 bg-[#1f201e] border border-[#414945]/40 rounded-xl shadow-sm">
+              <span className="text-[10px] text-[#8a938e] uppercase font-semibold block mb-0.5">Time</span>
               <input
                 type="text"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
                 placeholder="10:00 AM"
-                className="text-xs font-bold text-gray-800 outline-none bg-transparent w-full"
+                className="text-xs font-bold text-[#e3e2e0] outline-none bg-transparent w-full"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-2.5">
-            <div className="p-2.5 bg-white border border-gray-200 rounded-xl shadow-sm">
-              <span className="text-[10px] text-gray-400 uppercase font-semibold block mb-0.5">Duration</span>
+            <div className="p-2.5 bg-[#1f201e] border border-[#414945]/40 rounded-xl shadow-sm">
+              <span className="text-[10px] text-[#8a938e] uppercase font-semibold block mb-0.5">Duration</span>
               <select
                 value={duration}
                 onChange={(e) => setDuration(e.target.value)}
-                className="text-xs font-bold text-gray-800 bg-transparent outline-none w-full cursor-pointer"
+                className="text-xs font-bold text-[#e3e2e0] bg-transparent outline-none w-full cursor-pointer"
               >
-                <option value="15">15 minutes</option>
-                <option value="30">30 minutes</option>
-                <option value="45">45 minutes</option>
-                <option value="60">60 minutes</option>
-                <option value="90">90 minutes</option>
-                <option value="120">2 hours</option>
+                <option className="bg-[#1f201e] text-[#e3e2e0]" value="15">15 minutes</option>
+                <option className="bg-[#1f201e] text-[#e3e2e0]" value="30">30 minutes</option>
+                <option className="bg-[#1f201e] text-[#e3e2e0]" value="45">45 minutes</option>
+                <option className="bg-[#1f201e] text-[#e3e2e0]" value="60">60 minutes</option>
+                <option className="bg-[#1f201e] text-[#e3e2e0]" value="90">90 minutes</option>
+                <option className="bg-[#1f201e] text-[#e3e2e0]" value="120">2 hours</option>
               </select>
             </div>
-            <div className="p-2.5 bg-white border border-gray-200 rounded-xl shadow-sm">
-              <span className="text-[10px] text-gray-400 uppercase font-semibold block mb-0.5">Priority</span>
+            <div className="p-2.5 bg-[#1f201e] border border-[#414945]/40 rounded-xl shadow-sm">
+              <span className="text-[10px] text-[#8a938e] uppercase font-semibold block mb-0.5">Priority</span>
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as any)}
-                className="text-xs font-bold text-gray-800 bg-transparent outline-none w-full"
+                className="text-xs font-bold text-[#e3e2e0] bg-transparent outline-none w-full cursor-pointer"
               >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
+                <option className="bg-[#1f201e] text-[#e3e2e0]" value="low">Low</option>
+                <option className="bg-[#1f201e] text-[#e3e2e0]" value="medium">Medium</option>
+                <option className="bg-[#1f201e] text-[#e3e2e0]" value="high">High</option>
               </select>
             </div>
           </div>
 
           <div>
-            <label className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider block mb-1">
+            <label className="text-[10px] font-semibold text-[#c0c8c3] uppercase tracking-wider block mb-1">
               Related Contact (Optional)
             </label>
             <select
               value={selectedContact}
               onChange={(e) => setSelectedContact(e.target.value)}
-              className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-800 outline-none shadow-sm"
+              className="w-full bg-[#1f201e] border border-[#414945]/40 rounded-xl px-3 py-2 text-xs text-[#e3e2e0] outline-none shadow-sm cursor-pointer"
             >
-              <option value="">Search or select contact</option>
+              <option className="bg-[#1f201e] text-[#e3e2e0]" value="">Select contact (optional)</option>
               {contacts.map((c) => (
-                <option key={c.id} value={c.id}>
+                <option key={c.id} className="bg-[#1f201e] text-[#e3e2e0]" value={c.id}>
                   {c.name} ({c.company})
                 </option>
               ))}
@@ -469,7 +389,7 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
 
       <button
         onClick={handleSubmit}
-        className="w-full py-3 rounded-2xl bg-[#0F382C] text-white font-semibold text-xs shadow-md hover:bg-[#13493A] transition-all"
+        className="w-full py-3 rounded-2xl bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/50 text-[#e9c349] font-bold text-xs shadow-xl hover:brightness-110 active:scale-95 transition-all mt-4 font-['Space_Grotesk']"
       >
         Create Task
       </button>
@@ -478,56 +398,71 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
 }
 
 // 8. Task Details & Edit
-export function Screen10TaskDetails({ tasks, contacts, onNavigate, selectedTask }: PlanningProps) {
+export function Screen10TaskDetails({ tasks, contacts, onNavigate, selectedTask, onDeleteTask, onToggleTask }: PlanningProps) {
   const task = selectedTask || tasks[0];
   const contact = contacts.find((c) => c.id === task?.relatedContactId);
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#F9F8F5] text-gray-900 flex flex-col justify-between p-6 select-none rounded-[38px]">
+    <div className="w-full h-full min-h-[680px] bg-[#121412] text-[#e3e2e0] flex flex-col justify-between p-5 select-none rounded-[38px]">
       <div>
         {/* Header */}
-        <div className="flex justify-between items-center mb-5">
-          <button onClick={() => onNavigate?.(6)} className="text-gray-600 hover:text-gray-900 text-xs font-semibold">
+        <div className="flex justify-between items-center mb-4">
+          <button onClick={() => onNavigate?.(6)} className="text-[#c0c8c3] hover:text-white text-xs font-semibold flex items-center gap-1">
             ‹ Back
           </button>
-          <span className="text-xs font-bold text-gray-900">Task Details</span>
-          <span className="text-gray-400 text-xs">⋯</span>
+          <span className="text-xs font-bold text-[#e3e2e0] font-['Space_Grotesk']">Task Details</span>
+          <button
+            onClick={() => {
+              if (task && onDeleteTask) {
+                onDeleteTask(task.id);
+                onNavigate?.(6);
+              }
+            }}
+            className="text-rose-400 hover:text-rose-300 text-xs font-bold"
+            title="Delete task"
+          >
+            Delete
+          </button>
         </div>
 
         {/* Task Title Header */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm mb-4">
+        <div className="glass-card specular-border rounded-2xl p-4 shadow-sm mb-3">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-base">📋</span>
-            <h3 className="text-base font-bold text-gray-900">{task?.title || 'Client Call'}</h3>
+            <h3 className="text-base font-bold text-[#e3e2e0] font-['Space_Grotesk']">{task?.title || 'Client Call'}</h3>
           </div>
-          <p className="text-xs text-gray-500">{task?.subtitle || 'ABC Constructions'}</p>
+          <p className="text-xs text-[#c0c8c3]">{task?.subtitle || 'Reviewing project milestones'}</p>
         </div>
 
         {/* Details Grid */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm space-y-3 mb-4">
+        <div className="glass-card specular-border rounded-2xl p-4 shadow-sm space-y-3 mb-3">
           <div className="flex justify-between items-center text-xs">
-            <span className="text-gray-400">Date</span>
-            <span className="font-semibold text-gray-800">{task?.date || 'Tue, 20 Oct 2026'}</span>
+            <span className="text-[#8a938e]">Date</span>
+            <span className="font-semibold text-[#e3e2e0]">{task?.date || 'Today'}</span>
           </div>
           <div className="flex justify-between items-center text-xs">
-            <span className="text-gray-400">Time</span>
-            <span className="font-semibold text-gray-800">
+            <span className="text-[#8a938e]">Time</span>
+            <span className="font-semibold text-[#e3e2e0]">
               {task?.startTime} – {task?.endTime}
             </span>
           </div>
           <div className="flex justify-between items-center text-xs">
-            <span className="text-gray-400">Duration</span>
-            <span className="font-semibold text-gray-800">{task?.durationMinutes} minutes</span>
+            <span className="text-[#8a938e]">Duration</span>
+            <span className="font-semibold text-[#e3e2e0]">{task?.durationMinutes} minutes</span>
           </div>
           <div className="flex justify-between items-center text-xs">
-            <span className="text-gray-400">Priority</span>
-            <span className="font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full text-[10px] uppercase">
+            <span className="text-[#8a938e]">Priority</span>
+            <span className="font-bold text-[#e9c349] bg-[#0e3e30] border border-[#e9c349]/30 px-2 py-0.5 rounded-full text-[10px] uppercase">
               {task?.priority}
             </span>
           </div>
           <div className="flex justify-between items-center text-xs">
-            <span className="text-gray-400">Status</span>
-            <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full text-[10px] capitalize">
+            <span className="text-[#8a938e]">Status</span>
+            <span className={`font-bold px-2 py-0.5 rounded-full text-[10px] uppercase ${
+              task?.status === 'completed'
+                ? 'bg-emerald-950 text-[#4edea3] border border-[#4edea3]/30'
+                : 'bg-[#1f201e] text-[#a1d1bd] border border-[#a1d1bd]/30'
+            }`}>
               {task?.status}
             </span>
           </div>
@@ -537,9 +472,9 @@ export function Screen10TaskDetails({ tasks, contacts, onNavigate, selectedTask 
         {contact && (
           <div
             onClick={() => onNavigate?.(10)}
-            className="bg-white border border-gray-100 rounded-2xl p-3.5 shadow-sm mb-4 cursor-pointer hover:border-emerald-300 transition-colors"
+            className="glass-card specular-border rounded-2xl p-3.5 shadow-sm mb-3 cursor-pointer hover:border-[#e9c349]/50 transition-colors"
           >
-            <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider block mb-2">
+            <span className="text-[10px] font-semibold text-[#8a938e] uppercase tracking-wider block mb-2">
               Related Contact
             </span>
             <div className="flex items-center justify-between">
@@ -548,46 +483,31 @@ export function Screen10TaskDetails({ tasks, contacts, onNavigate, selectedTask 
                   {contact.name[0]}
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-gray-900">{contact.name}</h4>
-                  <p className="text-[10px] text-gray-400">{contact.company}</p>
+                  <h4 className="text-xs font-bold text-[#e3e2e0]">{contact.name}</h4>
+                  <p className="text-[10px] text-[#c0c8c3]">{contact.company}</p>
                 </div>
               </div>
-              <span className="text-xs text-gray-300">›</span>
+              <span className="text-xs text-[#a1d1bd]">View profile ›</span>
             </div>
           </div>
         )}
-
-        {/* Notes */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
-          <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider block mb-1">
-            Notes
-          </span>
-          <p className="text-xs text-gray-600 leading-relaxed">
-            {task?.notes || 'Discuss new project requirements and timeline.'}
-          </p>
-        </div>
       </div>
 
-      <div className="flex gap-2 pt-3">
+      <div className="space-y-2 mt-2">
         <button
-          onClick={() => downloadICS([task], `nimora-task-${task.id}.ics`)}
-          className="py-3 px-3 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold text-xs transition-all flex items-center justify-center gap-1 shadow-sm"
-          title="Export to Calendar"
+          onClick={() => {
+            if (task && onToggleTask) {
+              onToggleTask(task.id);
+              onNavigate?.(6);
+            }
+          }}
+          className={`w-full py-2.5 rounded-xl font-bold text-xs transition-all ${
+            task?.status === 'completed'
+              ? 'bg-[#1f201e] text-[#c0c8c3] border border-[#414945]/40 hover:bg-[#292a29]'
+              : 'bg-[#10B981] text-gray-950 shadow-md hover:bg-[#059669]'
+          }`}
         >
-          <span>📅</span>
-        </button>
-        <button
-          onClick={() => onNavigate?.(15)}
-          className="flex-1 py-3 rounded-2xl bg-emerald-100 text-emerald-900 font-semibold text-xs hover:bg-emerald-200 transition-all flex items-center justify-center gap-1.5"
-        >
-          <span>💬</span>
-          <span>WhatsApp</span>
-        </button>
-        <button
-          onClick={() => onNavigate?.(6)}
-          className="flex-1 py-3 rounded-2xl bg-[#0F382C] text-white font-semibold text-xs shadow-md hover:bg-[#13493A] transition-all"
-        >
-          Edit Task
+          {task?.status === 'completed' ? 'Mark Incomplete' : 'Mark Completed ✓'}
         </button>
       </div>
     </div>

@@ -29,13 +29,49 @@ import {
 } from '@/nimora/screens/WidgetAndSettingsScreens';
 
 export default function NimoraApp() {
-  const [activeTab, setActiveTab] = useState<'home' | 'schedule' | 'voice' | 'contacts' | 'settings' | 'add_task'>('home');
+  const [activeTab, setActiveTab] = useState<
+    | 'home'
+    | 'schedule'
+    | 'voice'
+    | 'contacts'
+    | 'settings'
+    | 'add_task'
+    | 'task_details'
+    | 'contact_details'
+    | 'notifications'
+    | 'widget'
+    | 'ai_suggestions'
+  >('home');
   const [tasks, setTasks] = useState<NimoraTask[]>(INITIAL_TASKS);
   const [contacts] = useState<Contact[]>(INITIAL_CONTACTS);
   const [selectedTask, setSelectedTask] = useState<NimoraTask>(INITIAL_TASKS[0]);
   const [selectedContact, setSelectedContact] = useState<Contact>(INITIAL_CONTACTS[0]);
   const [isListening, setIsListening] = useState(false);
   const [currentTime, setCurrentTime] = useState('9:41');
+
+  // True persistent storage across reloads and mobile sessions
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('nimora_planner_tasks');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setTasks(parsed);
+          setSelectedTask(parsed[0]);
+        }
+      }
+    } catch (e) {
+      console.warn('Could not read from localStorage', e);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('nimora_planner_tasks', JSON.stringify(tasks));
+    } catch (e) {
+      console.warn('Could not write to localStorage', e);
+    }
+  }, [tasks]);
 
   useEffect(() => {
     const updateTime = () => {
@@ -60,6 +96,19 @@ export default function NimoraApp() {
   const handleAddTask = (newTask: NimoraTask) => {
     setTasks((prev) => [newTask, ...prev]);
     setActiveTab('home');
+  };
+
+  const handleDeleteTask = (id: string) => {
+    setTasks((prev) => prev.filter((t) => t.id !== id));
+    setActiveTab('schedule');
+  };
+
+  const handleResetData = () => {
+    setTasks(INITIAL_TASKS);
+    setSelectedTask(INITIAL_TASKS[0]);
+    try {
+      localStorage.removeItem('nimora_planner_tasks');
+    } catch {}
   };
 
   const completedCount = tasks.filter((t) => t.status === 'completed').length;
@@ -103,11 +152,12 @@ export default function NimoraApp() {
 
         <div className="flex items-center space-x-2">
           <button
-            onClick={() => setActiveTab('settings')}
+            onClick={() => setActiveTab('notifications')}
             aria-label="Notifications"
-            className="w-9 h-9 rounded-full flex items-center justify-center text-[#c0c8c3] hover:text-[#a1d1bd] transition-colors duration-150 active:scale-95 border border-[#414945]/30 bg-[#1f201e]/60"
+            className="w-9 h-9 rounded-full flex items-center justify-center text-[#c0c8c3] hover:text-[#a1d1bd] transition-colors duration-150 active:scale-95 border border-[#414945]/30 bg-[#1f201e]/60 relative"
           >
             <span className="material-symbols-outlined text-[20px]">notifications</span>
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#e9c349]"></span>
           </button>
           <div
             onClick={() => setActiveTab('settings')}
@@ -242,7 +292,13 @@ export default function NimoraApp() {
               </div>
 
               {/* High Priority Focus Card */}
-              <div className="glass-card specular-border rounded-xl p-4 border-l-4 border-l-rose-500 shadow-xl relative overflow-hidden">
+              <div
+                onClick={() => {
+                  setSelectedTask(activeFocusTask);
+                  setActiveTab('task_details');
+                }}
+                className="glass-card specular-border rounded-xl p-4 border-l-4 border-l-rose-500 shadow-xl relative overflow-hidden cursor-pointer hover:border-r hover:border-r-[#e9c349]/40 transition-all"
+              >
                 <div className="flex items-start justify-between gap-2">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
@@ -265,7 +321,10 @@ export default function NimoraApp() {
                 </div>
 
                 {/* Quick Interaction Actions */}
-                <div className="flex items-center gap-2.5 mt-4 pt-3 border-t border-[#414945]/20">
+                <div
+                  className="flex items-center gap-2.5 mt-4 pt-3 border-t border-[#414945]/20"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <a
                     className="flex-1 py-2 px-3 rounded-lg bg-[#1f201e] hover:bg-[#292a29] flex items-center justify-center gap-2 text-[#a1d1bd] border border-[#414945]/40 text-xs font-semibold active:scale-95 transition-transform"
                     href="tel:+919876543210"
@@ -325,16 +384,23 @@ export default function NimoraApp() {
               return (
                 <article
                   key={task.id}
+                  onClick={() => {
+                    setSelectedTask(task);
+                    setActiveTab('task_details');
+                  }}
                   className={`glass-card specular-border rounded-xl p-4 border-l-[3px] ${
                     borderColors[task.color] || 'border-l-emerald-500'
-                  } shadow-sm flex items-start justify-between gap-3 transition-all ${
+                  } shadow-sm flex items-start justify-between gap-3 transition-all cursor-pointer ${
                     isCompleted ? 'opacity-50' : 'hover:scale-[1.01]'
                   }`}
                 >
                   <div className="flex items-start gap-3">
                     {/* Tactile Checkbox */}
                     <button
-                      onClick={() => handleToggleTask(task.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleToggleTask(task.id);
+                      }}
                       aria-label="Complete Task"
                       className={`mt-0.5 w-5 h-5 rounded border border-[#e9c349]/50 flex items-center justify-center hover:bg-[#e9c349]/20 transition-colors ${
                         isCompleted ? 'bg-[#e9c349] text-gray-950' : ''
@@ -370,6 +436,7 @@ export default function NimoraApp() {
                   {/* Fast Action */}
                   <a
                     aria-label="WhatsApp quick trigger"
+                    onClick={(e) => e.stopPropagation()}
                     className="p-2 rounded-lg bg-[#1f201e] text-[#a1d1bd] border border-[#414945]/30 hover:border-[#a1d1bd]/50 active:scale-95 transition-all self-center"
                     href="https://wa.me/919876543210"
                     target="_blank"
@@ -394,7 +461,11 @@ export default function NimoraApp() {
               if (mod === 5) setActiveTab('home');
               if (mod === 7) setActiveTab('add_task');
             }}
-            onSelectTask={setSelectedTask}
+            onSelectTask={(task) => {
+              setSelectedTask(task);
+              setActiveTab('task_details');
+            }}
+            onToggleTask={handleToggleTask}
           />
         </div>
       )}
@@ -405,8 +476,25 @@ export default function NimoraApp() {
           <Screen09AddTask
             tasks={tasks}
             contacts={contacts}
-            onNavigate={(mod) => setActiveTab('home')}
+            onNavigate={() => setActiveTab('home')}
             onAddTask={handleAddTask}
+          />
+        </div>
+      )}
+
+      {/* Task Details View */}
+      {activeTab === 'task_details' && selectedTask && (
+        <div className="pt-20 px-4">
+          <Screen10TaskDetails
+            tasks={tasks}
+            contacts={contacts}
+            selectedTask={selectedTask}
+            onNavigate={(mod) => {
+              if (mod === 5) setActiveTab('home');
+              else setActiveTab('schedule');
+            }}
+            onToggleTask={handleToggleTask}
+            onDeleteTask={handleDeleteTask}
           />
         </div>
       )}
@@ -432,7 +520,56 @@ export default function NimoraApp() {
             onNavigate={(mod) => {
               if (mod === 5) setActiveTab('home');
             }}
-            onSelectContact={setSelectedContact}
+            onSelectContact={(c) => {
+              setSelectedContact(c);
+              setActiveTab('contact_details');
+            }}
+          />
+        </div>
+      )}
+
+      {/* Contact Details View */}
+      {activeTab === 'contact_details' && selectedContact && (
+        <div className="pt-20 px-4">
+          <Screen12ContactDetails
+            contacts={contacts}
+            suggestions={INITIAL_AI_SUGGESTIONS}
+            selectedContact={selectedContact}
+            onNavigate={() => setActiveTab('contacts')}
+          />
+        </div>
+      )}
+
+      {/* Notifications View */}
+      {activeTab === 'notifications' && (
+        <div className="pt-20 px-4">
+          <Screen16Notifications
+            tasks={tasks}
+            notifications={INITIAL_NOTIFICATIONS}
+            onNavigate={() => setActiveTab('home')}
+          />
+        </div>
+      )}
+
+      {/* Widget Preview View */}
+      {activeTab === 'widget' && (
+        <div className="pt-20 px-4">
+          <Screen15Widget
+            tasks={tasks}
+            notifications={INITIAL_NOTIFICATIONS}
+            onNavigate={() => setActiveTab('home')}
+          />
+        </div>
+      )}
+
+      {/* AI Suggestions View */}
+      {activeTab === 'ai_suggestions' && (
+        <div className="pt-20 px-4">
+          <Screen14AISuggestions
+            contacts={contacts}
+            suggestions={INITIAL_AI_SUGGESTIONS}
+            onNavigate={() => setActiveTab('home')}
+            onAddTask={handleAddTask}
           />
         </div>
       )}
@@ -443,7 +580,12 @@ export default function NimoraApp() {
           <Screen18ProfileSettings
             tasks={tasks}
             notifications={INITIAL_NOTIFICATIONS}
-            onNavigate={() => setActiveTab('home')}
+            onNavigate={(mod) => {
+              if (mod === 12) setActiveTab('widget');
+              else if (mod === 13) setActiveTab('notifications');
+              else setActiveTab('home');
+            }}
+            onResetData={handleResetData}
           />
         </div>
       )}

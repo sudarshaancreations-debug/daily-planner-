@@ -3,11 +3,12 @@
 import React, { useState } from 'react';
 import { NimoraTask, NimoraNotification } from '../data';
 
-interface WidgetAndSettingsProps {
+export interface WidgetAndSettingsProps {
   tasks: NimoraTask[];
   notifications: NimoraNotification[];
   onNavigate?: (screenNumber: number) => void;
   onAddTask?: (task: NimoraTask) => void;
+  onResetData?: () => void;
 }
 
 // 13. iOS Home Screen Widget
@@ -17,16 +18,13 @@ export function Screen15Widget({ tasks, onNavigate }: WidgetAndSettingsProps) {
 
   return (
     <div
-      className="w-full h-full min-h-[680px] text-white flex flex-col justify-between p-6 select-none rounded-[38px] relative overflow-hidden"
-      style={{
-        backgroundImage: `radial-gradient(circle at top right, #134e4a, #042f2e, #022c22, #000000)`,
-      }}
+      className="w-full h-full min-h-[680px] text-[#e3e2e0] flex flex-col justify-between p-6 select-none rounded-[38px] relative overflow-hidden bg-[#121412]"
     >
       {/* iOS Status Bar */}
-      <div className="flex justify-between items-center text-xs text-white/80 pt-2 z-10 font-semibold">
+      <div className="flex justify-between items-center text-xs text-[#c0c8c3] pt-2 z-10 font-semibold font-['Space_Grotesk']">
         <span>9:01</span>
-        <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-white" />
+        <div className="flex items-center gap-1.5 text-[#e3e2e0]">
+          <span className="w-2 h-2 rounded-full bg-[#10B981]" />
           <span>5G</span>
           <span>100%</span>
         </div>
@@ -37,17 +35,17 @@ export function Screen15Widget({ tasks, onNavigate }: WidgetAndSettingsProps) {
         {/* iOS Glassmorphic Dark Widget */}
         <div
           onClick={() => onNavigate?.(5)}
-          className="cursor-pointer bg-[#0A2E24]/85 backdrop-blur-xl border border-emerald-500/30 rounded-3xl p-5 shadow-2xl hover:scale-[1.02] transition-all"
+          className="cursor-pointer glass-card specular-border rounded-3xl p-5 shadow-2xl hover:scale-[1.02] transition-all border border-[#e9c349]/30"
         >
           {/* Widget Header */}
           <div className="flex justify-between items-center mb-3">
             <div className="flex items-center gap-1.5">
-              <span className="text-amber-400 text-xs">🔥</span>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-emerald-200">
+              <span className="text-[#e9c349] text-xs">🔥</span>
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#a1d1bd] font-['Space_Grotesk']">
                 NIMORA
               </span>
             </div>
-            <span className="text-[10px] font-bold text-emerald-300 uppercase tracking-wider bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-700/40">
+            <span className="text-[10px] font-bold text-[#e9c349] uppercase tracking-wider bg-[#0e3e30] px-2 py-0.5 rounded-full border border-[#e9c349]/40 font-['Space_Grotesk']">
               NOW
             </span>
           </div>
@@ -55,11 +53,11 @@ export function Screen15Widget({ tasks, onNavigate }: WidgetAndSettingsProps) {
           {/* Current Focus Task */}
           <div className="flex items-center justify-between mb-4">
             <div>
-              <p className="text-[10px] uppercase font-bold text-emerald-300/80 tracking-wider">
-                Now
+              <p className="text-[10px] uppercase font-bold text-[#a1d1bd] tracking-wider font-['Space_Grotesk']">
+                Current Focus
               </p>
-              <h3 className="text-sm font-extrabold text-white mt-0.5">{nextTask?.title}</h3>
-              <p className="text-[11px] text-emerald-200/90 font-medium">
+              <h3 className="text-sm font-extrabold text-[#e3e2e0] mt-0.5 font-['Space_Grotesk']">{nextTask?.title}</h3>
+              <p className="text-[11px] text-[#c0c8c3] font-medium">
                 {nextTask?.startTime} – {nextTask?.endTime}
               </p>
             </div>
@@ -68,21 +66,21 @@ export function Screen15Widget({ tasks, onNavigate }: WidgetAndSettingsProps) {
                 e.stopPropagation();
                 onNavigate?.(6);
               }}
-              className="w-8 h-8 rounded-full bg-emerald-500 hover:bg-emerald-400 text-emerald-950 flex items-center justify-center text-xs font-bold transition-all shadow-md shadow-emerald-900/50"
+              className="w-8 h-8 rounded-full bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/50 text-[#e9c349] flex items-center justify-center text-xs font-bold transition-all shadow-md"
             >
               ▶
             </button>
           </div>
 
           {/* Next Task Section */}
-          <div className="border-t border-emerald-700/40 pt-2.5 flex items-center justify-between text-xs">
+          <div className="border-t border-[#414945]/30 pt-2.5 flex items-center justify-between text-xs">
             <div>
-              <p className="text-[9px] uppercase font-bold text-emerald-400/60 tracking-wider">
+              <p className="text-[9px] uppercase font-bold text-[#8a938e] tracking-wider font-['Space_Grotesk']">
                 Next
               </p>
-              <p className="text-white/90 font-semibold">{upcomingTask?.title}</p>
+              <p className="text-[#e3e2e0] font-semibold">{upcomingTask?.title}</p>
             </div>
-            <span className="text-[11px] text-emerald-300 font-semibold">
+            <span className="text-[11px] text-[#a1d1bd] font-semibold">
               {upcomingTask?.startTime} – {upcomingTask?.endTime}
             </span>
           </div>
@@ -92,26 +90,26 @@ export function Screen15Widget({ tasks, onNavigate }: WidgetAndSettingsProps) {
         <div className="flex justify-center">
           <button
             onClick={() => onNavigate?.(11)}
-            className="w-12 h-12 rounded-full bg-emerald-800/80 backdrop-blur border border-emerald-600/40 flex items-center justify-center text-xl text-white shadow-lg hover:scale-110 active:scale-95 transition-all"
+            className="w-12 h-12 rounded-full bg-[#0e3e30] border border-[#e9c349]/60 flex items-center justify-center text-xl text-[#e9c349] shadow-lg hover:scale-110 active:scale-95 transition-all"
           >
-            🎙️
+            <span className="material-symbols-outlined text-[24px]">mic</span>
           </button>
         </div>
       </div>
 
       {/* iOS App Dock */}
-      <div className="bg-white/10 backdrop-blur-md rounded-3xl p-3 flex justify-around items-center z-10 border border-white/10">
-        <button onClick={() => onNavigate?.(5)} className="w-11 h-11 rounded-2xl bg-emerald-800 flex items-center justify-center text-xl shadow-md">
-          📅
+      <div className="bg-[#1f201e]/80 backdrop-blur-md rounded-3xl p-3 flex justify-around items-center z-10 border border-[#414945]/30">
+        <button onClick={() => onNavigate?.(5)} className="w-11 h-11 rounded-2xl bg-[#0e3e30] text-[#e9c349] flex items-center justify-center text-xl shadow-md border border-[#e9c349]/30">
+          <span className="material-symbols-outlined text-[20px]">home</span>
         </button>
-        <button onClick={() => onNavigate?.(15)} className="w-11 h-11 rounded-2xl bg-green-500 flex items-center justify-center text-xl shadow-md">
-          💬
+        <button onClick={() => onNavigate?.(6)} className="w-11 h-11 rounded-2xl bg-[#1f201e] text-[#a1d1bd] flex items-center justify-center text-xl shadow-md border border-[#414945]/40">
+          <span className="material-symbols-outlined text-[20px]">calendar_today</span>
         </button>
-        <button onClick={() => onNavigate?.(9)} className="w-11 h-11 rounded-2xl bg-blue-500 flex items-center justify-center text-xl shadow-md">
-          👥
+        <button onClick={() => onNavigate?.(9)} className="w-11 h-11 rounded-2xl bg-[#1f201e] text-[#a1d1bd] flex items-center justify-center text-xl shadow-md border border-[#414945]/40">
+          <span className="material-symbols-outlined text-[20px]">group</span>
         </button>
-        <button onClick={() => onNavigate?.(12)} className="w-11 h-11 rounded-2xl bg-purple-600 flex items-center justify-center text-xl shadow-md">
-          ✨
+        <button onClick={() => onNavigate?.(16)} className="w-11 h-11 rounded-2xl bg-[#1f201e] text-[#a1d1bd] flex items-center justify-center text-xl shadow-md border border-[#414945]/40">
+          <span className="material-symbols-outlined text-[20px]">settings</span>
         </button>
       </div>
     </div>
@@ -121,13 +119,13 @@ export function Screen15Widget({ tasks, onNavigate }: WidgetAndSettingsProps) {
 // 14. Notifications & Snooze
 export function Screen16Notifications({ notifications, onNavigate }: WidgetAndSettingsProps) {
   return (
-    <div className="w-full h-full min-h-[680px] bg-gradient-to-b from-[#111827] via-[#0F172A] to-black text-white flex flex-col justify-between p-6 select-none rounded-[38px] relative overflow-hidden">
+    <div className="w-full h-full min-h-[680px] bg-[#121412] text-[#e3e2e0] flex flex-col justify-between p-6 select-none rounded-[38px] relative overflow-hidden">
       <div>
         {/* iOS Lock Screen Header Clock */}
         <div className="text-center pt-4 mb-6">
-          <span className="text-xs text-white/50 block">🔒</span>
-          <h1 className="text-5xl font-extralight tracking-tight text-white/95 mt-1">9:00</h1>
-          <p className="text-xs text-white/70 font-medium mt-1">Tue, 20 Oct</p>
+          <span className="text-xs text-[#8a938e] block">🔒</span>
+          <h1 className="text-5xl font-extralight tracking-tight text-[#e3e2e0] mt-1 font-['Space_Grotesk']">9:00</h1>
+          <p className="text-xs text-[#c0c8c3] font-medium mt-1">Tue, 20 Oct</p>
         </div>
 
         {/* Notifications List */}
@@ -135,24 +133,24 @@ export function Screen16Notifications({ notifications, onNavigate }: WidgetAndSe
           {notifications.map((n) => (
             <div
               key={n.id}
-              className="bg-white/10 backdrop-blur-xl border border-white/15 rounded-2xl p-3.5 shadow-lg space-y-2 hover:bg-white/15 transition-all cursor-pointer"
+              className="glass-card specular-border rounded-2xl p-3.5 shadow-lg space-y-2 hover:border-[#e9c349]/40 transition-all cursor-pointer"
               onClick={() => onNavigate?.(6)}
             >
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-1.5">
-                  <span className="w-4 h-4 rounded-md bg-emerald-700 flex items-center justify-center text-[10px]">
+                  <span className="w-4 h-4 rounded-md bg-[#0e3e30] text-[#e9c349] flex items-center justify-center text-[10px] font-bold">
                     N
                   </span>
-                  <span className="text-[11px] font-bold text-white uppercase tracking-wider">
+                  <span className="text-[11px] font-bold text-[#e3e2e0] uppercase tracking-wider font-['Space_Grotesk']">
                     NIMORA
                   </span>
                 </div>
-                <span className="text-[10px] text-white/50">{n.timeAgo}</span>
+                <span className="text-[10px] text-[#8a938e]">{n.timeAgo}</span>
               </div>
 
               <div>
-                <h4 className="text-xs font-bold text-white">{n.title}</h4>
-                <p className="text-[11px] text-white/80 mt-0.5">{n.body}</p>
+                <h4 className="text-xs font-bold text-[#e3e2e0] font-['Space_Grotesk']">{n.title}</h4>
+                <p className="text-[11px] text-[#c0c8c3] mt-0.5">{n.body}</p>
               </div>
             </div>
           ))}
@@ -162,7 +160,7 @@ export function Screen16Notifications({ notifications, onNavigate }: WidgetAndSe
       <div className="text-center pb-2">
         <button
           onClick={() => onNavigate?.(5)}
-          className="text-xs text-white/60 hover:text-white px-4 py-1.5 bg-white/10 rounded-full border border-white/10"
+          className="text-xs text-[#c0c8c3] hover:text-white px-4 py-1.5 bg-[#1f201e] rounded-full border border-[#414945]/40"
         >
           Swipe up to unlock ›
         </button>
@@ -208,18 +206,18 @@ export function Screen17WhatsApp({ onNavigate }: WidgetAndSettingsProps) {
           <button onClick={() => onNavigate?.(10)} className="text-gray-300 text-sm">
             ‹
           </button>
-          <div className="w-9 h-9 rounded-full bg-emerald-700 text-white font-bold flex items-center justify-center text-xs">
+          <div className="w-9 h-9 rounded-full bg-[#005C4B] text-white font-bold flex items-center justify-center text-xs">
             AM
           </div>
           <div>
-            <h3 className="text-xs font-bold text-white leading-tight">Arun Mehta</h3>
+            <h3 className="text-xs font-bold text-white leading-tight font-['Space_Grotesk']">Arun Mehta</h3>
             <p className="text-[10px] text-emerald-400">Online</p>
           </div>
         </div>
         <div className="flex items-center gap-3 text-gray-300 text-sm">
-          <span>📹</span>
-          <span>📞</span>
-          <span>⋮</span>
+          <span className="material-symbols-outlined text-[18px]">videocam</span>
+          <span className="material-symbols-outlined text-[18px]">call</span>
+          <span className="material-symbols-outlined text-[18px]">more_vert</span>
         </div>
       </div>
 
@@ -248,25 +246,27 @@ export function Screen17WhatsApp({ onNavigate }: WidgetAndSettingsProps) {
         ))}
 
         {/* Click to Chat Promo Card */}
-        <div className="bg-[#182229]/90 border border-gray-700/60 rounded-2xl p-3 text-center space-y-2 mt-4">
-          <span className="text-xl">💬</span>
-          <h4 className="text-xs font-bold text-emerald-300">Click to Chat</h4>
+        <div className="bg-[#182229]/90 border border-gray-700/60 rounded-2xl p-3.5 text-center space-y-2 mt-4">
+          <span className="material-symbols-outlined text-[#25D366] text-[24px]">chat</span>
+          <h4 className="text-xs font-bold text-emerald-300 font-['Space_Grotesk']">Click to Chat</h4>
           <p className="text-[10px] text-gray-300 leading-relaxed">
             Opens WhatsApp with the selected contact. (We do not read your personal messages).
           </p>
-          <button
-            onClick={() => send("Hi Arun, looking forward to our review meeting.")}
+          <a
+            href="https://wa.me/919876543210"
+            target="_blank"
+            rel="noreferrer"
             className="w-full py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20BD5A] text-gray-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg transition-colors"
           >
-            <span>💬</span>
+            <span className="material-symbols-outlined text-[18px]">chat</span>
             <span>Open in WhatsApp</span>
-          </button>
+          </a>
         </div>
       </div>
 
       {/* Input bar */}
       <div className="bg-[#1F2C34] p-2 flex items-center gap-2">
-        <span className="text-gray-400 text-sm px-1">😊</span>
+        <span className="material-symbols-outlined text-gray-400 text-[20px] px-1">mood</span>
         <input
           type="text"
           value={input}
@@ -287,147 +287,137 @@ export function Screen17WhatsApp({ onNavigate }: WidgetAndSettingsProps) {
 }
 
 // 16. Settings & Privacy
-export function Screen18ProfileSettings({ onNavigate }: WidgetAndSettingsProps) {
+export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSettingsProps) {
+  const [resetMessage, setResetMessage] = useState('');
+
+  const handleReset = () => {
+    if (confirm('Are you sure you want to reset all tasks to initial demo state?')) {
+      onResetData?.();
+      setResetMessage('Demo data restored successfully!');
+      setTimeout(() => setResetMessage(''), 2500);
+    }
+  };
+
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#F9F8F5] text-gray-900 flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
+    <div className="w-full h-full min-h-[680px] bg-[#121412] text-[#e3e2e0] flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
       <div className="overflow-y-auto">
         {/* Header */}
-        <div className="p-5 pb-3 bg-white border-b border-gray-100 flex items-center justify-between">
-          <button onClick={() => onNavigate?.(5)} className="text-gray-600 hover:text-gray-900 text-xs font-semibold">
+        <div className="p-4 bg-[#121412]/90 border-b border-[#414945]/30 flex items-center justify-between">
+          <button onClick={() => onNavigate?.(5)} className="text-[#c0c8c3] hover:text-white text-xs font-semibold flex items-center gap-1">
             ‹ Back
           </button>
-          <h2 className="text-sm font-bold text-gray-900">Settings & Privacy</h2>
+          <h2 className="text-sm font-bold text-[#e3e2e0] font-['Space_Grotesk']">Settings & Privacy</h2>
           <span className="w-5" />
         </div>
 
         {/* User Card */}
-        <div className="p-4 bg-white border-b border-gray-100 flex items-center justify-between">
+        <div className="p-4 glass-card specular-border m-4 rounded-2xl flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-emerald-900 text-amber-200 font-bold flex items-center justify-center text-base shadow-sm ring-2 ring-emerald-600/20">
+            <div className="w-12 h-12 rounded-full bg-[#0e3e30] text-[#e9c349] font-bold flex items-center justify-center text-base shadow-sm ring-2 ring-[#e9c349]/30 font-['Space_Grotesk']">
               S
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <h3 className="text-sm font-bold text-gray-900">Sudarshan</h3>
-                <span className="text-[9px] font-extrabold bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded-full">
+                <h3 className="text-sm font-bold text-[#e3e2e0] font-['Space_Grotesk']">Sudarshan</h3>
+                <span className="text-[9px] font-extrabold bg-[#af8d11]/30 text-[#e9c349] px-1.5 py-0.5 rounded-full border border-[#e9c349]/40">
                   PRO
                 </span>
               </div>
-              <p className="text-xs text-gray-400">sudarshan@example.com</p>
+              <p className="text-xs text-[#8a938e]">sudarshan@bespokestudio.com</p>
             </div>
           </div>
-          <span className="text-xs text-gray-300">›</span>
+          <span className="text-xs text-[#8a938e]">›</span>
         </div>
 
         {/* Options List */}
-        <div className="p-4 space-y-2">
+        <div className="px-4 space-y-2">
+          {/* Go Premium – Google Pay / Apple Pay */}
+          <a
+            href="/payments"
+            className="p-3.5 bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/60 rounded-2xl flex items-center justify-between cursor-pointer hover:brightness-110 transition-all shadow-md active:scale-[0.99]"
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-base">💎</span>
+              <div>
+                <span className="text-xs font-bold text-[#e9c349] block font-['Space_Grotesk']">Go Premium Upgrade</span>
+                <span className="text-[10px] text-[#a1d1bd]">Google Pay · Apple Pay</span>
+              </div>
+            </div>
+            <span className="text-[11px] font-semibold text-[#e9c349] flex items-center gap-1">
+              Unlock <span className="text-[#8a938e]">›</span>
+            </span>
+          </a>
+
+          {/* Reset Demo Data Button */}
+          <button
+            onClick={handleReset}
+            className="w-full p-3 bg-[#1f201e] border border-rose-500/30 rounded-2xl flex items-center justify-between cursor-pointer hover:border-rose-400 transition-colors shadow-sm text-left"
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-sm">🔄</span>
+              <div>
+                <span className="text-xs font-semibold text-rose-300 block">Reset Demo Data</span>
+                <span className="text-[10px] text-[#8a938e]">Restore fresh initial agenda & contacts</span>
+              </div>
+            </div>
+            <span className="text-[11px] text-rose-400 font-bold">Reset ›</span>
+          </button>
+
+          {resetMessage && (
+            <div className="p-2.5 bg-emerald-950/70 border border-emerald-500/40 rounded-xl text-xs text-[#4edea3] text-center">
+              {resetMessage}
+            </div>
+          )}
+
           <div
             onClick={() => onNavigate?.(3)}
-            className="p-3 bg-white border border-gray-200/80 rounded-2xl flex items-center justify-between cursor-pointer hover:border-emerald-300 transition-colors shadow-sm"
+            className="p-3 bg-[#1f201e] border border-[#414945]/30 rounded-2xl flex items-center justify-between cursor-pointer hover:border-[#e9c349]/40 transition-colors shadow-sm"
           >
             <div className="flex items-center gap-3">
               <span className="text-sm">✳️</span>
-              <span className="text-xs font-semibold text-gray-800">AI Assistant</span>
+              <span className="text-xs font-semibold text-[#e3e2e0]">AI Assistant Integration</span>
             </div>
-            <span className="text-[11px] font-bold text-emerald-800 flex items-center gap-1">
-              Claude (Connected) <span className="text-gray-300">›</span>
+            <span className="text-[11px] font-bold text-[#4edea3] flex items-center gap-1">
+              Active <span className="text-[#8a938e]">›</span>
             </span>
           </div>
 
           <div
             onClick={() => onNavigate?.(4)}
-            className="p-3 bg-white border border-gray-200/80 rounded-2xl flex items-center justify-between cursor-pointer hover:border-emerald-300 transition-colors shadow-sm"
+            className="p-3 bg-[#1f201e] border border-[#414945]/30 rounded-2xl flex items-center justify-between cursor-pointer hover:border-[#e9c349]/40 transition-colors shadow-sm"
           >
             <div className="flex items-center gap-3">
               <span className="text-sm">🔌</span>
-              <span className="text-xs font-semibold text-gray-800">Connected Apps</span>
+              <span className="text-xs font-semibold text-[#e3e2e0]">Connected Calendars & Tools</span>
             </div>
-            <span className="text-[11px] text-gray-400 flex items-center gap-1">
-              4 Active <span className="text-gray-300">›</span>
+            <span className="text-[11px] text-[#8a938e] flex items-center gap-1">
+              Google · Apple <span className="text-[#8a938e]">›</span>
             </span>
           </div>
-
-          <div className="p-3 bg-white border border-gray-200/80 rounded-2xl flex items-center justify-between cursor-pointer hover:border-emerald-300 transition-colors shadow-sm">
-            <div className="flex items-center gap-3">
-              <span className="text-sm">⚙️</span>
-              <span className="text-xs font-semibold text-gray-800">Preferences</span>
-            </div>
-            <span className="text-gray-300 text-xs">›</span>
-          </div>
-
-          <div
-            onClick={() => onNavigate?.(14)}
-            className="p-3 bg-white border border-gray-200/80 rounded-2xl flex items-center justify-between cursor-pointer hover:border-emerald-300 transition-colors shadow-sm"
-          >
-            <div className="flex items-center gap-3">
-              <span className="text-sm">🔔</span>
-              <span className="text-xs font-semibold text-gray-800">Notifications</span>
-            </div>
-            <span className="text-gray-300 text-xs">›</span>
-          </div>
-
-          {/* Go Premium – Google Pay / Apple Pay */}
-          <a
-            href="/payments"
-            className="p-3 bg-gradient-to-r from-emerald-600 to-teal-500 border border-emerald-400/40 rounded-2xl flex items-center justify-between cursor-pointer hover:opacity-90 transition-opacity shadow-sm"
-          >
-            <div className="flex items-center gap-3">
-              <span className="text-sm">💎</span>
-              <span className="text-xs font-bold text-white">Go Premium</span>
-            </div>
-            <span className="text-[11px] font-semibold text-white/80 flex items-center gap-1">
-              Google Pay · Apple Pay <span className="text-white/60">›</span>
-            </span>
-          </a>
         </div>
 
         {/* Privacy Callout Cards matching right column of Screen 16 */}
-        <div className="p-4 pt-1 space-y-2">
-          <h4 className="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-2">
+        <div className="p-4 pt-4 space-y-2">
+          <h4 className="text-[10px] font-bold uppercase tracking-wider text-[#8a938e] mb-2 font-['Space_Grotesk']">
             Your Data. Your Control.
           </h4>
 
-          <div className="p-3 bg-emerald-50/70 border border-emerald-100 rounded-2xl flex items-start gap-2.5">
+          <div className="p-3 glass-card specular-border rounded-2xl flex items-start gap-2.5">
             <span className="text-base">🛡️</span>
             <div>
-              <h5 className="text-xs font-bold text-emerald-950">Secure & Private</h5>
-              <p className="text-[10px] text-emerald-800/80">Your data is encrypted and under your control.</p>
+              <h5 className="text-xs font-bold text-[#e3e2e0] font-['Space_Grotesk']">Secure & Private</h5>
+              <p className="text-[10px] text-[#c0c8c3]">Your client conversations & follow-ups are client-side encrypted.</p>
             </div>
           </div>
 
-          <div className="p-3 bg-teal-50/70 border border-teal-100 rounded-2xl flex items-start gap-2.5">
+          <div className="p-3 glass-card specular-border rounded-2xl flex items-start gap-2.5">
             <span className="text-base">🎯</span>
             <div>
-              <h5 className="text-xs font-bold text-teal-950">Connect Only What You Need</h5>
-              <p className="text-[10px] text-teal-800/80">Data minimization principle built-in.</p>
-            </div>
-          </div>
-
-          <div className="p-3 bg-amber-50/70 border border-amber-100 rounded-2xl flex items-start gap-2.5">
-            <span className="text-base">🔒</span>
-            <div>
-              <h5 className="text-xs font-bold text-amber-950">Clear Permissions</h5>
-              <p className="text-[10px] text-amber-800/80">Manage or revoke app access anytime.</p>
-            </div>
-          </div>
-
-          <div className="p-3 bg-sky-50/70 border border-sky-100 rounded-2xl flex items-start gap-2.5">
-            <span className="text-base">🗑️</span>
-            <div>
-              <h5 className="text-xs font-bold text-sky-950">Data Deletion</h5>
-              <p className="text-[10px] text-sky-800/80">Request to delete your data whenever you want.</p>
+              <h5 className="text-xs font-bold text-[#e3e2e0] font-['Space_Grotesk']">Connect Only What You Need</h5>
+              <p className="text-[10px] text-[#c0c8c3]">Data minimization principle built-in.</p>
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="text-center py-3 border-t border-gray-100 bg-white">
-        <button
-          onClick={() => onNavigate?.(1)}
-          className="text-xs font-semibold text-rose-600 hover:text-rose-800"
-        >
-          Sign Out of Sudarshan Account
-        </button>
       </div>
     </div>
   );

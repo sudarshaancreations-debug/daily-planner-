@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Contact, AISuggestion, NimoraTask } from '../data';
 
-interface ContactsAndAIProps {
+export interface ContactsAndAIProps {
   contacts: Contact[];
   suggestions: AISuggestion[];
   onNavigate?: (screenNumber: number) => void;
@@ -26,14 +26,15 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
   });
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#F9F8F5] text-gray-900 flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
+    <div className="w-full h-full min-h-[680px] bg-[#121412] text-[#e3e2e0] flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
       {/* Top Header */}
-      <div className="p-5 pb-3 bg-white border-b border-gray-100">
+      <div className="p-4 bg-[#121412]/90 border-b border-[#414945]/30">
         <div className="flex justify-between items-center mb-3">
-          <h2 className="text-base font-bold text-gray-900">Contacts</h2>
-          <button className="w-7 h-7 rounded-full bg-emerald-800 text-white flex items-center justify-center text-sm font-bold shadow-sm">
-            +
-          </button>
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-[#e9c349] text-[20px]">group</span>
+            <h2 className="text-base font-bold text-[#e3e2e0] font-['Space_Grotesk']">CRM & Contacts</h2>
+          </div>
+          <span className="text-xs text-[#a1d1bd] font-semibold">{filtered.length} Contacts</span>
         </div>
 
         {/* Search */}
@@ -42,10 +43,10 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search contacts..."
-            className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-8 pr-3 py-1.5 text-xs text-gray-800 outline-none focus:border-emerald-600"
+            placeholder="Search clients, architects, vendors..."
+            className="w-full bg-[#1f201e] border border-[#414945]/40 rounded-xl pl-9 pr-3 py-2 text-xs text-[#e3e2e0] outline-none focus:border-[#e9c349] placeholder-[#8a938e]"
           />
-          <span className="absolute left-2.5 top-2 text-xs text-gray-400">🔍</span>
+          <span className="material-symbols-outlined absolute left-2.5 top-2.5 text-[18px] text-[#8a938e]">search</span>
         </div>
 
         {/* Filter Pills */}
@@ -56,11 +57,11 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
               onClick={() => setFilter(cat)}
               className={`px-3 py-1 rounded-full text-[11px] font-semibold capitalize whitespace-nowrap transition-all ${
                 filter === cat
-                  ? 'bg-emerald-800 text-white'
-                  : 'bg-gray-100 text-gray-500 hover:text-gray-900'
+                  ? 'bg-[#0e3e30] text-[#e9c349] border border-[#e9c349]/40 shadow-sm'
+                  : 'bg-[#1f201e] text-[#c0c8c3] border border-[#414945]/20 hover:text-white'
               }`}
             >
-              {cat === 'all' ? 'All' : `${cat}s`}
+              {cat === 'all' ? 'All Contacts' : `${cat}s`}
             </button>
           ))}
         </div>
@@ -75,55 +76,41 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
               onSelectContact?.(contact);
               onNavigate?.(10);
             }}
-            className="p-3.5 bg-white border border-gray-100 rounded-2xl flex items-center justify-between hover:border-emerald-300 transition-all shadow-sm cursor-pointer"
+            className="glass-card specular-border p-3.5 rounded-2xl flex items-center justify-between hover:border-[#e9c349]/50 transition-all shadow-sm cursor-pointer active:scale-[0.99]"
           >
             <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-full ${contact.avatarColor} text-white font-bold flex items-center justify-center text-xs shadow-sm`}>
+              <div className={`w-10 h-10 rounded-full ${contact.avatarColor} text-white font-bold flex items-center justify-center text-xs shadow-md ring-2 ring-white/10 font-['Space_Grotesk']`}>
                 {contact.name.split(' ').map((n) => n[0]).join('')}
               </div>
               <div>
-                <h4 className="text-xs font-bold text-gray-900">{contact.name}</h4>
-                <p className="text-[10px] text-gray-400">{contact.company}</p>
+                <h4 className="text-xs font-bold text-[#e3e2e0] font-['Space_Grotesk']">{contact.name}</h4>
+                <p className="text-[10px] text-[#c0c8c3]">{contact.company} · {contact.title}</p>
                 <div className="flex items-center gap-2 mt-1">
                   {contact.followUpCount > 0 ? (
-                    <span className="text-[9px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">
+                    <span className="text-[9px] font-bold text-[#e9c349] bg-[#0e3e30] border border-[#e9c349]/30 px-1.5 py-0.5 rounded">
                       {contact.followUpCount} {contact.followUpCount === 1 ? 'follow-up' : 'follow-ups'}
                     </span>
                   ) : (
-                    <span className="text-[9px] text-gray-400">No follow-ups</span>
+                    <span className="text-[9px] text-[#8a938e]">Up to date</span>
                   )}
-                  <span className="text-[9px] text-gray-400">• Last call: {contact.lastCall}</span>
+                  <span className="text-[9px] text-[#8a938e]">• Last: {contact.lastCall}</span>
                 </div>
               </div>
             </div>
 
-            <span className="text-gray-300 text-sm">›</span>
+            <div className="flex items-center gap-2">
+              <a
+                onClick={(e) => e.stopPropagation()}
+                href={`tel:${contact.phone}`}
+                className="w-7 h-7 rounded-lg bg-[#1f201e] flex items-center justify-center text-[#a1d1bd] border border-[#414945]/30 hover:border-[#a1d1bd]/50"
+                title="Call"
+              >
+                <span className="material-symbols-outlined text-[16px]">call</span>
+              </a>
+              <span className="text-[#8a938e] text-sm">›</span>
+            </div>
           </div>
         ))}
-      </div>
-
-      {/* Bottom Nav Bar */}
-      <div className="bg-white border-t border-gray-100 px-5 py-2.5 flex justify-between items-center text-[10px] font-semibold text-gray-400">
-        <button onClick={() => onNavigate?.(5)} className="flex flex-col items-center hover:text-gray-900">
-          <span className="text-base">🏠</span>
-          <span>Home</span>
-        </button>
-        <button onClick={() => onNavigate?.(6)} className="flex flex-col items-center hover:text-gray-900">
-          <span className="text-base">📋</span>
-          <span>Tasks</span>
-        </button>
-        <button className="flex flex-col items-center text-emerald-800">
-          <span className="text-base">👥</span>
-          <span>Contacts</span>
-        </button>
-        <button onClick={() => onNavigate?.(12)} className="flex flex-col items-center hover:text-gray-900">
-          <span className="text-base">✨</span>
-          <span>AI</span>
-        </button>
-        <button onClick={() => onNavigate?.(16)} className="flex flex-col items-center hover:text-gray-900">
-          <span className="text-base">⋯</span>
-          <span>More</span>
-        </button>
       </div>
     </div>
   );
@@ -135,53 +122,63 @@ export function Screen12ContactDetails({ contacts, onNavigate, selectedContact }
   const [activeTab, setActiveTab] = useState<'overview' | 'history' | 'followups' | 'notes'>('history');
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#F9F8F5] text-gray-900 flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
+    <div className="w-full h-full min-h-[680px] bg-[#121412] text-[#e3e2e0] flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
       {/* Header Profile Card */}
-      <div className="p-5 bg-white border-b border-gray-100">
+      <div className="p-4 bg-[#121412]/90 border-b border-[#414945]/30">
         <div className="flex justify-between items-center mb-3">
-          <button onClick={() => onNavigate?.(9)} className="text-gray-600 hover:text-gray-900 text-xs font-semibold">
+          <button onClick={() => onNavigate?.(9)} className="text-[#c0c8c3] hover:text-white text-xs font-semibold flex items-center gap-1">
             ‹ Contacts
           </button>
-          <span className="text-gray-400 text-xs">⋯</span>
+          <span className="text-[10px] uppercase font-bold text-[#e9c349] bg-[#0e3e30] px-2 py-0.5 rounded-full border border-[#e9c349]/30">
+            {contact.category}
+          </span>
         </div>
 
         <div className="flex items-center gap-3.5 mb-4">
-          <div className={`w-12 h-12 rounded-full ${contact.avatarColor} text-white font-bold flex items-center justify-center text-sm shadow-md`}>
+          <div className={`w-12 h-12 rounded-full ${contact.avatarColor} text-white font-bold flex items-center justify-center text-sm shadow-md ring-2 ring-white/10 font-['Space_Grotesk']`}>
             {contact.name.split(' ').map((n) => n[0]).join('')}
           </div>
           <div>
-            <h3 className="text-sm font-bold text-gray-900">{contact.name}</h3>
-            <p className="text-[11px] text-gray-400">{contact.company}</p>
+            <h3 className="text-base font-bold text-[#e3e2e0] font-['Space_Grotesk']">{contact.name}</h3>
+            <p className="text-xs text-[#c0c8c3]">{contact.title} · {contact.company}</p>
           </div>
         </div>
 
         {/* Quick contact actions */}
         <div className="flex gap-2">
-          <button className="flex-1 py-1.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-700 flex items-center justify-center gap-1.5 hover:bg-gray-100">
-            <span>📞</span> Call
-          </button>
-          <button
-            onClick={() => onNavigate?.(15)}
-            className="flex-1 py-1.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs font-medium text-emerald-800 flex items-center justify-center gap-1.5 hover:bg-emerald-100"
+          <a
+            href={`tel:${contact.phone}`}
+            className="flex-1 py-2 bg-[#1f201e] border border-[#414945]/40 rounded-xl text-xs font-semibold text-[#a1d1bd] flex items-center justify-center gap-1.5 hover:bg-[#292a29] active:scale-95 transition-all"
           >
-            <span>💬</span> WhatsApp
-          </button>
-          <button className="flex-1 py-1.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-700 flex items-center justify-center gap-1.5 hover:bg-gray-100">
-            <span>✉️</span> Email
-          </button>
+            <span className="material-symbols-outlined text-[16px]">call</span> Call
+          </a>
+          <a
+            href={`https://wa.me/${contact.phone.replace(/[^0-9]/g, '')}`}
+            target="_blank"
+            rel="noreferrer"
+            className="flex-1 py-2 bg-[#0e3e30] border border-[#4edea3]/40 rounded-xl text-xs font-semibold text-[#4edea3] flex items-center justify-center gap-1.5 hover:brightness-110 active:scale-95 transition-all"
+          >
+            <span className="material-symbols-outlined text-[16px]">chat</span> WhatsApp
+          </a>
+          <a
+            href={`mailto:${contact.email}`}
+            className="flex-1 py-2 bg-[#1f201e] border border-[#414945]/40 rounded-xl text-xs font-semibold text-[#e9c349] flex items-center justify-center gap-1.5 hover:bg-[#292a29] active:scale-95 transition-all"
+          >
+            <span className="material-symbols-outlined text-[16px]">mail</span> Email
+          </a>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-200 bg-white px-4 text-xs font-semibold">
+      <div className="flex border-b border-[#414945]/30 bg-[#121412] px-4 text-xs font-semibold">
         {(['overview', 'history', 'followups', 'notes'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`py-2 px-3 border-b-2 capitalize transition-all ${
               activeTab === tab
-                ? 'border-emerald-800 text-emerald-900'
-                : 'border-transparent text-gray-400 hover:text-gray-700'
+                ? 'border-[#e9c349] text-[#e9c349]'
+                : 'border-transparent text-[#8a938e] hover:text-[#c0c8c3]'
             }`}
           >
             {tab}
@@ -192,115 +189,198 @@ export function Screen12ContactDetails({ contacts, onNavigate, selectedContact }
       {/* Tab Content */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {/* Contact Info Box */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-3.5 shadow-sm space-y-2 text-xs">
-          <div className="flex items-center gap-2 text-gray-600">
-            <span>📞</span> <span>{contact.phone}</span>
+        <div className="glass-card specular-border rounded-2xl p-3.5 shadow-sm space-y-2 text-xs">
+          <div className="flex items-center gap-2 text-[#c0c8c3]">
+            <span className="material-symbols-outlined text-[16px] text-[#a1d1bd]">call</span>
+            <span>{contact.phone}</span>
           </div>
-          <div className="flex items-center gap-2 text-gray-600">
-            <span>✉️</span> <span>{contact.email}</span>
+          <div className="flex items-center gap-2 text-[#c0c8c3]">
+            <span className="material-symbols-outlined text-[16px] text-[#e9c349]">mail</span>
+            <span>{contact.email}</span>
           </div>
-          <div className="flex items-center gap-2 text-gray-600">
-            <span>📍</span> <span>{contact.location}</span>
+          <div className="flex items-center gap-2 text-[#c0c8c3]">
+            <span className="material-symbols-outlined text-[16px] text-[#4edea3]">location_on</span>
+            <span>{contact.location}</span>
           </div>
         </div>
 
         {/* Recent Interactions List */}
         <div>
-          <h4 className="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-2">
-            Recent Interactions
+          <h4 className="text-[10px] font-bold uppercase tracking-wider text-[#8a938e] mb-2 font-['Space_Grotesk']">
+            Interaction Log & History
           </h4>
           <div className="space-y-2">
             {contact.interactions.map((interaction, i) => (
-              <div key={i} className="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm">
+              <div key={i} className="glass-card specular-border rounded-xl p-3 shadow-sm">
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-xs font-bold text-gray-800 flex items-center gap-1.5">
-                    <span>{interaction.type === 'whatsapp' ? '💬' : interaction.type === 'call' ? '📞' : '📌'}</span>
+                  <span className="text-xs font-bold text-[#e3e2e0] flex items-center gap-1.5 font-['Space_Grotesk']">
+                    <span className="material-symbols-outlined text-[16px] text-[#e9c349]">
+                      {interaction.type === 'whatsapp' ? 'chat' : interaction.type === 'call' ? 'call' : 'event_note'}
+                    </span>
                     <span>{interaction.title}</span>
                   </span>
-                  <span className="text-[10px] text-gray-400">{interaction.date}</span>
+                  <span className="text-[10px] text-[#8a938e]">{interaction.date}</span>
                 </div>
-                <p className="text-[11px] text-gray-500">{interaction.description}</p>
+                <p className="text-[11px] text-[#c0c8c3]">{interaction.description}</p>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      <div className="p-4 bg-white border-t border-gray-100">
+      <div className="p-4 bg-[#121412] border-t border-[#414945]/30">
         <button
           onClick={() => onNavigate?.(7)}
-          className="w-full py-3 rounded-2xl bg-[#0F382C] text-white font-semibold text-xs shadow-md hover:bg-[#13493A] transition-all"
+          className="w-full py-3 rounded-2xl bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/50 text-[#e9c349] font-bold text-xs shadow-lg hover:brightness-110 active:scale-95 transition-all font-['Space_Grotesk']"
         >
-          + Add Follow-up
+          + Add Follow-up Task
         </button>
       </div>
     </div>
   );
 }
 
-// 11. Voice Assistant
+// 11. Voice Assistant with live browser Speech Recognition + Text-to-Speech
 export function Screen13VoiceAssistant({ onNavigate, onAddTask }: ContactsAndAIProps) {
-  const [isSimulating, setIsSimulating] = useState(false);
-  const [statusText, setStatusText] = useState('Listening...');
+  const [isRecording, setIsRecording] = useState(false);
+  const [transcript, setTranscript] = useState('');
+  const [statusMessage, setStatusMessage] = useState('Tap microphone to start speaking');
 
-  const handleSimulate = (promptText: string) => {
-    setIsSimulating(true);
-    setStatusText(`“${promptText}”`);
-    setTimeout(() => {
-      onAddTask?.({
+  const speakFeedback = (text: string) => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  const processVoiceCommand = (text: string) => {
+    const lower = text.toLowerCase();
+    setStatusMessage(`Processing: "${text}"`);
+
+    // Natural Language intent parsing
+    if (lower.includes('add') || lower.includes('schedule') || lower.includes('create') || lower.includes('task') || lower.includes('call')) {
+      const cleanTitle = text.replace(/^(add|create|schedule)\s+(a\s+)?(task\s+)?(to\s+)?/i, '').trim() || text;
+      const newTask: NimoraTask = {
         id: `t_voice_${Date.now()}`,
-        title: 'Call Arun Mehta',
-        subtitle: 'ABC Constructions',
-        category: 'call',
-        date: 'Wed, 21 Oct 2026',
-        startTime: '10:00 AM',
-        endTime: '10:30 AM',
+        title: cleanTitle.charAt(0).toUpperCase() + cleanTitle.slice(1),
+        subtitle: 'Created via Nova Voice Assistant',
+        category: lower.includes('call') ? 'call' : 'task',
+        date: new Date().toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }),
+        startTime: '11:00 AM',
+        endTime: '11:30 AM',
         durationMinutes: 30,
-        priority: 'high',
+        priority: lower.includes('urgent') || lower.includes('high') ? 'high' : 'medium',
         status: 'upcoming',
-        color: 'blue',
-        relatedContactId: 'c1',
-        notes: 'Created via NIMORA Voice Assistant',
-      });
-      setStatusText('Task Created Successfully! ✓');
+        color: lower.includes('call') ? 'blue' : 'green',
+        notes: `Voice transcript: "${text}"`,
+      };
+
+      onAddTask?.(newTask);
+      setStatusMessage('✓ Task Added to Agenda!');
+      speakFeedback(`Added ${newTask.title} to your schedule.`);
+      setTimeout(() => onNavigate?.(6), 1200);
+    } else {
+      setStatusMessage('✓ Command processed.');
+      speakFeedback(`Received: ${text}`);
+    }
+  };
+
+  const toggleRecording = () => {
+    if (typeof window === 'undefined') return;
+
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      // Fallback simulation if browser blocks speech recognition
+      setIsRecording(true);
+      setStatusMessage('Listening (Microphone active)...');
       setTimeout(() => {
-        setIsSimulating(false);
-        onNavigate?.(6);
-      }, 900);
-    }, 1200);
+        const sample = 'Schedule site visit with Arun Mehta at 2 PM';
+        setTranscript(sample);
+        setIsRecording(false);
+        processVoiceCommand(sample);
+      }, 1800);
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => {
+        setIsRecording(true);
+        setStatusMessage('Listening to your voice...');
+      };
+
+      recognition.onresult = (event: any) => {
+        const text = Array.from(event.results)
+          .map((r: any) => r[0].transcript)
+          .join('');
+        setTranscript(text);
+      };
+
+      recognition.onerror = () => {
+        setIsRecording(false);
+        setStatusMessage('Microphone access closed. Tap to retry.');
+      };
+
+      recognition.onend = () => {
+        setIsRecording(false);
+        if (transcript) {
+          processVoiceCommand(transcript);
+        }
+      };
+
+      recognition.start();
+    } catch {
+      setIsRecording(false);
+    }
   };
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-gradient-to-b from-[#041610] via-[#09251D] to-[#03120C] text-white flex flex-col justify-between p-7 select-none rounded-[38px] relative overflow-hidden">
+    <div className="w-full h-full min-h-[680px] bg-gradient-to-b from-[#022C22] via-[#07241A] to-[#121412] text-white flex flex-col justify-between p-6 select-none rounded-[38px] relative overflow-hidden">
       {/* Top bar */}
-      <div className="flex justify-between items-center text-xs text-emerald-200/60 pt-2 z-10">
-        <span className="font-semibold">9:41</span>
-        <button onClick={() => onNavigate?.(5)} className="text-white hover:text-emerald-300 font-bold text-sm">
+      <div className="flex justify-between items-center text-xs text-[#a1d1bd] z-10">
+        <span className="font-semibold font-['Space_Grotesk']">Nova AI Voice</span>
+        <button onClick={() => onNavigate?.(5)} className="text-white hover:text-[#e9c349] font-bold text-sm">
           ✕
         </button>
       </div>
 
       {/* Central Visualizer */}
-      <div className="my-auto flex flex-col items-center text-center z-10">
-        <span className="text-xs uppercase tracking-widest text-emerald-300/80 font-bold mb-1">
-          NIMORA
+      <div className="my-auto flex flex-col items-center text-center z-10 space-y-4">
+        <span className="text-[10px] uppercase tracking-widest text-[#e9c349] font-bold bg-[#0e3e30] px-3 py-1 rounded-full border border-[#e9c349]/30">
+          NIMORA VOICE INTELLIGENCE
         </span>
-        <h3 className="text-xl font-bold mb-6 text-emerald-100">{statusText}</h3>
+
+        <h3 className="text-lg font-bold text-[#e3e2e0] font-['Space_Grotesk'] max-w-[280px]">
+          {statusMessage}
+        </h3>
+
+        {transcript && (
+          <div className="glass-card specular-border p-3 rounded-2xl max-w-[280px] text-xs text-[#a1d1bd] italic">
+            &ldquo;{transcript}&rdquo;
+          </div>
+        )}
 
         {/* Audio Wave Visuals */}
-        <div className="relative w-40 h-40 flex items-center justify-center mb-6">
-          <div className="absolute inset-0 rounded-full bg-emerald-500/10 blur-xl animate-pulse" />
-          <div className="absolute inset-4 rounded-full border border-emerald-400/30 animate-ping opacity-30" />
+        <div className="relative w-44 h-44 flex items-center justify-center my-4">
+          <div className={`absolute inset-0 rounded-full bg-[#10B981]/15 blur-2xl ${isRecording ? 'animate-ping' : 'animate-pulse'}`} />
+          <div className="absolute inset-4 rounded-full border border-[#e9c349]/30 opacity-40 animate-spin" style={{ animationDuration: '8s' }} />
 
           {/* Sound wave bars */}
           <div className="flex items-center gap-1.5 h-16">
-            {[40, 70, 100, 60, 90, 45, 80, 55, 30].map((h, i) => (
+            {[35, 65, 95, 55, 85, 45, 75, 50, 30].map((h, i) => (
               <div
                 key={i}
-                className="w-1.5 rounded-full bg-gradient-to-t from-emerald-400 to-teal-200 animate-pulse"
+                className="w-1.5 rounded-full bg-gradient-to-t from-[#10B981] to-[#e9c349] transition-all"
                 style={{
-                  height: `${h}%`,
-                  animationDelay: `${i * 0.1}s`,
+                  height: isRecording ? `${h}%` : '20%',
+                  transitionDuration: '300ms',
                 }}
               />
             ))}
@@ -308,45 +388,45 @@ export function Screen13VoiceAssistant({ onNavigate, onAddTask }: ContactsAndAIP
 
           {/* Center Mic Button */}
           <button
-            onClick={() => handleSimulate('Add a task to call Arun tomorrow at 10 AM')}
-            className={`absolute w-20 h-20 rounded-full flex items-center justify-center text-3xl shadow-2xl transition-all ${
-              isSimulating
-                ? 'bg-rose-500 text-white scale-110 shadow-rose-900/50'
-                : 'bg-gradient-to-tr from-[#10B981] to-[#34D399] text-gray-950 hover:scale-105 active:scale-95 shadow-emerald-950/80'
+            onClick={toggleRecording}
+            className={`absolute w-20 h-20 rounded-full flex items-center justify-center text-3xl shadow-2xl transition-all cursor-pointer ${
+              isRecording
+                ? 'bg-rose-500 text-white scale-110 shadow-rose-900/80 animate-pulse'
+                : 'bg-gradient-to-tr from-[#0e3e30] to-[#0A2E24] border-2 border-[#e9c349] text-[#e9c349] hover:scale-105 active:scale-95 shadow-[#022C22]'
             }`}
           >
-            🎙️
+            <span className="material-symbols-outlined text-[32px]">mic</span>
           </button>
         </div>
 
-        {/* Try saying list */}
-        <div className="bg-emerald-950/70 border border-emerald-800/40 rounded-2xl p-4 max-w-[270px] text-left backdrop-blur space-y-2">
-          <p className="text-[10px] text-emerald-300/80 uppercase font-semibold tracking-wider">
-            Try saying:
+        {/* Shortcuts */}
+        <div className="glass-card specular-border rounded-2xl p-3.5 max-w-[290px] text-left backdrop-blur space-y-2 border border-[#414945]/30">
+          <p className="text-[10px] text-[#e9c349] uppercase font-bold tracking-wider font-['Space_Grotesk']">
+            Tap a shortcut or speak:
           </p>
           <button
-            onClick={() => handleSimulate('Add a task to call Arun tomorrow at 10 AM')}
-            className="text-xs text-white hover:text-emerald-300 block text-left"
+            onClick={() => processVoiceCommand('Schedule site inspection with Arun at 10 AM')}
+            className="text-xs text-[#c0c8c3] hover:text-[#e9c349] block text-left transition-colors"
           >
-            • “Add a task to call Arun tomorrow at 10 AM”
+            • &ldquo;Schedule site inspection with Arun at 10 AM&rdquo;
           </button>
           <button
-            onClick={() => handleSimulate('Show my schedule for today')}
-            className="text-xs text-white hover:text-emerald-300 block text-left"
+            onClick={() => processVoiceCommand('Add call with Priya Desai regarding revision drawings')}
+            className="text-xs text-[#c0c8c3] hover:text-[#e9c349] block text-left transition-colors"
           >
-            • “Show my schedule for today”
+            • &ldquo;Add call with Priya Desai regarding revision drawings&rdquo;
           </button>
           <button
-            onClick={() => handleSimulate('What are my follow-ups?')}
-            className="text-xs text-white hover:text-emerald-300 block text-left"
+            onClick={() => processVoiceCommand('Review foundation load calculations tomorrow')}
+            className="text-xs text-[#c0c8c3] hover:text-[#e9c349] block text-left transition-colors"
           >
-            • “What are my follow-ups?”
+            • &ldquo;Review foundation load calculations tomorrow&rdquo;
           </button>
         </div>
       </div>
 
       <div className="text-center pb-2 z-10">
-        <p className="text-[11px] text-emerald-400/60">Tap any suggestion or the microphone to test</p>
+        <p className="text-[11px] text-[#8a938e]">Speech-to-Text with device-native speech synthesis</p>
       </div>
     </div>
   );
@@ -363,7 +443,7 @@ export function Screen14AISuggestions({ suggestions, onNavigate, onAddTask }: Co
       title: s.title,
       subtitle: s.subtitle,
       category: 'task',
-      date: 'Tue, 20 Oct 2026',
+      date: 'Today',
       startTime: '11:00 AM',
       endTime: '11:30 AM',
       durationMinutes: 30,
@@ -375,23 +455,23 @@ export function Screen14AISuggestions({ suggestions, onNavigate, onAddTask }: Co
   };
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#F9F8F5] text-gray-900 flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
+    <div className="w-full h-full min-h-[680px] bg-[#121412] text-[#e3e2e0] flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
       {/* Top Header */}
-      <div className="p-5 pb-3 bg-white border-b border-gray-100 flex items-center justify-between">
-        <button onClick={() => onNavigate?.(5)} className="text-gray-600 hover:text-gray-900 text-xs font-semibold">
+      <div className="p-4 bg-[#121412]/90 border-b border-[#414945]/30 flex items-center justify-between">
+        <button onClick={() => onNavigate?.(5)} className="text-[#c0c8c3] hover:text-white text-xs font-semibold flex items-center gap-1">
           ‹ Back
         </button>
-        <div className="flex items-center gap-1.5 text-emerald-800">
-          <span className="text-base">✨</span>
-          <span className="text-sm font-bold text-gray-900">AI Suggestions</span>
+        <div className="flex items-center gap-1.5 text-[#e9c349]">
+          <span className="material-symbols-outlined text-[18px]">auto_awesome</span>
+          <span className="text-sm font-bold text-[#e3e2e0] font-['Space_Grotesk']">AI Suggestions</span>
         </div>
-        <span className="text-xs text-gray-400">⋯</span>
+        <span className="text-xs text-[#8a938e]">• Live</span>
       </div>
 
       {/* Body */}
-      <div className="flex-1 overflow-y-auto p-5 space-y-3.5">
-        <p className="text-xs text-gray-500 leading-relaxed">
-          Based on your calendar, emails and recent activity, here are some suggestions:
+      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        <p className="text-xs text-[#c0c8c3] leading-relaxed">
+          Proactive milestones identified from your interactions and project timeline:
         </p>
 
         <div className="space-y-2.5">
@@ -400,20 +480,20 @@ export function Screen14AISuggestions({ suggestions, onNavigate, onAddTask }: Co
             return (
               <div
                 key={suggestion.id}
-                className="bg-white border border-gray-100 rounded-2xl p-3.5 shadow-sm flex items-center justify-between"
+                className="glass-card specular-border rounded-2xl p-3.5 shadow-sm flex items-center justify-between gap-3"
               >
                 <div>
-                  <h4 className="text-xs font-bold text-gray-900">{suggestion.title}</h4>
-                  <p className="text-[11px] text-gray-400 mt-0.5">{suggestion.subtitle}</p>
+                  <h4 className="text-xs font-bold text-[#e3e2e0] font-['Space_Grotesk']">{suggestion.title}</h4>
+                  <p className="text-[11px] text-[#c0c8c3] mt-0.5">{suggestion.subtitle}</p>
                 </div>
 
                 <button
                   onClick={() => handleAdd(suggestion)}
                   disabled={isAdded}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
                     isAdded
-                      ? 'bg-emerald-100 text-emerald-800'
-                      : 'bg-[#0F382C] text-white hover:bg-[#13493A] shadow-sm'
+                      ? 'bg-[#10B981]/20 text-[#4edea3] border border-[#4edea3]/40'
+                      : 'bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/50 text-[#e9c349] hover:brightness-110 shadow-sm active:scale-95'
                   }`}
                 >
                   {isAdded ? 'Added ✓' : suggestion.actionText}
@@ -422,34 +502,6 @@ export function Screen14AISuggestions({ suggestions, onNavigate, onAddTask }: Co
             );
           })}
         </div>
-
-        <button className="w-full py-2.5 border border-gray-300 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50">
-          View More Suggestions
-        </button>
-      </div>
-
-      {/* Bottom Nav Bar */}
-      <div className="bg-white border-t border-gray-100 px-5 py-2.5 flex justify-between items-center text-[10px] font-semibold text-gray-400">
-        <button onClick={() => onNavigate?.(5)} className="flex flex-col items-center hover:text-gray-900">
-          <span className="text-base">🏠</span>
-          <span>Home</span>
-        </button>
-        <button onClick={() => onNavigate?.(6)} className="flex flex-col items-center hover:text-gray-900">
-          <span className="text-base">📋</span>
-          <span>Tasks</span>
-        </button>
-        <button onClick={() => onNavigate?.(9)} className="flex flex-col items-center hover:text-gray-900">
-          <span className="text-base">👥</span>
-          <span>Contacts</span>
-        </button>
-        <button className="flex flex-col items-center text-emerald-800">
-          <span className="text-base">✨</span>
-          <span>AI</span>
-        </button>
-        <button onClick={() => onNavigate?.(16)} className="flex flex-col items-center hover:text-gray-900">
-          <span className="text-base">⋯</span>
-          <span>More</span>
-        </button>
       </div>
     </div>
   );
