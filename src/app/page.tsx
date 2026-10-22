@@ -48,12 +48,17 @@ export default function NimoraApp() {
   const [contacts] = useState<Contact[]>(INITIAL_CONTACTS);
   const [selectedTask, setSelectedTask] = useState<NimoraTask>(INITIAL_TASKS[0]);
   const [selectedContact, setSelectedContact] = useState<Contact>(INITIAL_CONTACTS[0]);
+  const [assistantName, setAssistantName] = useState('Nova');
   const [isListening, setIsListening] = useState(false);
   const [currentTime, setCurrentTime] = useState('9:41');
 
   // True persistent storage across reloads and mobile sessions
   useEffect(() => {
     try {
+      const savedName = localStorage.getItem('nimora_assistant_name');
+      if (savedName) {
+        setAssistantName(savedName);
+      }
       const saved = localStorage.getItem('nimora_planner_tasks');
       if (saved) {
         const parsed = JSON.parse(saved);
@@ -66,6 +71,15 @@ export default function NimoraApp() {
       console.warn('Could not read from localStorage', e);
     }
   }, []);
+
+  const handleUpdateAssistantName = (newName: string) => {
+    setAssistantName(newName);
+    try {
+      localStorage.setItem('nimora_assistant_name', newName);
+    } catch (e) {
+      console.warn('Could not save assistant name', e);
+    }
+  };
 
   useEffect(() => {
     try {
@@ -516,6 +530,8 @@ export default function NimoraApp() {
           <Screen13VoiceAssistant
             contacts={contacts}
             suggestions={INITIAL_AI_SUGGESTIONS}
+            assistantName={assistantName}
+            onUpdateAssistantName={handleUpdateAssistantName}
             onNavigate={() => setActiveTab('home')}
             onAddTask={handleAddTask}
           />
@@ -623,7 +639,7 @@ export default function NimoraApp() {
             </span>
           </div>
           <div className="flex items-center space-x-2">
-            <span className="text-xs text-[#e3e2e0] font-semibold">Ask Nova...</span>
+            <span className="text-xs text-[#e3e2e0] font-semibold">Ask {assistantName}...</span>
             <div className="flex space-x-0.5 items-center">
               <span className="w-1 h-3 bg-[#4edea3] rounded-full animate-bounce"></span>
               <span className="w-1 h-5 bg-[#e9c349] rounded-full animate-bounce" style={{ animationDelay: '0.15s' }}></span>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Contact, AISuggestion, NimoraTask } from '../data';
 
 export interface ContactsAndAIProps {
@@ -10,6 +10,8 @@ export interface ContactsAndAIProps {
   onSelectContact?: (contact: Contact) => void;
   selectedContact?: Contact;
   onAddTask?: (task: NimoraTask) => void;
+  assistantName?: string;
+  onUpdateAssistantName?: (name: string) => void;
 }
 
 // 9. Contacts & Follow-ups
@@ -240,65 +242,205 @@ export function Screen12ContactDetails({ contacts, onNavigate, selectedContact }
   );
 }
 
-// 11. Voice Assistant with live browser Speech Recognition + Text-to-Speech
-export function Screen13VoiceAssistant({ onNavigate, onAddTask }: ContactsAndAIProps) {
+// 11. Voice Assistant with live browser Speech Recognition + Text-to-Speech + Name Customization
+export function Screen13VoiceAssistant({
+  contacts,
+  onNavigate,
+  onAddTask,
+  assistantName = 'Nova',
+  onUpdateAssistantName,
+}: ContactsAndAIProps) {
+  const [name, setName] = useState(assistantName);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [customNameInput, setCustomNameInput] = useState(assistantName);
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
-  const [statusMessage, setStatusMessage] = useState('Tap microphone to start speaking');
+  const [typedInput, setTypedInput] = useState('');
+  const [statusMessage, setStatusMessage] = useState(`Tap microphone to speak to ${name}`);
+
+  const transcriptRef = useRef('');
+  const recognitionRef = useRef<any>(null);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('nimora_assistant_name');
+      if (saved) {
+        setName(saved);
+        setCustomNameInput(saved);
+      }
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    setName(assistantName);
+    setCustomNameInput(assistantName);
+  }, [assistantName]);
 
   const speakFeedback = (text: string) => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 1.0;
-      utterance.pitch = 1.0;
-      window.speechSynthesis.speak(utterance);
+      try {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        window.speechSynthesis.speak(utterance);
+      } catch (e) {
+        console.warn('SpeechSynthesis error:', e);
+      }
     }
   };
 
+  const handleSaveAssistantName = (newName: string) => {
+    const trimmed = newName.trim() || 'Nova';
+    setName(trimmed);
+    setCustomNameInput(trimmed);
+    setIsEditingName(false);
+    try {
+      localStorage.setItem('nimora_assistant_name', trimmed);
+    } catch {}
+    onUpdateAssistantName?.(trimmed);
+    setStatusMessage(`Voice assistant renamed to ${trimmed}!`);
+    speakFeedback(`Hello, I am ${trimmed}. What can I organize for you today?`);
+  };
+
   const processVoiceCommand = (text: string) => {
-    const lower = text.toLowerCase();
-    setStatusMessage(`Processing: "${text}"`);
+    if (!text || !text.trim()) return;
+    const cleanText = text.trim();
+    const lower = cleanText.toLowerCase();
+    setStatusMessage(`Processing: "${cleanText}"`);
 
     // Natural Language intent parsing
-    if (lower.includes('add') || lower.includes('schedule') || lower.includes('create') || lower.includes('task') || lower.includes('call')) {
-      const cleanTitle = text.replace(/^(add|create|schedule)\s+(a\s+)?(task\s+)?(to\s+)?/i, '').trim() || text;
+    if (
+      lower.includes('add') ||
+      lower.includes('schedule') ||
+      lower.includes('create') ||
+      lower.includes('task') ||
+      lower.includes('call') ||
+      lower.includes('meeting') ||
+      lower.includes('visit') ||
+      lower.includes('review')
+    ) {
+      // 1. Clean Title
+      let cleanTitle = cleanText
+        .replace(
+          new RegExp(`^(hey\\s+)?(${name}|assistant|nova|jarvis|aria|friday)\\s*[,.:]?\\s*`, 'i'),
+          ''
+        )
+        .replace(/^(add|create|schedule|please\s+add|please\s+schedule)\s+(a\s+)?(task\s+)?(to\s+)?/i, '')
+        .trim();
+
+      if (!cleanTitle) cleanTitle = cleanText;
+
+      // 2. Extract Category
+      let category: NimoraTask['category'] = 'task';
+      let color: NimoraTask['color'] = 'green';
+      if (lower.includes('call') || lower.includes('phone')) {
+        category = 'call';
+        color = 'blue';
+      } else if (lower.includes('follow') || lower.includes('status update')) {
+        category = 'followup';
+        color = 'orange';
+      } else if (lower.includes('note') || lower.includes('remember')) {
+        category = 'note';
+        color = 'gray';
+      }
+
+      // 3. Extract Time
+      let startTime = '11:00 AM';
+      const timeMatch = cleanText.match(/\b(?:at\s+)?(\d{1,2}(?::\d{2})?\s*(?:am|pm)?)\b/i);
+      if (timeMatch && timeMatch[1]) {
+        let rawT = timeMatch[1].trim().toUpperCase();
+        if (!rawT.includes('AM') && !rawT.includes('PM')) {
+          const num = parseInt(rawT);
+          rawT = num >= 8 && num <= 11 ? `${num}:00 AM` : `${num}:00 PM`;
+        }
+        startTime = rawT;
+      }
+
+      // 4. Extract Date
+      let dateStr = new Date().toLocaleDateString('en-US', {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      });
+      if (lower.includes('tomorrow')) {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        dateStr = tomorrow.toLocaleDateString('en-US', {
+          weekday: 'short',
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+        });
+      }
+
+      // 5. Match Contact
+      const matchedContact = contacts.find((c) =>
+        lower.includes(c.name.toLowerCase().split(' ')[0]) ||
+        lower.includes(c.company.toLowerCase().split(' ')[0])
+      );
+
       const newTask: NimoraTask = {
         id: `t_voice_${Date.now()}`,
         title: cleanTitle.charAt(0).toUpperCase() + cleanTitle.slice(1),
-        subtitle: 'Created via Nova Voice Assistant',
-        category: lower.includes('call') ? 'call' : 'task',
-        date: new Date().toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }),
-        startTime: '11:00 AM',
-        endTime: '11:30 AM',
-        durationMinutes: 30,
+        subtitle: matchedContact
+          ? `${matchedContact.name} · ${matchedContact.company}`
+          : `Created via ${name} Voice Assistant`,
+        category,
+        date: dateStr,
+        startTime,
+        endTime: '11:45 AM',
+        durationMinutes: 45,
         priority: lower.includes('urgent') || lower.includes('high') ? 'high' : 'medium',
         status: 'upcoming',
-        color: lower.includes('call') ? 'blue' : 'green',
-        notes: `Voice transcript: "${text}"`,
+        color,
+        relatedContactId: matchedContact?.id,
+        notes: `Voice input: "${cleanText}"`,
       };
 
       onAddTask?.(newTask);
-      setStatusMessage('✓ Task Added to Agenda!');
-      speakFeedback(`Added ${newTask.title} to your schedule.`);
-      setTimeout(() => onNavigate?.(6), 1200);
+      setStatusMessage(`✓ Added: ${newTask.title}`);
+      speakFeedback(`Added ${newTask.title} to your schedule for ${startTime}.`);
+      setTimeout(() => onNavigate?.(6), 1400);
     } else {
-      setStatusMessage('✓ Command processed.');
-      speakFeedback(`Received: ${text}`);
+      setStatusMessage(`✓ ${name}: Command received.`);
+      speakFeedback(`I heard "${cleanText}". What task would you like to schedule?`);
+    }
+  };
+
+  const stopRecording = () => {
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch {}
+    }
+    setIsRecording(false);
+    const spoken = transcriptRef.current.trim();
+    if (spoken) {
+      processVoiceCommand(spoken);
     }
   };
 
   const toggleRecording = () => {
     if (typeof window === 'undefined') return;
 
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (isRecording) {
+      stopRecording();
+      return;
+    }
+
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      // Fallback simulation if browser blocks speech recognition
+      // Browser fallback simulation if speech recognition is not supported
       setIsRecording(true);
-      setStatusMessage('Listening (Microphone active)...');
+      setStatusMessage(`${name} is listening...`);
       setTimeout(() => {
-        const sample = 'Schedule site visit with Arun Mehta at 2 PM';
+        const sample = 'Schedule site inspection with Arun Mehta at 2 PM';
         setTranscript(sample);
+        transcriptRef.current = sample;
         setIsRecording(false);
         processVoiceCommand(sample);
       }, 1800);
@@ -306,6 +448,9 @@ export function Screen13VoiceAssistant({ onNavigate, onAddTask }: ContactsAndAIP
     }
 
     try {
+      transcriptRef.current = '';
+      setTranscript('');
+
       const recognition = new SpeechRecognition();
       recognition.continuous = false;
       recognition.interimResults = true;
@@ -313,66 +458,159 @@ export function Screen13VoiceAssistant({ onNavigate, onAddTask }: ContactsAndAIP
 
       recognition.onstart = () => {
         setIsRecording(true);
-        setStatusMessage('Listening to your voice...');
+        setStatusMessage(`${name} is listening to your voice...`);
       };
 
       recognition.onresult = (event: any) => {
-        const text = Array.from(event.results)
-          .map((r: any) => r[0].transcript)
-          .join('');
-        setTranscript(text);
+        let finalStr = '';
+        let interimStr = '';
+        for (let i = 0; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            finalStr += event.results[i][0].transcript;
+          } else {
+            interimStr += event.results[i][0].transcript;
+          }
+        }
+        const current = finalStr || interimStr;
+        transcriptRef.current = current;
+        setTranscript(current);
       };
 
-      recognition.onerror = () => {
+      recognition.onerror = (e: any) => {
+        console.warn('SpeechRecognition error:', e);
         setIsRecording(false);
-        setStatusMessage('Microphone access closed. Tap to retry.');
+        setStatusMessage('Microphone access closed. Tap mic or type below.');
       };
 
       recognition.onend = () => {
         setIsRecording(false);
-        if (transcript) {
-          processVoiceCommand(transcript);
+        const captured = transcriptRef.current.trim();
+        if (captured) {
+          processVoiceCommand(captured);
         }
       };
 
+      recognitionRef.current = recognition;
       recognition.start();
-    } catch {
+    } catch (err) {
+      console.warn('SpeechRecognition start failed:', err);
       setIsRecording(false);
+      setStatusMessage('Tap mic to retry or type command below');
     }
   };
 
+  const handleSendTypedCommand = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!typedInput.trim()) return;
+    const text = typedInput.trim();
+    setTypedInput('');
+    setTranscript(text);
+    processVoiceCommand(text);
+  };
+
   return (
-    <div className="w-full h-full min-h-[680px] bg-gradient-to-b from-[#022C22] via-[#07241A] to-[#121412] text-white flex flex-col justify-between p-6 select-none rounded-[38px] relative overflow-hidden">
-      {/* Top bar */}
-      <div className="flex justify-between items-center text-xs text-[#a1d1bd] z-10">
-        <span className="font-semibold font-['Space_Grotesk']">Nova AI Voice</span>
-        <button onClick={() => onNavigate?.(5)} className="text-white hover:text-[#e9c349] font-bold text-sm">
+    <div className="w-full h-full min-h-[680px] bg-gradient-to-b from-[#022C22] via-[#07241A] to-[#121412] text-white flex flex-col justify-between p-5 select-none rounded-[38px] relative overflow-hidden shadow-2xl">
+      {/* Top Bar with Name Customizer */}
+      <div className="flex justify-between items-center text-xs text-[#a1d1bd] z-10 pb-2 border-b border-[#414945]/30">
+        <div className="flex items-center gap-2">
+          <span className="font-semibold font-['Space_Grotesk'] text-[#e3e2e0]">
+            {name} AI Voice
+          </span>
+          <button
+            onClick={() => setIsEditingName(!isEditingName)}
+            className="px-2 py-0.5 rounded-full bg-[#1f201e] border border-[#e9c349]/40 text-[#e9c349] text-[10px] font-bold flex items-center gap-1 hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+            title="Change voice assistant name"
+          >
+            <span className="material-symbols-outlined text-[12px]">edit</span>
+            Rename
+          </button>
+        </div>
+        <button
+          onClick={() => onNavigate?.(5)}
+          className="w-7 h-7 rounded-full bg-[#1f201e] border border-[#414945]/40 flex items-center justify-center text-white hover:text-[#e9c349] font-bold text-xs"
+        >
           ✕
         </button>
       </div>
 
+      {/* Name Customization Drawer / Modal */}
+      {isEditingName && (
+        <div className="p-3 bg-[#121412]/95 border border-[#e9c349]/50 rounded-2xl shadow-2xl z-20 space-y-2.5 my-2">
+          <div className="flex justify-between items-center">
+            <span className="text-[10px] uppercase font-bold text-[#e9c349] tracking-wider">
+              Change Assistant Name
+            </span>
+            <button
+              onClick={() => setIsEditingName(false)}
+              className="text-[#8a938e] hover:text-white text-xs"
+            >
+              ✕
+            </button>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              value={customNameInput}
+              onChange={(e) => setCustomNameInput(e.target.value)}
+              placeholder="e.g. Jarvis, Friday, Aria..."
+              className="flex-1 bg-[#1f201e] border border-[#414945]/50 rounded-xl px-3 py-1.5 text-xs text-white outline-none focus:border-[#e9c349]"
+            />
+            <button
+              onClick={() => handleSaveAssistantName(customNameInput)}
+              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/60 text-[#e9c349] font-bold text-xs cursor-pointer active:scale-95 transition-all"
+            >
+              Save
+            </button>
+          </div>
+          {/* Quick Preset Names */}
+          <div className="flex items-center gap-1.5 flex-wrap pt-1">
+            <span className="text-[10px] text-[#8a938e]">Presets:</span>
+            {['Nova', 'Jarvis', 'Aria', 'Friday', 'Atlas', 'Gemini'].map((preset) => (
+              <button
+                key={preset}
+                onClick={() => handleSaveAssistantName(preset)}
+                className={`text-[10px] px-2 py-0.5 rounded-full border transition-all cursor-pointer ${
+                  name === preset
+                    ? 'bg-[#e9c349] text-gray-950 font-bold border-[#e9c349]'
+                    : 'bg-[#1f201e] text-[#c0c8c3] border-[#414945]/30 hover:border-[#a1d1bd]'
+                }`}
+              >
+                {preset}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Central Visualizer */}
-      <div className="my-auto flex flex-col items-center text-center z-10 space-y-4">
+      <div className="my-auto flex flex-col items-center text-center z-10 space-y-3">
         <span className="text-[10px] uppercase tracking-widest text-[#e9c349] font-bold bg-[#0e3e30] px-3 py-1 rounded-full border border-[#e9c349]/30">
           NIMORA VOICE INTELLIGENCE
         </span>
 
-        <h3 className="text-lg font-bold text-[#e3e2e0] font-['Space_Grotesk'] max-w-[280px]">
+        <h3 className="text-base font-bold text-[#e3e2e0] font-['Space_Grotesk'] max-w-[280px]">
           {statusMessage}
         </h3>
 
         {transcript && (
-          <div className="glass-card specular-border p-3 rounded-2xl max-w-[280px] text-xs text-[#a1d1bd] italic">
+          <div className="glass-card specular-border p-3 rounded-2xl max-w-[280px] text-xs text-[#a1d1bd] italic shadow-sm">
             &ldquo;{transcript}&rdquo;
           </div>
         )}
 
-        {/* Audio Wave Visuals */}
-        <div className="relative w-44 h-44 flex items-center justify-center my-4">
-          <div className={`absolute inset-0 rounded-full bg-[#10B981]/15 blur-2xl ${isRecording ? 'animate-ping' : 'animate-pulse'}`} />
-          <div className="absolute inset-4 rounded-full border border-[#e9c349]/30 opacity-40 animate-spin" style={{ animationDuration: '8s' }} />
+        {/* Audio Wave Visuals & Mic Button */}
+        <div className="relative w-40 h-40 flex items-center justify-center my-2">
+          <div
+            className={`absolute inset-0 rounded-full bg-[#10B981]/15 blur-2xl ${
+              isRecording ? 'animate-ping' : 'animate-pulse'
+            }`}
+          />
+          <div
+            className="absolute inset-4 rounded-full border border-[#e9c349]/30 opacity-40 animate-spin"
+            style={{ animationDuration: '8s' }}
+          />
 
-          {/* Sound wave bars */}
+          {/* Sound Wave Bars */}
           <div className="flex items-center gap-1.5 h-16">
             {[35, 65, 95, 55, 85, 45, 75, 50, 30].map((h, i) => (
               <div
@@ -395,39 +633,64 @@ export function Screen13VoiceAssistant({ onNavigate, onAddTask }: ContactsAndAIP
                 : 'bg-gradient-to-tr from-[#0e3e30] to-[#0A2E24] border-2 border-[#e9c349] text-[#e9c349] hover:scale-105 active:scale-95 shadow-[#022C22]'
             }`}
           >
-            <span className="material-symbols-outlined text-[32px]">mic</span>
+            <span className="material-symbols-outlined text-[32px]">
+              {isRecording ? 'mic' : 'mic_none'}
+            </span>
           </button>
         </div>
 
-        {/* Shortcuts */}
-        <div className="glass-card specular-border rounded-2xl p-3.5 max-w-[290px] text-left backdrop-blur space-y-2 border border-[#414945]/30">
+        <p className="text-[10px] text-[#c0c8c3]">
+          {isRecording ? `Tap mic to finish speaking to ${name}` : `Tap mic to speak or use shortcuts`}
+        </p>
+
+        {/* Quick Voice Shortcuts */}
+        <div className="glass-card specular-border rounded-2xl p-3 max-w-[300px] text-left backdrop-blur space-y-1.5 border border-[#414945]/30">
           <p className="text-[10px] text-[#e9c349] uppercase font-bold tracking-wider font-['Space_Grotesk']">
-            Tap a shortcut or speak:
+            Quick commands for {name}:
           </p>
           <button
             onClick={() => processVoiceCommand('Schedule site inspection with Arun at 10 AM')}
-            className="text-xs text-[#c0c8c3] hover:text-[#e9c349] block text-left transition-colors"
+            className="text-[11px] text-[#c0c8c3] hover:text-[#e9c349] block text-left transition-colors cursor-pointer"
           >
             • &ldquo;Schedule site inspection with Arun at 10 AM&rdquo;
           </button>
           <button
             onClick={() => processVoiceCommand('Add call with Priya Desai regarding revision drawings')}
-            className="text-xs text-[#c0c8c3] hover:text-[#e9c349] block text-left transition-colors"
+            className="text-[11px] text-[#c0c8c3] hover:text-[#e9c349] block text-left transition-colors cursor-pointer"
           >
             • &ldquo;Add call with Priya Desai regarding revision drawings&rdquo;
           </button>
           <button
-            onClick={() => processVoiceCommand('Review foundation load calculations tomorrow')}
-            className="text-xs text-[#c0c8c3] hover:text-[#e9c349] block text-left transition-colors"
+            onClick={() => processVoiceCommand('Review foundation load calculations tomorrow at 3 PM')}
+            className="text-[11px] text-[#c0c8c3] hover:text-[#e9c349] block text-left transition-colors cursor-pointer"
           >
-            • &ldquo;Review foundation load calculations tomorrow&rdquo;
+            • &ldquo;Review foundation load calculations tomorrow at 3 PM&rdquo;
           </button>
         </div>
       </div>
 
-      <div className="text-center pb-2 z-10">
-        <p className="text-[11px] text-[#8a938e]">Speech-to-Text with device-native speech synthesis</p>
-      </div>
+      {/* Typed Command Fallback Input */}
+      <form onSubmit={handleSendTypedCommand} className="pt-2 z-10 space-y-1">
+        <div className="flex items-center gap-2 p-1.5 bg-[#1f201e]/80 border border-[#414945]/40 rounded-xl">
+          <input
+            type="text"
+            value={typedInput}
+            onChange={(e) => setTypedInput(e.target.value)}
+            placeholder={`Or type a command for ${name}...`}
+            className="flex-1 bg-transparent px-2 py-1 text-xs text-[#e3e2e0] outline-none placeholder-[#8a938e]"
+          />
+          <button
+            type="submit"
+            disabled={!typedInput.trim()}
+            className="p-1.5 rounded-lg bg-[#0e3e30] text-[#e9c349] hover:brightness-110 disabled:opacity-40 cursor-pointer flex items-center justify-center transition-all"
+          >
+            <span className="material-symbols-outlined text-[16px]">send</span>
+          </button>
+        </div>
+        <p className="text-[10px] text-[#8a938e] text-center">
+          Voice Speech-to-Text & spoken voice feedback powered by {name}
+        </p>
+      </form>
     </div>
   );
 }
