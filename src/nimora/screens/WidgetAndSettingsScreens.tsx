@@ -331,22 +331,22 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
 
         {/* Options List */}
         <div className="px-4 space-y-2">
-          {/* Go Premium – Google Pay / Apple Pay */}
-          <a
-            href="/payments"
-            className="p-3.5 bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/60 rounded-2xl flex items-center justify-between cursor-pointer hover:brightness-110 transition-all shadow-md active:scale-[0.99]"
+          {/* Subscription & Pricing Plans */}
+          <button
+            onClick={() => onNavigate?.(99)}
+            className="w-full p-3.5 bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/60 rounded-2xl flex items-center justify-between cursor-pointer hover:brightness-110 transition-all shadow-md active:scale-[0.99] text-left"
           >
             <div className="flex items-center gap-3">
               <span className="text-base">💎</span>
               <div>
-                <span className="text-xs font-bold text-[#e9c349] block font-['Space_Grotesk']">Go Premium Upgrade</span>
-                <span className="text-[10px] text-[#a1d1bd]">Google Pay · Apple Pay</span>
+                <span className="text-xs font-bold text-[#e9c349] block font-['Space_Grotesk']">Membership & Subscription Plans</span>
+                <span className="text-[10px] text-[#a1d1bd]">Explore Pro & Executive Tiers from $7.99/mo</span>
               </div>
             </div>
             <span className="text-[11px] font-semibold text-[#e9c349] flex items-center gap-1">
-              Unlock <span className="text-[#8a938e]">›</span>
+              View Plans <span className="text-[#8a938e]">›</span>
             </span>
-          </a>
+          </button>
 
           {/* Reset Demo Data Button */}
           <button
@@ -419,6 +419,394 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+// 15. Subscription & Membership Plans (Pricing First, Then Purchase)
+export function Screen19SubscriptionPlans({ onNavigate }: { onNavigate?: (screenNumber: number) => void }) {
+  const [billingCycle, setBillingCycle] = useState<'annual' | 'monthly'>('annual');
+  const [selectedPlan, setSelectedPlan] = useState<'pro' | 'essential' | 'founder'>('pro');
+  const [step, setStep] = useState<'pricing' | 'checkout'>('pricing');
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const plans = {
+    essential: {
+      id: 'essential',
+      name: 'Essential',
+      badge: 'Core Daily',
+      monthlyPrice: '$4.99',
+      annualPrice: '$3.99',
+      period: '/month',
+      billedNote: billingCycle === 'annual' ? 'Billed annually ($47.88/yr)' : 'Billed monthly',
+      description: 'Ideal for independent professionals organizing daily agendas.',
+      features: [
+        'Up to 30 tasks & reminders / day',
+        'Tactile schedule time-blocking',
+        'One-tap .ics Calendar export',
+        'Local encrypted persistence',
+      ],
+      notIncluded: [
+        'AI Voice "Ask Nova" Assistant',
+        'Stakeholder CRM follow-ups',
+        '2-Way Cloud Calendar Sync',
+      ],
+    },
+    pro: {
+      id: 'pro',
+      name: 'Executive Pro',
+      badge: '⭐ Most Popular',
+      monthlyPrice: '$9.99',
+      annualPrice: '$7.99',
+      period: '/month',
+      billedNote: billingCycle === 'annual' ? 'Billed annually ($95.88/yr) · Save 20%' : 'Billed monthly',
+      description: 'Full autonomous executive intelligence & stakeholder management.',
+      features: [
+        'Unlimited Tasks, Schedules & Sub-tasks',
+        'Ask Nova Voice AI Assistant (Speech & Audio Feedback)',
+        'Full Stakeholder CRM & follow-up tracking',
+        '2-Way Calendar Sync (Google, Apple, Outlook)',
+        'Direct WhatsApp & phone call triggers',
+        'High-priority offline cloud synchronization',
+      ],
+      notIncluded: [],
+    },
+    founder: {
+      id: 'founder',
+      name: 'Founder Lifetime',
+      badge: 'Lifetime Access',
+      monthlyPrice: '$199',
+      annualPrice: '$199',
+      period: ' one-time',
+      billedNote: 'Pay once, own forever · No subscriptions',
+      description: 'For founders, partners, and high-impact architects who demand the best.',
+      features: [
+        'All Executive Pro capabilities forever',
+        'Early access to all new MCP agent tools',
+        'VIP 1-on-1 Concierge support line',
+        'White-label executive exports & PDF reporting',
+        'All future major updates included',
+      ],
+      notIncluded: [],
+    },
+  };
+
+  const currentPlan = plans[selectedPlan];
+  const displayPrice = billingCycle === 'annual' ? currentPlan.annualPrice : currentPlan.monthlyPrice;
+
+  const handleSimulatePayment = (methodName: string) => {
+    setIsProcessing(true);
+    setTimeout(() => {
+      setIsProcessing(false);
+      setPaymentSuccess(true);
+    }, 1200);
+  };
+
+  return (
+    <div className="w-full h-full min-h-[680px] bg-[#121412] text-[#e3e2e0] flex flex-col justify-between p-4 select-none rounded-[38px] shadow-2xl relative overflow-hidden">
+      {/* Top Header */}
+      <div className="flex justify-between items-center pb-3 border-b border-[#414945]/30">
+        <button
+          onClick={() => {
+            if (step === 'checkout') setStep('pricing');
+            else onNavigate?.(5);
+          }}
+          className="text-[#c0c8c3] hover:text-white text-xs font-semibold flex items-center gap-1 cursor-pointer"
+        >
+          ‹ {step === 'checkout' ? 'Back to Pricing' : 'Back'}
+        </button>
+        <div className="text-center">
+          <span className="text-[10px] text-[#e9c349] font-bold uppercase tracking-widest block font-['Space_Grotesk']">
+            {step === 'pricing' ? 'NIMORA MEMBERSHIP' : 'SECURE CHECKOUT'}
+          </span>
+          <span className="text-xs font-bold text-[#e3e2e0] font-['Space_Grotesk']">
+            {step === 'pricing' ? 'Choose Your Plan' : 'Finalize Upgrade'}
+          </span>
+        </div>
+        <div className="flex items-center gap-1 text-[10px] text-[#a1d1bd]">
+          <span className="material-symbols-outlined text-[14px]">lock</span>
+          <span>SSL</span>
+        </div>
+      </div>
+
+      {/* Main Body */}
+      <div className="flex-1 overflow-y-auto py-3 space-y-4">
+        {step === 'pricing' ? (
+          <>
+            {/* Value Proposition Header */}
+            <div className="text-center space-y-1 pt-1">
+              <span className="text-[10px] font-bold bg-[#af8d11]/30 text-[#e9c349] px-2.5 py-0.5 rounded-full border border-[#e9c349]/40 tracking-wider">
+                EXECUTIVE INTELLIGENCE
+              </span>
+              <h2 className="font-['Space_Grotesk'] text-xl font-bold text-[#e3e2e0] pt-1">
+                Elevate Your Daily Focus
+              </h2>
+              <p className="text-xs text-[#c0c8c3] max-w-[320px] mx-auto">
+                Transparent pricing. Unlock voice scheduling, stakeholder CRM, and multi-device cloud sync.
+              </p>
+            </div>
+
+            {/* Monthly / Annual Billing Toggle */}
+            <div className="flex justify-center">
+              <div className="p-1 bg-[#1f201e] rounded-xl border border-[#414945]/40 flex items-center shadow-inner">
+                <button
+                  onClick={() => setBillingCycle('monthly')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                    billingCycle === 'monthly'
+                      ? 'bg-[#0e3e30] text-[#e9c349] shadow-sm border border-[#e9c349]/30'
+                      : 'text-[#c0c8c3] hover:text-white'
+                  }`}
+                >
+                  Monthly
+                </button>
+                <button
+                  onClick={() => setBillingCycle('annual')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                    billingCycle === 'annual'
+                      ? 'bg-[#0e3e30] text-[#e9c349] shadow-sm border border-[#e9c349]/30'
+                      : 'text-[#c0c8c3] hover:text-white'
+                  }`}
+                >
+                  <span>Annual</span>
+                  <span className="text-[9px] px-1.5 py-0.2 bg-[#e9c349] text-gray-950 rounded-full font-extrabold uppercase">
+                    Save 20%
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {/* Pricing Cards List */}
+            <div className="space-y-3">
+              {(['pro', 'essential', 'founder'] as const).map((planKey) => {
+                const plan = plans[planKey];
+                const isSelected = selectedPlan === planKey;
+                const price = billingCycle === 'annual' ? plan.annualPrice : plan.monthlyPrice;
+
+                return (
+                  <div
+                    key={plan.id}
+                    onClick={() => setSelectedPlan(planKey)}
+                    className={`glass-card rounded-2xl p-4 cursor-pointer transition-all relative ${
+                      isSelected
+                        ? 'border-2 border-[#e9c349] shadow-[0_8px_24px_rgba(233,195,73,0.15)] bg-[#0e3e30]/30'
+                        : 'border border-[#414945]/30 hover:border-[#a1d1bd]/40'
+                    }`}
+                  >
+                    {/* Badge */}
+                    <div className="flex justify-between items-center mb-1">
+                      <span
+                        className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                          planKey === 'pro'
+                            ? 'bg-[#e9c349] text-gray-950 font-extrabold'
+                            : 'bg-[#1f201e] text-[#a1d1bd] border border-[#414945]/40'
+                        }`}
+                      >
+                        {plan.badge}
+                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <div
+                          className={`w-4 h-4 rounded-full border flex items-center justify-center ${
+                            isSelected
+                              ? 'border-[#e9c349] bg-[#e9c349] text-gray-950'
+                              : 'border-[#414945]'
+                          }`}
+                        >
+                          {isSelected && <span className="text-[10px] font-bold">✓</span>}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Plan Title & Price */}
+                    <div className="flex justify-between items-baseline mt-2">
+                      <div>
+                        <h3 className="font-['Space_Grotesk'] text-base font-bold text-[#e3e2e0]">
+                          {plan.name}
+                        </h3>
+                        <p className="text-[11px] text-[#c0c8c3]">{plan.description}</p>
+                      </div>
+                      <div className="text-right">
+                        <div className="flex items-baseline justify-end gap-0.5">
+                          <span className="font-['Space_Grotesk'] text-xl font-bold text-[#e9c349]">
+                            {price}
+                          </span>
+                          <span className="text-[10px] text-[#8a938e]">{plan.period}</span>
+                        </div>
+                        <span className="text-[9px] text-[#a1d1bd] block">{plan.billedNote}</span>
+                      </div>
+                    </div>
+
+                    {/* Feature Highlights */}
+                    <div className="mt-3 pt-2.5 border-t border-[#414945]/20 space-y-1">
+                      {plan.features.slice(0, 3).map((f, i) => (
+                        <div key={i} className="flex items-center gap-2 text-xs text-[#e3e2e0]">
+                          <span className="text-[#4edea3] text-[13px]">✓</span>
+                          <span>{f}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Trust and Assurance Box */}
+            <div className="p-3 rounded-xl bg-[#1f201e]/60 border border-[#414945]/20 flex items-center justify-between text-center">
+              <div className="flex-1">
+                <span className="text-xs text-[#e9c349]">★★★★★</span>
+                <p className="text-[9px] text-[#c0c8c3]">4.9/5 from 12k+ Leaders</p>
+              </div>
+              <div className="h-6 w-px bg-[#414945]/30" />
+              <div className="flex-1">
+                <span className="text-xs">🛡️</span>
+                <p className="text-[9px] text-[#c0c8c3]">14-Day Money Back</p>
+              </div>
+              <div className="h-6 w-px bg-[#414945]/30" />
+              <div className="flex-1">
+                <span className="text-xs">⚡</span>
+                <p className="text-[9px] text-[#c0c8c3]">Instant Activation</p>
+              </div>
+            </div>
+          </>
+        ) : (
+          /* STEP 2: CHECKOUT & PURCHASE */
+          <div className="space-y-4 pt-1">
+            {paymentSuccess ? (
+              <div className="glass-card specular-border p-6 rounded-2xl text-center space-y-3">
+                <div className="w-14 h-14 rounded-full bg-[#0e3e30] border-2 border-[#e9c349] mx-auto flex items-center justify-center text-2xl">
+                  💎
+                </div>
+                <h3 className="font-['Space_Grotesk'] text-lg font-bold text-[#e3e2e0]">
+                  Welcome to {currentPlan.name}!
+                </h3>
+                <p className="text-xs text-[#a1d1bd]">
+                  Your subscription is active. All premium features, Ask Nova voice AI, and multi-device sync are unlocked.
+                </p>
+                <div className="p-3 bg-[#1f201e] rounded-xl text-xs text-left space-y-1">
+                  <div className="flex justify-between">
+                    <span className="text-[#8a938e]">Plan</span>
+                    <span className="text-[#e9c349] font-bold">{currentPlan.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[#8a938e]">Amount Paid</span>
+                    <span className="text-[#e3e2e0] font-bold">{displayPrice}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[#8a938e]">Status</span>
+                    <span className="text-[#4edea3] font-bold">Active · Renews {billingCycle}</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    setStep('pricing');
+                    setPaymentSuccess(false);
+                    onNavigate?.(5);
+                  }}
+                  className="w-full py-3 rounded-xl bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/50 text-[#e9c349] font-bold text-xs shadow-md mt-2 cursor-pointer"
+                >
+                  Return to Daily Planner
+                </button>
+              </div>
+            ) : (
+              <>
+                {/* Plan Summary Card */}
+                <div className="glass-card specular-border p-4 rounded-2xl space-y-2">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <span className="text-[10px] text-[#e9c349] uppercase font-bold tracking-wider">
+                        Selected Plan
+                      </span>
+                      <h3 className="font-['Space_Grotesk'] text-base font-bold text-[#e3e2e0]">
+                        {currentPlan.name}
+                      </h3>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-['Space_Grotesk'] text-lg font-bold text-[#e9c349]">
+                        {displayPrice}
+                      </span>
+                      <span className="text-[10px] text-[#8a938e] block">{currentPlan.period}</span>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-[#a1d1bd] border-t border-[#414945]/20 pt-2">
+                    {currentPlan.billedNote} · Includes 14-day refund guarantee.
+                  </p>
+                </div>
+
+                {/* Choose Payment Method */}
+                <div className="space-y-2.5">
+                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#c0c8c3] font-['Space_Grotesk']">
+                    Select Payment Method
+                  </h4>
+
+                  {/* Google Pay */}
+                  <button
+                    disabled={isProcessing}
+                    onClick={() => handleSimulatePayment('Google Pay')}
+                    className="w-full p-3.5 bg-black hover:bg-neutral-900 border border-neutral-700 rounded-2xl flex items-center justify-between shadow-md active:scale-[0.99] transition-transform cursor-pointer"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-base font-bold text-white tracking-tight">G Pay</span>
+                      <span className="text-xs text-[#c0c8c3]">One-tap instant checkout</span>
+                    </div>
+                    <span className="text-xs text-[#e9c349] font-semibold">Pay {displayPrice} ›</span>
+                  </button>
+
+                  {/* Apple Pay */}
+                  <button
+                    disabled={isProcessing}
+                    onClick={() => handleSimulatePayment('Apple Pay')}
+                    className="w-full p-3.5 bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 rounded-2xl flex items-center justify-between shadow-md active:scale-[0.99] transition-transform cursor-pointer"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-base font-bold text-white tracking-tight"> Pay</span>
+                      <span className="text-xs text-[#c0c8c3]">Touch ID / Face ID</span>
+                    </div>
+                    <span className="text-xs text-[#e9c349] font-semibold">Pay {displayPrice} ›</span>
+                  </button>
+
+                  {/* Credit Card / UPI */}
+                  <button
+                    disabled={isProcessing}
+                    onClick={() => handleSimulatePayment('Card & UPI')}
+                    className="w-full p-3.5 bg-[#1f201e] hover:bg-[#292a29] border border-[#414945]/40 rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.99] transition-transform cursor-pointer"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-[#a1d1bd] text-[20px]">credit_card</span>
+                      <span className="text-xs text-[#e3e2e0]">Card, NetBanking & UPI</span>
+                    </div>
+                    <span className="text-xs text-[#c0c8c3]">Continue ›</span>
+                  </button>
+                </div>
+
+                {isProcessing && (
+                  <div className="p-3 bg-[#0e3e30] border border-[#e9c349]/40 rounded-xl text-center text-xs text-[#e9c349] font-semibold animate-pulse flex items-center justify-center gap-2">
+                    <span className="material-symbols-outlined text-[16px] animate-spin">progress_activity</span>
+                    Securing transaction & activating membership...
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Bottom Action Footer (Only in Pricing step) */}
+      {step === 'pricing' && (
+        <div className="pt-2 border-t border-[#414945]/30">
+          <button
+            onClick={() => setStep('checkout')}
+            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/60 text-[#e9c349] font-bold text-xs shadow-xl hover:brightness-110 active:scale-95 transition-all font-['Space_Grotesk'] flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span>Continue to Checkout</span>
+            <span>·</span>
+            <span>{displayPrice} {currentPlan.period}</span>
+            <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+          </button>
+          <p className="text-[10px] text-[#8a938e] text-center mt-1.5">
+            Prices in USD. Cancel anytime from profile settings.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

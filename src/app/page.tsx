@@ -26,6 +26,7 @@ import {
   Screen16Notifications,
   Screen17WhatsApp,
   Screen18ProfileSettings,
+  Screen19SubscriptionPlans,
 } from '@/nimora/screens/WidgetAndSettingsScreens';
 
 export default function NimoraApp() {
@@ -41,6 +42,7 @@ export default function NimoraApp() {
     | 'notifications'
     | 'widget'
     | 'ai_suggestions'
+    | 'pricing'
   >('home');
   const [tasks, setTasks] = useState<NimoraTask[]>(INITIAL_TASKS);
   const [contacts] = useState<Contact[]>(INITIAL_CONTACTS);
@@ -145,9 +147,13 @@ export default function NimoraApp() {
             <span className="font-['Space_Grotesk'] text-lg tracking-wider text-[#a1d1bd] font-bold">
               NIMORA
             </span>
-            <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#af8d11]/30 text-[#e9c349] border border-[#e9c349]/30 tracking-widest">
+            <button
+              onClick={() => setActiveTab('pricing')}
+              className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#af8d11]/30 text-[#e9c349] border border-[#e9c349]/30 tracking-widest hover:scale-105 active:scale-95 transition-transform cursor-pointer"
+              title="View Membership Plans"
+            >
               PRO
-            </span>
+            </button>
           </div>
         </div>
 
@@ -588,9 +594,19 @@ export default function NimoraApp() {
             onNavigate={(mod) => {
               if (mod === 12) setActiveTab('widget');
               else if (mod === 13) setActiveTab('notifications');
+              else if (mod === 99) setActiveTab('pricing');
               else setActiveTab('home');
             }}
             onResetData={handleResetData}
+          />
+        </div>
+      )}
+
+      {/* Subscription & Pricing Plans View */}
+      {activeTab === 'pricing' && (
+        <div className="pt-20 px-4">
+          <Screen19SubscriptionPlans
+            onNavigate={() => setActiveTab('settings')}
           />
         </div>
       )}
