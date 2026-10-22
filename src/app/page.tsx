@@ -123,8 +123,15 @@ export default function NimoraApp() {
   };
 
   const handleDeleteTask = (id: string) => {
-    setTasks((prev) => prev.filter((t) => t.id !== id));
-    setActiveTab('schedule');
+    setTasks((prev) => {
+      const updated = prev.filter((t) => t.id !== id);
+      try {
+        localStorage.setItem('nimora_planner_tasks', JSON.stringify(updated));
+      } catch (e) {
+        console.warn('Could not write to localStorage', e);
+      }
+      return updated;
+    });
   };
 
   const handleResetData = () => {
@@ -461,17 +468,32 @@ export default function NimoraApp() {
                     </div>
                   </div>
 
-                  {/* Fast Action */}
-                  <a
-                    aria-label="WhatsApp quick trigger"
-                    onClick={(e) => e.stopPropagation()}
-                    className="p-2 rounded-lg bg-[#1f201e] text-[#a1d1bd] border border-[#414945]/30 hover:border-[#a1d1bd]/50 active:scale-95 transition-all self-center"
-                    href="https://wa.me/919876543210"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <span className="material-symbols-outlined text-[18px]">chat</span>
-                  </a>
+                  {/* Quick Action Buttons */}
+                  <div className="flex items-center gap-1.5 self-center">
+                    <a
+                      aria-label="WhatsApp quick trigger"
+                      onClick={(e) => e.stopPropagation()}
+                      className="p-2 rounded-lg bg-[#1f201e] text-[#a1d1bd] border border-[#414945]/30 hover:border-[#a1d1bd]/50 active:scale-95 transition-all"
+                      href="https://wa.me/919876543210"
+                      target="_blank"
+                      rel="noreferrer"
+                      title="WhatsApp contact"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">chat</span>
+                    </a>
+                    <button
+                      type="button"
+                      aria-label="Delete Task"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteTask(task.id);
+                      }}
+                      className="p-2 rounded-lg bg-[#1f201e] text-[#8a938e] hover:text-rose-400 hover:bg-rose-950/30 border border-[#414945]/30 active:scale-95 transition-all cursor-pointer"
+                      title="Delete task"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">delete</span>
+                    </button>
+                  </div>
                 </article>
               );
             })}
@@ -495,6 +517,7 @@ export default function NimoraApp() {
               setActiveTab('task_details');
             }}
             onToggleTask={handleToggleTask}
+            onDeleteTask={handleDeleteTask}
           />
         </div>
       )}
@@ -550,6 +573,7 @@ export default function NimoraApp() {
               }
             }}
             onAddTask={handleAddTask}
+            onDeleteTask={handleDeleteTask}
           />
         </div>
       )}

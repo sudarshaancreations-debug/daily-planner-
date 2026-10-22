@@ -10,6 +10,7 @@ export interface ContactsAndAIProps {
   onSelectContact?: (contact: Contact) => void;
   selectedContact?: Contact;
   onAddTask?: (task: NimoraTask) => void;
+  onDeleteTask?: (id: string) => void;
   assistantName?: string;
   onUpdateAssistantName?: (name: string) => void;
 }
@@ -247,6 +248,7 @@ export function Screen13VoiceAssistant({
   contacts = [],
   onNavigate,
   onAddTask,
+  onDeleteTask,
   assistantName = 'Nova',
   onUpdateAssistantName,
 }: ContactsAndAIProps) {
@@ -619,13 +621,31 @@ export function Screen13VoiceAssistant({
                 <span>View in Schedule</span>
                 <span>›</span>
               </button>
+              {onDeleteTask && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (createdTask) {
+                      onDeleteTask(createdTask.id);
+                      setCreatedTask(null);
+                      setStatusMessage('Task removed from schedule.');
+                      speakFeedback('Task deleted.');
+                    }
+                  }}
+                  className="py-1.5 px-2.5 rounded-xl bg-rose-950/40 border border-rose-500/40 text-rose-400 hover:bg-rose-900/40 text-xs font-semibold cursor-pointer active:scale-95 transition-all flex items-center gap-1"
+                  title="Delete this task"
+                >
+                  <span className="material-symbols-outlined text-[14px]">delete</span>
+                  <span>Delete</span>
+                </button>
+              )}
               <button
                 type="button"
                 onClick={() => {
                   setCreatedTask(null);
                   setStatusMessage(`Tap microphone to speak to ${name}`);
                 }}
-                className="py-1.5 px-3 rounded-xl bg-[#1f201e] border border-[#414945]/40 text-[#c0c8c3] hover:text-white text-xs font-semibold cursor-pointer active:scale-95 transition-all"
+                className="py-1.5 px-2.5 rounded-xl bg-[#1f201e] border border-[#414945]/40 text-[#c0c8c3] hover:text-white text-xs font-semibold cursor-pointer active:scale-95 transition-all"
               >
                 + Next
               </button>

@@ -101,7 +101,13 @@ export function Screen07HomeDashboard({ tasks, onNavigate, onToggleTask, onSelec
 }
 
 // 6. Daily Planner Timeline
-export function Screen08DailyPlanner({ tasks, onNavigate, onSelectTask, onToggleTask }: PlanningProps) {
+export function Screen08DailyPlanner({
+  tasks,
+  onNavigate,
+  onSelectTask,
+  onToggleTask,
+  onDeleteTask,
+}: PlanningProps) {
   const borderColors: Record<string, string> = {
     blue: 'border-l-blue-500',
     green: 'border-l-emerald-500',
@@ -179,11 +185,27 @@ export function Screen08DailyPlanner({ tasks, onNavigate, onSelectTask, onToggle
                 </div>
               </div>
 
-              <div className="text-right flex flex-col items-end gap-1">
-                <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#0e3e30] text-[#e9c349] border border-[#e9c349]/30">
-                  {task.priority}
-                </span>
-                <span className="text-[10px] text-[#c0c8c3]">⏱ {task.durationMinutes}m</span>
+              <div className="text-right flex items-center gap-2">
+                <div className="flex flex-col items-end gap-1">
+                  <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#0e3e30] text-[#e9c349] border border-[#e9c349]/30">
+                    {task.priority}
+                  </span>
+                  <span className="text-[10px] text-[#c0c8c3]">⏱ {task.durationMinutes}m</span>
+                </div>
+                {onDeleteTask && (
+                  <button
+                    type="button"
+                    aria-label="Delete Task"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteTask(task.id);
+                    }}
+                    className="p-1.5 rounded-lg bg-[#1f201e] text-[#8a938e] hover:text-rose-400 hover:bg-rose-950/30 border border-[#414945]/30 active:scale-95 transition-all cursor-pointer"
+                    title="Delete task"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">delete</span>
+                  </button>
+                )}
               </div>
             </div>
           );
@@ -677,13 +699,27 @@ export function Screen10TaskDetails({ tasks, contacts, onNavigate, selectedTask,
               onNavigate?.(6);
             }
           }}
-          className={`w-full py-2.5 rounded-xl font-bold text-xs transition-all ${
+          className={`w-full py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer ${
             task?.status === 'completed'
               ? 'bg-[#1f201e] text-[#c0c8c3] border border-[#414945]/40 hover:bg-[#292a29]'
               : 'bg-[#10B981] text-gray-950 shadow-md hover:bg-[#059669]'
           }`}
         >
           {task?.status === 'completed' ? 'Mark Incomplete' : 'Mark Completed ✓'}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            if (task && onDeleteTask) {
+              onDeleteTask(task.id);
+              onNavigate?.(6);
+            }
+          }}
+          className="w-full py-2.5 rounded-xl font-bold text-xs bg-rose-950/40 border border-rose-500/40 text-rose-400 hover:bg-rose-900/40 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+        >
+          <span className="material-symbols-outlined text-[16px]">delete</span>
+          <span>Delete Task</span>
         </button>
       </div>
     </div>
