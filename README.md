@@ -1,11 +1,12 @@
-# 📅 NIMORA — Your Day. Intelligently Organized. (v1.0.0)
+# 📅 NIMORA — Your Day. Intelligently Organized. (v1.1.0)
 
 A modern, production-grade Daily Planner and MCP (Model Context Protocol) Hub built with **Next.js (App Router)**, **TypeScript**, and **Tailwind CSS**.
 
-- **Live Cloud URL**: [https://agile-sirocco-oyrlj9z.tmp.now](https://agile-sirocco-oyrlj9z.tmp.now)
-- **Claim & Make Permanent**: [Claim on Vercel](https://vercel.com/claim-deployment?code=9ea46908-d7e9-4695-ab7e-e6f19e821ce0)
-- **Health Check**: `GET /api/health`
-- **MCP Hub (16 Tools)**: `POST /api/mcp`
+- **Production URL**: [https://daily-planner-ten-beta.vercel.app](https://daily-planner-ten-beta.vercel.app)
+- **GitHub Repository**: [https://github.com/sudarshaancreations-debug/daily-planner-](https://github.com/sudarshaancreations-debug/daily-planner-)
+- **Health Check**: `GET https://daily-planner-ten-beta.vercel.app/api/health`
+- **MCP Hub (16 Tools)**: `POST https://daily-planner-ten-beta.vercel.app/api/mcp`
+- **Payments Gateway**: `https://daily-planner-ten-beta.vercel.app/payments` (Google Pay & Apple Pay via Web Payment Request API)
 
 ---
 
