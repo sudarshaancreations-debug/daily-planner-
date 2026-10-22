@@ -426,7 +426,7 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
 // 15. Subscription & Membership Plans (Pricing First, Then Purchase)
 export function Screen19SubscriptionPlans({ onNavigate }: { onNavigate?: (screenNumber: number) => void }) {
   const [billingCycle, setBillingCycle] = useState<'annual' | 'monthly'>('annual');
-  const [selectedPlan, setSelectedPlan] = useState<'pro' | 'essential' | 'founder'>('pro');
+  const [selectedPlan, setSelectedPlan] = useState<'pro' | 'essential'>('pro');
   const [step, setStep] = useState<'pricing' | 'checkout'>('pricing');
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -469,24 +469,6 @@ export function Screen19SubscriptionPlans({ onNavigate }: { onNavigate?: (screen
         '2-Way Calendar Sync (Google, Apple, Outlook)',
         'Direct WhatsApp & phone call triggers',
         'High-priority offline cloud synchronization',
-      ],
-      notIncluded: [],
-    },
-    founder: {
-      id: 'founder',
-      name: 'Founder Lifetime',
-      badge: 'Lifetime Access',
-      monthlyPrice: '$199',
-      annualPrice: '$199',
-      period: ' one-time',
-      billedNote: 'Pay once, own forever · No subscriptions',
-      description: 'For founders, partners, and high-impact architects who demand the best.',
-      features: [
-        'All Executive Pro capabilities forever',
-        'Early access to all new MCP agent tools',
-        'VIP 1-on-1 Concierge support line',
-        'White-label executive exports & PDF reporting',
-        'All future major updates included',
       ],
       notIncluded: [],
     },
@@ -578,7 +560,7 @@ export function Screen19SubscriptionPlans({ onNavigate }: { onNavigate?: (screen
 
             {/* Pricing Cards List */}
             <div className="space-y-3">
-              {(['pro', 'essential', 'founder'] as const).map((planKey) => {
+              {(['pro', 'essential'] as const).map((planKey) => {
                 const plan = plans[planKey];
                 const isSelected = selectedPlan === planKey;
                 const price = billingCycle === 'annual' ? plan.annualPrice : plan.monthlyPrice;
