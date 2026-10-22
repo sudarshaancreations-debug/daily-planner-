@@ -641,7 +641,7 @@ export function Screen19SubscriptionPlans({ onNavigate }: { onNavigate?: (screen
               <div className="h-6 w-px bg-[#414945]/30" />
               <div className="flex-1">
                 <span className="text-xs">🛡️</span>
-                <p className="text-[9px] text-[#c0c8c3]">14-Day Money Back</p>
+                <p className="text-[9px] text-[#c0c8c3]">Cancel Anytime</p>
               </div>
               <div className="h-6 w-px bg-[#414945]/30" />
               <div className="flex-1">
@@ -710,7 +710,7 @@ export function Screen19SubscriptionPlans({ onNavigate }: { onNavigate?: (screen
                     </div>
                   </div>
                   <p className="text-[11px] text-[#a1d1bd] border-t border-[#414945]/20 pt-2">
-                    {currentPlan.billedNote} · Includes 14-day refund guarantee.
+                    {currentPlan.billedNote} · Cancel anytime in account settings.
                   </p>
                 </div>
 
