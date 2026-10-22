@@ -340,7 +340,7 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
               <span className="text-base">💎</span>
               <div>
                 <span className="text-xs font-bold text-[#e9c349] block font-['Space_Grotesk']">Membership & Subscription Plans</span>
-                <span className="text-[10px] text-[#a1d1bd]">Explore Pro & Executive Tiers from $7.99/mo</span>
+                <span className="text-[10px] text-[#a1d1bd]">Explore Pro & Executive Tiers from $9.99/mo</span>
               </div>
             </div>
             <span className="text-[11px] font-semibold text-[#e9c349] flex items-center gap-1">
@@ -434,41 +434,41 @@ export function Screen19SubscriptionPlans({ onNavigate }: { onNavigate?: (screen
   const plans = {
     essential: {
       id: 'essential',
-      name: 'Essential',
-      badge: 'Core Daily',
-      monthlyPrice: '$4.99',
-      annualPrice: '$3.99',
+      name: 'Professional Starter',
+      badge: 'Core Pro',
+      monthlyPrice: '$13.99',
+      annualPrice: '$9.99',
       period: '/month',
-      billedNote: billingCycle === 'annual' ? 'Billed annually ($47.88/yr)' : 'Billed monthly',
-      description: 'Ideal for independent professionals organizing daily agendas.',
+      billedNote: billingCycle === 'annual' ? 'Billed annually ($119.88/yr) · Save 28%' : 'Billed monthly',
+      description: 'Ideal for architects, agents & contractors organizing daily site agendas.',
       features: [
-        'Up to 30 tasks & reminders / day',
-        'Tactile schedule time-blocking',
-        'One-tap .ics Calendar export',
-        'Local encrypted persistence',
+        'Unlimited Tasks, Schedules & Time-blocking',
+        'AI Voice Assistant with Spoken Confirmation',
+        'Stakeholder CRM & Follow-up Tracker (up to 50 contacts)',
+        'One-tap .ics Calendar Export & Local Encryption',
+        'Home Screen Push-to-Talk Quick Widget',
       ],
       notIncluded: [
-        'AI Voice "Ask Nova" Assistant',
-        'Stakeholder CRM follow-ups',
-        '2-Way Cloud Calendar Sync',
+        'Remote MCP Server (Claude & ChatGPT agents)',
+        '2-Way Live Google/Apple Calendar Sync',
       ],
     },
     pro: {
       id: 'pro',
-      name: 'Executive Pro',
+      name: 'Executive AI & MCP',
       badge: '⭐ Most Popular',
-      monthlyPrice: '$9.99',
-      annualPrice: '$7.99',
+      monthlyPrice: '$19.99',
+      annualPrice: '$15.99',
       period: '/month',
-      billedNote: billingCycle === 'annual' ? 'Billed annually ($95.88/yr) · Save 20%' : 'Billed monthly',
-      description: 'Full autonomous executive intelligence & stakeholder management.',
+      billedNote: billingCycle === 'annual' ? 'Billed annually ($191.88/yr) · Save 20%' : 'Billed monthly',
+      description: 'Full autonomous intelligence, remote MCP agent connectivity & 2-way sync.',
       features: [
-        'Unlimited Tasks, Schedules & Sub-tasks',
-        'Ask Nova Voice AI Assistant (Speech & Audio Feedback)',
-        'Full Stakeholder CRM & follow-up tracking',
-        '2-Way Calendar Sync (Google, Apple, Outlook)',
-        'Direct WhatsApp & phone call triggers',
-        'High-priority offline cloud synchronization',
+        'Everything in Professional Starter',
+        'Remote MCP Server Integration (Claude, ChatGPT, Gemini)',
+        'Unlimited Stakeholder CRM & Call/WhatsApp Logging',
+        '2-Way Live Calendar Sync (Google & Apple Calendar)',
+        'Direct WhatsApp & Phone Follow-up Triggers',
+        'Priority Multi-Device Cloud Real-time Synchronization',
       ],
       notIncluded: [],
     },
@@ -620,7 +620,7 @@ export function Screen19SubscriptionPlans({ onNavigate }: { onNavigate?: (screen
 
                     {/* Feature Highlights */}
                     <div className="mt-3 pt-2.5 border-t border-[#414945]/20 space-y-1">
-                      {plan.features.slice(0, 3).map((f, i) => (
+                      {plan.features.slice(0, 4).map((f, i) => (
                         <div key={i} className="flex items-center gap-2 text-xs text-[#e3e2e0]">
                           <span className="text-[#4edea3] text-[13px]">✓</span>
                           <span>{f}</span>
