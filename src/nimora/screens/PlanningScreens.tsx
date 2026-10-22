@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { NimoraTask, Contact } from '../data';
 import { downloadICS } from '@/lib/exportUtils';
 
@@ -100,6 +100,248 @@ export function Screen07HomeDashboard({ tasks, onNavigate, onToggleTask, onSelec
   );
 }
 
+export interface SwipeableScheduleCardProps {
+  task: NimoraTask;
+  borderColors: Record<string, string>;
+  onToggleTask?: (id: string) => void;
+  onSelectTask?: (task: NimoraTask) => void;
+  onDeleteTask?: (id: string) => void;
+  onNavigate?: (screenNumber: number) => void;
+  showWhatsApp?: boolean;
+}
+
+export function SwipeableScheduleCard({
+  task,
+  borderColors,
+  onToggleTask,
+  onSelectTask,
+  onDeleteTask,
+  onNavigate,
+  showWhatsApp = false,
+}: SwipeableScheduleCardProps) {
+  const [offsetX, setOffsetX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const startXRef = useRef(0);
+  const currentXRef = useRef(0);
+  const hasMovedRef = useRef(false);
+
+  const isCompleted = task.status === 'completed';
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    startXRef.current = e.touches[0].clientX;
+    currentXRef.current = offsetX;
+    setIsDragging(true);
+    hasMovedRef.current = false;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    const deltaX = e.touches[0].clientX - startXRef.current;
+    if (Math.abs(deltaX) > 6) {
+      hasMovedRef.current = true;
+    }
+    const targetOffset = currentXRef.current + deltaX;
+    setOffsetX(Math.max(-140, Math.min(140, targetOffset)));
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    if (offsetX > 45) {
+      setOffsetX(130);
+    } else if (offsetX < -45) {
+      setOffsetX(-130);
+    } else {
+      setOffsetX(0);
+    }
+  };
+
+  // Mouse drag support for desktop
+  const handleMouseDown = (e: React.MouseEvent) => {
+    startXRef.current = e.clientX;
+    currentXRef.current = offsetX;
+    setIsDragging(true);
+    hasMovedRef.current = false;
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    const deltaX = e.clientX - startXRef.current;
+    if (Math.abs(deltaX) > 6) {
+      hasMovedRef.current = true;
+    }
+    const targetOffset = currentXRef.current + deltaX;
+    setOffsetX(Math.max(-140, Math.min(140, targetOffset)));
+  };
+
+  const handleMouseUp = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    if (offsetX > 45) {
+      setOffsetX(130);
+    } else if (offsetX < -45) {
+      setOffsetX(-130);
+    } else {
+      setOffsetX(0);
+    }
+  };
+
+  const handleCardClick = () => {
+    if (hasMovedRef.current || Math.abs(offsetX) > 0) {
+      setOffsetX(0);
+      return;
+    }
+    onSelectTask?.(task);
+    onNavigate?.(8);
+  };
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setOffsetX(0);
+    onSelectTask?.(task);
+    onNavigate?.(8);
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setOffsetX(0);
+    onDeleteTask?.(task.id);
+  };
+
+  return (
+    <div className="relative overflow-hidden rounded-2xl select-none group my-1">
+      {/* Background Action Buttons Layer (Hidden underneath until slid) */}
+      <div className="absolute inset-0 flex items-center justify-between px-2 bg-[#0d0f0d] rounded-2xl border border-[#414945]/30">
+        {/* Left Side Actions (Revealed on Swipe Right) */}
+        <div className="flex items-center gap-1.5 z-0">
+          <button
+            type="button"
+            onClick={handleEdit}
+            className="w-13 h-10 px-2 rounded-xl bg-gradient-to-r from-[#e9c349] to-[#af8d11] text-gray-950 font-bold text-xs flex flex-col items-center justify-center shadow-md active:scale-90 transition-transform cursor-pointer"
+            title="Edit Task"
+          >
+            <span className="material-symbols-outlined text-[17px]">edit</span>
+            <span className="text-[9px]">Edit</span>
+          </button>
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="w-13 h-10 px-2 rounded-xl bg-gradient-to-r from-rose-600 to-rose-700 text-white font-bold text-xs flex flex-col items-center justify-center shadow-md active:scale-90 transition-transform cursor-pointer"
+            title="Delete Task"
+          >
+            <span className="material-symbols-outlined text-[17px]">delete</span>
+            <span className="text-[9px]">Delete</span>
+          </button>
+        </div>
+
+        {/* Right Side Actions (Revealed on Swipe Left) */}
+        <div className="flex items-center gap-1.5 z-0 ml-auto">
+          <button
+            type="button"
+            onClick={handleEdit}
+            className="w-13 h-10 px-2 rounded-xl bg-gradient-to-r from-[#e9c349] to-[#af8d11] text-gray-950 font-bold text-xs flex flex-col items-center justify-center shadow-md active:scale-90 transition-transform cursor-pointer"
+            title="Edit Task"
+          >
+            <span className="material-symbols-outlined text-[17px]">edit</span>
+            <span className="text-[9px]">Edit</span>
+          </button>
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="w-13 h-10 px-2 rounded-xl bg-gradient-to-r from-rose-600 to-rose-700 text-white font-bold text-xs flex flex-col items-center justify-center shadow-md active:scale-90 transition-transform cursor-pointer"
+            title="Delete Task"
+          >
+            <span className="material-symbols-outlined text-[17px]">delete</span>
+            <span className="text-[9px]">Delete</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Foreground Sliding Card */}
+      <div
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        onClick={handleCardClick}
+        style={{
+          transform: `translateX(${offsetX}px)`,
+          transition: isDragging ? 'none' : 'transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1)',
+        }}
+        className={`relative z-10 glass-card specular-border p-3.5 rounded-2xl border-l-[3px] ${
+          borderColors[task.color] || 'border-l-emerald-500'
+        } shadow-md flex items-start justify-between cursor-pointer bg-[#1f201e] hover:brightness-105 active:scale-[0.99] transition-all ${
+          isCompleted ? 'opacity-50' : ''
+        }`}
+      >
+        <div className="flex items-start gap-3 flex-1 min-w-0 pr-2">
+          {/* Tactile Checkbox */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleTask?.(task.id);
+            }}
+            className={`mt-0.5 w-5 h-5 rounded border border-[#e9c349]/50 flex items-center justify-center hover:bg-[#e9c349]/20 transition-colors shrink-0 ${
+              isCompleted ? 'bg-[#e9c349] text-gray-950' : ''
+            }`}
+          >
+            {isCompleted && <span className="material-symbols-outlined text-[14px] font-bold">check</span>}
+          </button>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-[10px] font-bold text-[#a1d1bd] font-['Space_Grotesk']">
+                {task.startTime} – {task.endTime}
+              </span>
+              <span className="text-[8px] px-1 py-0.2 rounded bg-[#0e3e30] text-[#e9c349] border border-[#e9c349]/30 uppercase font-bold">
+                {task.category}
+              </span>
+            </div>
+            <h4 className={`text-xs font-bold leading-tight font-['Space_Grotesk'] mt-0.5 truncate ${
+              isCompleted ? 'line-through text-[#8a938e]' : 'text-[#e3e2e0]'
+            }`}>
+              {task.title}
+            </h4>
+            {task.subtitle && (
+              <p className="text-[10px] text-[#c0c8c3] mt-0.5 truncate">{task.subtitle}</p>
+            )}
+          </div>
+        </div>
+
+        <div className="text-right flex items-center gap-2 shrink-0">
+          <div className="flex flex-col items-end gap-1">
+            <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#0e3e30] text-[#e9c349] border border-[#e9c349]/30">
+              {task.priority}
+            </span>
+            <span className="text-[10px] text-[#c0c8c3]">⏱ {task.durationMinutes}m</span>
+          </div>
+
+          {showWhatsApp && (
+            <a
+              aria-label="WhatsApp quick trigger"
+              onClick={(e) => e.stopPropagation()}
+              className="p-1.5 rounded-lg bg-[#121412] text-[#a1d1bd] border border-[#414945]/30 hover:border-[#a1d1bd]/50 active:scale-95 transition-all"
+              href="https://wa.me/919876543210"
+              target="_blank"
+              rel="noreferrer"
+              title="WhatsApp contact"
+            >
+              <span className="material-symbols-outlined text-[16px]">chat</span>
+            </a>
+          )}
+
+          {/* Swipe indicator pill */}
+          <span className="text-[10px] text-[#8a938e] opacity-60 group-hover:opacity-100 flex items-center" title="Slide right or left for actions">
+            ‹ ›
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // 6. Daily Planner Timeline
 export function Screen08DailyPlanner({
   tasks,
@@ -145,71 +387,30 @@ export function Screen08DailyPlanner({
         </div>
       </div>
 
-      {/* Time blocked schedule list */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {tasks.map((task) => {
-          const isCompleted = task.status === 'completed';
-          return (
-            <div
-              key={task.id}
-              onClick={() => {
-                onSelectTask?.(task);
-                onNavigate?.(8);
-              }}
-              className={`glass-card specular-border p-3.5 rounded-2xl border-l-[3px] ${
-                borderColors[task.color] || 'border-l-emerald-500'
-              } transition-all cursor-pointer shadow-sm hover:brightness-110 flex items-start justify-between ${
-                isCompleted ? 'opacity-50' : ''
-              }`}
-            >
-              <div className="flex items-start gap-3">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onToggleTask?.(task.id);
-                  }}
-                  className={`mt-0.5 w-5 h-5 rounded border border-[#e9c349]/50 flex items-center justify-center hover:bg-[#e9c349]/20 transition-colors ${
-                    isCompleted ? 'bg-[#e9c349] text-gray-950' : ''
-                  }`}
-                >
-                  {isCompleted && <span className="material-symbols-outlined text-[14px] font-bold">check</span>}
-                </button>
-                <div>
-                  <span className="text-[10px] font-bold text-[#a1d1bd] block mb-0.5 font-['Space_Grotesk']">
-                    {task.startTime} – {task.endTime}
-                  </span>
-                  <h4 className={`text-xs font-bold leading-tight font-['Space_Grotesk'] ${isCompleted ? 'line-through text-[#8a938e]' : 'text-[#e3e2e0]'}`}>
-                    {task.title}
-                  </h4>
-                  {task.subtitle && <p className="text-[10px] text-[#c0c8c3] mt-0.5">{task.subtitle}</p>}
-                </div>
-              </div>
+      {/* Swipe instruction pill */}
+      <div className="px-4 pt-2">
+        <div className="p-2 bg-[#1f201e]/60 border border-[#414945]/30 rounded-xl flex items-center justify-between text-[10px] text-[#c0c8c3]">
+          <span className="flex items-center gap-1">
+            <span className="material-symbols-outlined text-[13px] text-[#e9c349]">swipe</span>
+            <span>Swipe left or right on any task to <strong>Edit</strong> or <strong>Delete</strong></span>
+          </span>
+          <span className="text-[#e9c349] font-bold">‹ ›</span>
+        </div>
+      </div>
 
-              <div className="text-right flex items-center gap-2">
-                <div className="flex flex-col items-end gap-1">
-                  <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#0e3e30] text-[#e9c349] border border-[#e9c349]/30">
-                    {task.priority}
-                  </span>
-                  <span className="text-[10px] text-[#c0c8c3]">⏱ {task.durationMinutes}m</span>
-                </div>
-                {onDeleteTask && (
-                  <button
-                    type="button"
-                    aria-label="Delete Task"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDeleteTask(task.id);
-                    }}
-                    className="p-1.5 rounded-lg bg-[#1f201e] text-[#8a938e] hover:text-rose-400 hover:bg-rose-950/30 border border-[#414945]/30 active:scale-95 transition-all cursor-pointer"
-                    title="Delete task"
-                  >
-                    <span className="material-symbols-outlined text-[16px]">delete</span>
-                  </button>
-                )}
-              </div>
-            </div>
-          );
-        })}
+      {/* Time blocked schedule list */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-2.5">
+        {tasks.map((task) => (
+          <SwipeableScheduleCard
+            key={task.id}
+            task={task}
+            borderColors={borderColors}
+            onToggleTask={onToggleTask}
+            onSelectTask={onSelectTask}
+            onDeleteTask={onDeleteTask}
+            onNavigate={onNavigate}
+          />
+        ))}
       </div>
 
       {/* Floating Action Button */}

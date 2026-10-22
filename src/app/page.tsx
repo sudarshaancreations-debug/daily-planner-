@@ -14,6 +14,7 @@ import {
   Screen08DailyPlanner,
   Screen09AddTask,
   Screen10TaskDetails,
+  SwipeableScheduleCard,
 } from '@/nimora/screens/PlanningScreens';
 import {
   Screen11Contacts,
@@ -406,97 +407,38 @@ export default function NimoraApp() {
               </button>
             </div>
 
-            {tasks.map((task) => {
-              const isCompleted = task.status === 'completed';
-              const borderColors: Record<string, string> = {
-                blue: 'border-l-blue-500',
-                green: 'border-l-emerald-500',
-                coral: 'border-l-orange-400',
-                orange: 'border-l-orange-400',
-                gray: 'border-l-gray-400',
-              };
+            {/* Swipe instruction hint */}
+            <div className="p-2 bg-[#1f201e]/60 border border-[#414945]/30 rounded-xl flex items-center justify-between text-[10px] text-[#c0c8c3]">
+              <span className="flex items-center gap-1">
+                <span className="material-symbols-outlined text-[13px] text-[#e9c349]">swipe</span>
+                <span>Slide right or left to reveal <strong>Edit</strong> & <strong>Delete</strong></span>
+              </span>
+              <span className="text-[#e9c349] font-bold">‹ ›</span>
+            </div>
 
-              return (
-                <article
-                  key={task.id}
-                  onClick={() => {
-                    setSelectedTask(task);
-                    setActiveTab('task_details');
-                  }}
-                  className={`glass-card specular-border rounded-xl p-4 border-l-[3px] ${
-                    borderColors[task.color] || 'border-l-emerald-500'
-                  } shadow-sm flex items-start justify-between gap-3 transition-all cursor-pointer ${
-                    isCompleted ? 'opacity-50' : 'hover:scale-[1.01]'
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    {/* Tactile Checkbox */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleToggleTask(task.id);
-                      }}
-                      aria-label="Complete Task"
-                      className={`mt-0.5 w-5 h-5 rounded border border-[#e9c349]/50 flex items-center justify-center hover:bg-[#e9c349]/20 transition-colors ${
-                        isCompleted ? 'bg-[#e9c349] text-gray-950' : ''
-                      }`}
-                    >
-                      {isCompleted && (
-                        <span className="material-symbols-outlined text-[16px] font-bold">check</span>
-                      )}
-                    </button>
-
-                    <div className="space-y-0.5">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-[#a1d1bd]">
-                          {task.startTime}
-                        </span>
-                        <span className="px-1.5 py-0.2 rounded text-[9px] font-semibold bg-[#0e3e30] text-[#a1d1bd] border border-[#a1d1bd]/30 uppercase">
-                          {task.category}
-                        </span>
-                      </div>
-                      <h4
-                        className={`font-['Space_Grotesk'] text-sm font-bold text-[#e3e2e0] ${
-                          isCompleted ? 'line-through' : ''
-                        }`}
-                      >
-                        {task.title}
-                      </h4>
-                      {task.subtitle && (
-                        <p className="text-xs text-[#c0c8c3]">{task.subtitle}</p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Quick Action Buttons */}
-                  <div className="flex items-center gap-1.5 self-center">
-                    <a
-                      aria-label="WhatsApp quick trigger"
-                      onClick={(e) => e.stopPropagation()}
-                      className="p-2 rounded-lg bg-[#1f201e] text-[#a1d1bd] border border-[#414945]/30 hover:border-[#a1d1bd]/50 active:scale-95 transition-all"
-                      href="https://wa.me/919876543210"
-                      target="_blank"
-                      rel="noreferrer"
-                      title="WhatsApp contact"
-                    >
-                      <span className="material-symbols-outlined text-[18px]">chat</span>
-                    </a>
-                    <button
-                      type="button"
-                      aria-label="Delete Task"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteTask(task.id);
-                      }}
-                      className="p-2 rounded-lg bg-[#1f201e] text-[#8a938e] hover:text-rose-400 hover:bg-rose-950/30 border border-[#414945]/30 active:scale-95 transition-all cursor-pointer"
-                      title="Delete task"
-                    >
-                      <span className="material-symbols-outlined text-[18px]">delete</span>
-                    </button>
-                  </div>
-                </article>
-              );
-            })}
+            {tasks.map((task) => (
+              <SwipeableScheduleCard
+                key={task.id}
+                task={task}
+                borderColors={{
+                  blue: 'border-l-blue-500',
+                  green: 'border-l-emerald-500',
+                  coral: 'border-l-orange-400',
+                  orange: 'border-l-orange-400',
+                  gray: 'border-l-gray-400',
+                }}
+                showWhatsApp={true}
+                onToggleTask={handleToggleTask}
+                onSelectTask={(t) => {
+                  setSelectedTask(t);
+                  setActiveTab('task_details');
+                }}
+                onDeleteTask={handleDeleteTask}
+                onNavigate={(mod) => {
+                  if (mod === 8) setActiveTab('task_details');
+                }}
+              />
+            ))}
           </section>
         </main>
       )}
