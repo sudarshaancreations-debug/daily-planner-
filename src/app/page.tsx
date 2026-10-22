@@ -110,9 +110,16 @@ export default function NimoraApp() {
   };
 
   const handleAddTask = (newTask: NimoraTask) => {
-    setTasks((prev) => [newTask, ...prev]);
+    setTasks((prev) => {
+      const updated = [newTask, ...prev];
+      try {
+        localStorage.setItem('nimora_planner_tasks', JSON.stringify(updated));
+      } catch (e) {
+        console.warn('Could not write to localStorage', e);
+      }
+      return updated;
+    });
     setSelectedTask(newTask);
-    setActiveTab('schedule');
   };
 
   const handleDeleteTask = (id: string) => {
@@ -502,7 +509,10 @@ export default function NimoraApp() {
               if (mod === 6) setActiveTab('schedule');
               else setActiveTab('home');
             }}
-            onAddTask={handleAddTask}
+            onAddTask={(task) => {
+              handleAddTask(task);
+              setActiveTab('schedule');
+            }}
           />
         </div>
       )}
@@ -532,7 +542,13 @@ export default function NimoraApp() {
             suggestions={INITIAL_AI_SUGGESTIONS}
             assistantName={assistantName}
             onUpdateAssistantName={handleUpdateAssistantName}
-            onNavigate={() => setActiveTab('home')}
+            onNavigate={(mod) => {
+              if (mod === 6) {
+                setActiveTab('schedule');
+              } else {
+                setActiveTab('home');
+              }
+            }}
             onAddTask={handleAddTask}
           />
         </div>

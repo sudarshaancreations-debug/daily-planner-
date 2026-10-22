@@ -244,7 +244,7 @@ export function Screen12ContactDetails({ contacts, onNavigate, selectedContact }
 
 // 11. Voice Assistant with live browser Speech Recognition + Text-to-Speech + Name Customization
 export function Screen13VoiceAssistant({
-  contacts,
+  contacts = [],
   onNavigate,
   onAddTask,
   assistantName = 'Nova',
@@ -257,6 +257,7 @@ export function Screen13VoiceAssistant({
   const [transcript, setTranscript] = useState('');
   const [typedInput, setTypedInput] = useState('');
   const [statusMessage, setStatusMessage] = useState(`Tap microphone to speak to ${name}`);
+  const [createdTask, setCreatedTask] = useState<NimoraTask | null>(null);
 
   const transcriptRef = useRef('');
   const recognitionRef = useRef<any>(null);
@@ -307,106 +308,98 @@ export function Screen13VoiceAssistant({
     if (!text || !text.trim()) return;
     const cleanText = text.trim();
     const lower = cleanText.toLowerCase();
+    transcriptRef.current = ''; // prevent duplicate execution
     setStatusMessage(`Processing: "${cleanText}"`);
 
-    // Natural Language intent parsing
-    if (
-      lower.includes('add') ||
-      lower.includes('schedule') ||
-      lower.includes('create') ||
-      lower.includes('task') ||
-      lower.includes('call') ||
-      lower.includes('meeting') ||
-      lower.includes('visit') ||
-      lower.includes('review')
-    ) {
-      // 1. Clean Title
-      let cleanTitle = cleanText
-        .replace(
-          new RegExp(`^(hey\\s+)?(${name}|assistant|nova|jarvis|aria|friday)\\s*[,.:]?\\s*`, 'i'),
-          ''
-        )
-        .replace(/^(add|create|schedule|please\s+add|please\s+schedule)\s+(a\s+)?(task\s+)?(to\s+)?/i, '')
-        .trim();
+    // 1. Clean Title: strip assistant invocation and polite prefixes
+    let cleanTitle = cleanText
+      .replace(
+        new RegExp(`^(hey\\s+)?(${name}|assistant|nova|jarvis|aria|friday|gemini|atlas)\\s*[,.:]?\\s*`, 'i'),
+        ''
+      )
+      .replace(
+        /^(can\s+you\s+|please\s+|could\s+you\s+)?(remind\s+me\s+to\s+|i\s+need\s+to\s+|don't\s+forget\s+to\s+|remember\s+to\s+|schedule\s+a\s+|schedule\s+|add\s+a\s+task\s+to\s+|add\s+a\s+|add\s+task\s+|add\s+|create\s+a\s+|create\s+task\s+|create\s+|book\s+a\s+|book\s+|make\s+a\s+note\s+to\s+|set\s+a\s+reminder\s+to\s+|set\s+up\s+a\s+|set\s+up\s+)?/i,
+        ''
+      )
+      .trim();
 
-      if (!cleanTitle) cleanTitle = cleanText;
+    if (!cleanTitle) cleanTitle = cleanText;
 
-      // 2. Extract Category
-      let category: NimoraTask['category'] = 'task';
-      let color: NimoraTask['color'] = 'green';
-      if (lower.includes('call') || lower.includes('phone')) {
-        category = 'call';
-        color = 'blue';
-      } else if (lower.includes('follow') || lower.includes('status update')) {
-        category = 'followup';
-        color = 'orange';
-      } else if (lower.includes('note') || lower.includes('remember')) {
-        category = 'note';
-        color = 'gray';
+    // 2. Extract Category
+    let category: NimoraTask['category'] = 'task';
+    let color: NimoraTask['color'] = 'green';
+    if (lower.includes('call') || lower.includes('phone') || lower.includes('ring') || lower.includes('contact')) {
+      category = 'call';
+      color = 'blue';
+    } else if (lower.includes('follow') || lower.includes('status update') || lower.includes('check in')) {
+      category = 'followup';
+      color = 'orange';
+    } else if (lower.includes('meeting') || lower.includes('meet') || lower.includes('discuss') || lower.includes('appointment')) {
+      category = 'task';
+      color = 'coral';
+    } else if (lower.includes('note') || lower.includes('remember') || lower.includes('idea') || lower.includes('write down')) {
+      category = 'note';
+      color = 'gray';
+    }
+
+    // 3. Extract Time
+    let startTime = '11:00 AM';
+    const timeMatch = cleanText.match(/\b(?:at\s+)?(\d{1,2}(?::\d{2})?\s*(?:am|pm)?)\b/i);
+    if (timeMatch && timeMatch[1]) {
+      let rawT = timeMatch[1].trim().toUpperCase();
+      if (!rawT.includes('AM') && !rawT.includes('PM')) {
+        const num = parseInt(rawT);
+        rawT = num >= 8 && num <= 11 ? `${num}:00 AM` : `${num}:00 PM`;
       }
+      startTime = rawT;
+    }
 
-      // 3. Extract Time
-      let startTime = '11:00 AM';
-      const timeMatch = cleanText.match(/\b(?:at\s+)?(\d{1,2}(?::\d{2})?\s*(?:am|pm)?)\b/i);
-      if (timeMatch && timeMatch[1]) {
-        let rawT = timeMatch[1].trim().toUpperCase();
-        if (!rawT.includes('AM') && !rawT.includes('PM')) {
-          const num = parseInt(rawT);
-          rawT = num >= 8 && num <= 11 ? `${num}:00 AM` : `${num}:00 PM`;
-        }
-        startTime = rawT;
-      }
-
-      // 4. Extract Date
-      let dateStr = new Date().toLocaleDateString('en-US', {
+    // 4. Extract Date
+    let dateStr = new Date().toLocaleDateString('en-US', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+    if (lower.includes('tomorrow')) {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      dateStr = tomorrow.toLocaleDateString('en-US', {
         weekday: 'short',
         day: 'numeric',
         month: 'short',
         year: 'numeric',
       });
-      if (lower.includes('tomorrow')) {
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        dateStr = tomorrow.toLocaleDateString('en-US', {
-          weekday: 'short',
-          day: 'numeric',
-          month: 'short',
-          year: 'numeric',
-        });
-      }
-
-      // 5. Match Contact
-      const matchedContact = contacts.find((c) =>
-        lower.includes(c.name.toLowerCase().split(' ')[0]) ||
-        lower.includes(c.company.toLowerCase().split(' ')[0])
-      );
-
-      const newTask: NimoraTask = {
-        id: `t_voice_${Date.now()}`,
-        title: cleanTitle.charAt(0).toUpperCase() + cleanTitle.slice(1),
-        subtitle: matchedContact
-          ? `${matchedContact.name} · ${matchedContact.company}`
-          : `Created via ${name} Voice Assistant`,
-        category,
-        date: dateStr,
-        startTime,
-        endTime: '11:45 AM',
-        durationMinutes: 45,
-        priority: lower.includes('urgent') || lower.includes('high') ? 'high' : 'medium',
-        status: 'upcoming',
-        color,
-        relatedContactId: matchedContact?.id,
-        notes: `Voice input: "${cleanText}"`,
-      };
-
-      onAddTask?.(newTask);
-      setStatusMessage(`✓ Added: ${newTask.title}`);
-      speakFeedback(`Added ${newTask.title} to your schedule for ${startTime}.`);
-      setTimeout(() => onNavigate?.(6), 1400);
-    } else {
-      setStatusMessage(`✓ ${name}: Command received.`);
-      speakFeedback(`I heard "${cleanText}". What task would you like to schedule?`);
     }
+
+    // 5. Match Contact
+    const matchedContact = (contacts || []).find((c) =>
+      lower.includes(c.name.toLowerCase().split(' ')[0]) ||
+      lower.includes(c.company.toLowerCase().split(' ')[0])
+    );
+
+    const newTask: NimoraTask = {
+      id: `t_voice_${Date.now()}`,
+      title: cleanTitle.charAt(0).toUpperCase() + cleanTitle.slice(1),
+      subtitle: matchedContact
+        ? `${matchedContact.name} · ${matchedContact.company}`
+        : `Created via ${name} Voice Assistant`,
+      category,
+      date: dateStr,
+      startTime,
+      endTime: '11:45 AM',
+      durationMinutes: 45,
+      priority: lower.includes('urgent') || lower.includes('high') || lower.includes('asap') ? 'high' : 'medium',
+      status: 'upcoming',
+      color,
+      relatedContactId: matchedContact?.id,
+      notes: `Voice input: "${cleanText}"`,
+    };
+
+    onAddTask?.(newTask);
+    setCreatedTask(newTask);
+    setStatusMessage(`✓ Added to Schedule: ${newTask.title}`);
+    speakFeedback(`Added ${newTask.title} to your schedule for ${startTime}.`);
   };
 
   const stopRecording = () => {
@@ -443,7 +436,7 @@ export function Screen13VoiceAssistant({
         transcriptRef.current = sample;
         setIsRecording(false);
         processVoiceCommand(sample);
-      }, 1800);
+      }, 1600);
       return;
     }
 
@@ -462,16 +455,11 @@ export function Screen13VoiceAssistant({
       };
 
       recognition.onresult = (event: any) => {
-        let finalStr = '';
-        let interimStr = '';
+        let full = '';
         for (let i = 0; i < event.results.length; i++) {
-          if (event.results[i].isFinal) {
-            finalStr += event.results[i][0].transcript;
-          } else {
-            interimStr += event.results[i][0].transcript;
-          }
+          full += event.results[i][0].transcript;
         }
-        const current = finalStr || interimStr;
+        const current = full.trim();
         transcriptRef.current = current;
         setTranscript(current);
       };
@@ -479,7 +467,13 @@ export function Screen13VoiceAssistant({
       recognition.onerror = (e: any) => {
         console.warn('SpeechRecognition error:', e);
         setIsRecording(false);
-        setStatusMessage('Microphone access closed. Tap mic or type below.');
+        if (e.error === 'not-allowed') {
+          setStatusMessage('Microphone access blocked. Allow mic or type your command below.');
+        } else if (e.error === 'no-speech') {
+          setStatusMessage('No speech detected. Tap mic to try again or type below.');
+        } else {
+          setStatusMessage(`Speech error (${e.error}). Tap mic or type command below.`);
+        }
       };
 
       recognition.onend = () => {
@@ -526,10 +520,10 @@ export function Screen13VoiceAssistant({
           </button>
         </div>
         <button
-          onClick={() => onNavigate?.(5)}
-          className="w-7 h-7 rounded-full bg-[#1f201e] border border-[#414945]/40 flex items-center justify-center text-white hover:text-[#e9c349] font-bold text-xs"
+          onClick={() => onNavigate?.(6)}
+          className="text-[#e9c349] hover:underline flex items-center gap-1 font-semibold text-xs cursor-pointer"
         >
-          ✕
+          Daily Schedule ›
         </button>
       </div>
 
@@ -595,6 +589,47 @@ export function Screen13VoiceAssistant({
         {transcript && (
           <div className="glass-card specular-border p-3 rounded-2xl max-w-[280px] text-xs text-[#a1d1bd] italic shadow-sm">
             &ldquo;{transcript}&rdquo;
+          </div>
+        )}
+
+        {/* Created Task Confirmation Card */}
+        {createdTask && (
+          <div className="glass-card specular-border p-3.5 rounded-2xl max-w-[300px] w-full border-2 border-[#e9c349]/70 bg-[#0e3e30]/90 text-left shadow-2xl">
+            <div className="flex items-center justify-between text-[10px] text-[#e9c349] font-bold">
+              <span className="flex items-center gap-1">
+                <span className="material-symbols-outlined text-[14px]">check_circle</span>
+                TASK ADDED TO SCHEDULE
+              </span>
+              <span className="bg-[#e9c349]/20 px-1.5 py-0.5 rounded text-[#e9c349] uppercase">
+                {createdTask.startTime}
+              </span>
+            </div>
+            <h4 className="font-bold text-sm text-[#e3e2e0] mt-1.5">
+              {createdTask.title}
+            </h4>
+            <p className="text-[11px] text-[#a1d1bd] mt-0.5">
+              {createdTask.subtitle}
+            </p>
+            <div className="flex items-center gap-2 mt-3 pt-2.5 border-t border-[#414945]/40">
+              <button
+                type="button"
+                onClick={() => onNavigate?.(6)}
+                className="flex-1 py-1.5 px-3 rounded-xl bg-gradient-to-r from-[#e9c349] to-[#af8d11] text-gray-950 text-xs font-bold text-center flex items-center justify-center gap-1 shadow-md hover:brightness-105 active:scale-95 transition-all cursor-pointer"
+              >
+                <span>View in Schedule</span>
+                <span>›</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setCreatedTask(null);
+                  setStatusMessage(`Tap microphone to speak to ${name}`);
+                }}
+                className="py-1.5 px-3 rounded-xl bg-[#1f201e] border border-[#414945]/40 text-[#c0c8c3] hover:text-white text-xs font-semibold cursor-pointer active:scale-95 transition-all"
+              >
+                + Next
+              </button>
+            </div>
           </div>
         )}
 
