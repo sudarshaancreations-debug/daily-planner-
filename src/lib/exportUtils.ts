@@ -7,26 +7,16 @@ export function generateICS(tasks: NimoraTask[], calendarName = 'NIMORA Daily Ag
   const now = new Date();
   const timestamp = now.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
 
-  // Format date helper: 2026-10-20
+  // Format date helper: converts dateStr (YYYY-MM-DD) and timeStr (e.g. "9:00 AM") to iCalendar format
   const parseTaskDateTime = (dateStr: string, timeStr: string) => {
-    // Convert dateStr (YYYY-MM-DD) and timeStr (e.g., "9:00 AM") to iCalendar datetime (YYYYMMDDTHHMMSS)
+    if (!timeStr) return `${dateStr.replace(/-/g, '')}T090000`;
     const [t, meridiem] = timeStr.split(' ');
-    let [hours, minutes] = t.split(':').map(Number);
+    let [hours, minutes] = (t || '09:00').split(':').map(Number);
     if (meridiem === 'PM' && hours < 12) hours += 12;
     if (meridiem === 'AM' && hours === 12) hours = 0;
     const pad = (n: number) => n.toString().padStart(2, '0');
-    const datePart = dateStr.replace(/-/g, ''); // YYYYMMDD
-    return `${datePart}T${pad(hours)}${pad(minutes)}00`;
-  }
-    // e.g. "9:00 AM", "11:30 AM", "1:00 PM"
-    const [t, meridiem] = timeStr.split(' ');
-    let [hours, minutes] = t.split(':').map(Number);
-    if (meridiem === 'PM' && hours < 12) hours += 12;
-    if (meridiem === 'AM' && hours === 12) hours = 0;
-
-    const pad = (n: number) => n.toString().padStart(2, '0');
-    // Using default fixed date 20261020 for the mockup day or current year
-    return `20261020T${pad(hours)}${pad(minutes)}00`;
+    const datePart = dateStr ? dateStr.replace(/-/g, '') : '20261020';
+    return `${datePart}T${pad(hours || 0)}${pad(minutes || 0)}00`;
   };
 
   let ics = [
