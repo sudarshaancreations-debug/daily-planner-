@@ -211,6 +211,8 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
   const [time, setTime] = useState('10:00 AM');
   const [duration, setDuration] = useState('30');
   const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isDictating, setIsDictating] = useState(false);
 
   const formatDisplayDate = (isoDate: string) => {
     try {
@@ -224,8 +226,10 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
 
   const calculateEndTime = (startTimeStr: string, durMins: number) => {
     try {
-      const [t, meridiem] = startTimeStr.split(' ');
-      let [h, m] = (t || '10:00').split(':').map(Number);
+      const parts = startTimeStr.split(' ');
+      const t = parts[0] || '10:00';
+      const meridiem = parts[1] || 'AM';
+      let [h, m] = t.split(':').map(Number);
       if (meridiem === 'PM' && h < 12) h += 12;
       if (meridiem === 'AM' && h === 12) h = 0;
       const total = h * 60 + (m || 0) + durMins;
@@ -239,13 +243,82 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
     }
   };
 
+  const handleStartDictation = () => {
+    if (typeof window === 'undefined') return;
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setErrorMessage('Voice recognition not supported in this browser');
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => {
+        setIsDictating(true);
+        setErrorMessage('');
+      };
+
+      recognition.onresult = (event: any) => {
+        const spoken = event.results[0][0].transcript;
+        if (spoken) {
+          setTitle(spoken);
+          const lower = spoken.toLowerCase();
+          if (lower.includes('call')) setActiveTab('call');
+          else if (lower.includes('follow') || lower.includes('update')) setActiveTab('followup');
+          else if (lower.includes('note') || lower.includes('remember')) setActiveTab('note');
+
+          if (lower.includes('urgent') || lower.includes('high')) setPriority('high');
+
+          // Check if contacts match spoken words
+          const matchedContact = contacts.find((c) =>
+            lower.includes(c.name.toLowerCase().split(' ')[0])
+          );
+          if (matchedContact) {
+            setSelectedContact(matchedContact.id);
+          }
+        }
+        setIsDictating(false);
+      };
+
+      recognition.onerror = () => {
+        setIsDictating(false);
+      };
+
+      recognition.onend = () => {
+        setIsDictating(false);
+      };
+
+      recognition.start();
+    } catch {
+      setIsDictating(false);
+    }
+  };
+
+  const handleQuickDate = (offsetDays: number) => {
+    const d = new Date();
+    d.setDate(d.getDate() + offsetDays);
+    setDate(d.toISOString().split('T')[0]);
+  };
+
   const handleSubmit = () => {
-    if (!title.trim()) return;
+    if (!title.trim()) {
+      setErrorMessage('Please enter a task title to continue');
+      return;
+    }
+    setErrorMessage('');
     const durNum = parseInt(duration) || 30;
+    const contactObj = contacts.find((c) => c.id === selectedContact);
+    const subtitleText = description.trim() || (contactObj ? `${contactObj.name} · ${contactObj.company}` : undefined);
+
     const newTask: NimoraTask = {
       id: `t_${Date.now()}`,
       title: title.trim(),
-      subtitle: description.trim() || undefined,
+      subtitle: subtitleText,
       category: activeTab,
       date: formatDisplayDate(date),
       startTime: time,
@@ -253,7 +326,7 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
       durationMinutes: durNum,
       priority,
       status: 'upcoming',
-      color: activeTab === 'call' ? 'blue' : activeTab === 'followup' ? 'orange' : 'green',
+      color: activeTab === 'call' ? 'blue' : activeTab === 'followup' ? 'orange' : activeTab === 'note' ? 'gray' : 'green',
       relatedContactId: selectedContact || undefined,
       notes: description.trim(),
     };
@@ -262,71 +335,168 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
   };
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#121412] text-[#e3e2e0] flex flex-col justify-between p-5 select-none rounded-[38px]">
+    <div className="w-full h-full min-h-[680px] bg-[#121412] text-[#e3e2e0] flex flex-col justify-between p-5 select-none rounded-[38px] shadow-2xl">
       <div>
         {/* Top bar */}
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-base font-bold text-[#e3e2e0] font-['Space_Grotesk']">Add New Task</h2>
-          <button onClick={() => onNavigate?.(6)} className="text-[#c0c8c3] hover:text-white text-sm">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-[#e9c349] text-[22px]">add_task</span>
+            <h2 className="text-base font-bold text-[#e3e2e0] font-['Space_Grotesk']">Add New Task</h2>
+          </div>
+          <button
+            onClick={() => onNavigate?.(6)}
+            className="w-8 h-8 rounded-full bg-[#1f201e] border border-[#414945]/40 flex items-center justify-center text-[#c0c8c3] hover:text-white transition-colors"
+          >
             ✕
           </button>
         </div>
 
-        {/* Item type tabs */}
-        <div className="grid grid-cols-4 gap-1 p-1 bg-[#1f201e] rounded-xl mb-4 border border-[#414945]/30">
-          {(['task', 'followup', 'call', 'note'] as const).map((tab) => (
+        {/* Item type tabs with rich icons */}
+        <div className="grid grid-cols-4 gap-1.5 p-1 bg-[#1f201e] rounded-xl mb-4 border border-[#414945]/30">
+          {(
+            [
+              { id: 'task', label: 'Task', icon: 'task_alt', color: '#10B981' },
+              { id: 'followup', label: 'Follow-up', icon: 'history', color: '#F59E0B' },
+              { id: 'call', label: 'Call', icon: 'call', color: '#3B82F6' },
+              { id: 'note', label: 'Note', icon: 'edit_note', color: '#8B5CF6' },
+            ] as const
+          ).map((tab) => (
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`py-1.5 rounded-lg text-[11px] font-semibold capitalize transition-all ${
-                activeTab === tab ? 'bg-[#0e3e30] text-[#e9c349] shadow-sm border border-[#e9c349]/30' : 'text-[#c0c8c3]'
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`py-2 px-1 rounded-lg text-[11px] font-semibold flex flex-col items-center gap-1 transition-all ${
+                activeTab === tab.id
+                  ? 'bg-[#0e3e30] text-[#e9c349] shadow-sm border border-[#e9c349]/40'
+                  : 'text-[#c0c8c3] hover:text-white'
               }`}
             >
-              {tab === 'followup' ? 'Follow-up' : tab}
+              <span className="material-symbols-outlined text-[16px]">{tab.icon}</span>
+              <span>{tab.label}</span>
             </button>
           ))}
         </div>
 
-        {/* Inputs */}
+        {/* Form Inputs */}
         <div className="space-y-3">
+          {/* Title with AI speech dictation button */}
           <div>
-            <label className="text-[10px] font-semibold text-[#c0c8c3] uppercase tracking-wider block mb-1">
-              Task Title
-            </label>
+            <div className="flex justify-between items-center mb-1">
+              <label className="text-[10px] font-semibold text-[#c0c8c3] uppercase tracking-wider block">
+                Task Title *
+              </label>
+              <button
+                type="button"
+                onClick={handleStartDictation}
+                className={`text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 transition-all ${
+                  isDictating
+                    ? 'bg-rose-500/30 text-rose-300 border border-rose-500/50 animate-pulse'
+                    : 'bg-[#0e3e30] text-[#a1d1bd] border border-[#a1d1bd]/30 hover:border-[#e9c349]'
+                }`}
+                title="Dictate with voice"
+              >
+                <span className="material-symbols-outlined text-[12px]">mic</span>
+                {isDictating ? 'Listening...' : 'AI Voice Dictate'}
+              </button>
+            </div>
             <input
               type="text"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Review drawings & specs"
-              className="w-full bg-[#1f201e] border border-[#414945]/40 rounded-xl px-3.5 py-2.5 text-xs text-[#e3e2e0] outline-none focus:border-[#e9c349] shadow-sm placeholder-[#8a938e]"
+              onChange={(e) => {
+                setTitle(e.target.value);
+                if (errorMessage) setErrorMessage('');
+              }}
+              placeholder="e.g. Site inspection at Skyline Tower B"
+              className={`w-full bg-[#1f201e] border rounded-xl px-3.5 py-2.5 text-xs text-[#e3e2e0] outline-none shadow-sm placeholder-[#8a938e] transition-colors ${
+                errorMessage ? 'border-rose-500 ring-1 ring-rose-500' : 'border-[#414945]/40 focus:border-[#e9c349]'
+              }`}
             />
+            {errorMessage && (
+              <p className="text-[10px] text-rose-400 mt-1 flex items-center gap-1">
+                <span className="material-symbols-outlined text-[12px]">error</span>
+                {errorMessage}
+              </p>
+            )}
           </div>
 
+          {/* Description */}
           <div>
             <label className="text-[10px] font-semibold text-[#c0c8c3] uppercase tracking-wider block mb-1">
-              Description (Optional)
+              Description & Notes
             </label>
             <textarea
               rows={2}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Add details, location or notes..."
+              placeholder="Add key milestones, deliverables or location notes..."
               className="w-full bg-[#1f201e] border border-[#414945]/40 rounded-xl px-3.5 py-2 text-xs text-[#e3e2e0] outline-none focus:border-[#e9c349] resize-none shadow-sm placeholder-[#8a938e]"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-2.5">
+          {/* Date Picker + Quick Chips */}
+          <div>
+            <div className="flex justify-between items-center mb-1">
+              <label className="text-[10px] font-semibold text-[#8a938e] uppercase tracking-wider">
+                Date
+              </label>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => handleQuickDate(0)}
+                  className="text-[9px] px-2 py-0.5 rounded bg-[#1f201e] hover:bg-[#292a29] text-[#a1d1bd] border border-[#414945]/30"
+                >
+                  Today
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleQuickDate(1)}
+                  className="text-[9px] px-2 py-0.5 rounded bg-[#1f201e] hover:bg-[#292a29] text-[#a1d1bd] border border-[#414945]/30"
+                >
+                  Tomorrow
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleQuickDate(7)}
+                  className="text-[9px] px-2 py-0.5 rounded bg-[#1f201e] hover:bg-[#292a29] text-[#a1d1bd] border border-[#414945]/30"
+                >
+                  +7d
+                </button>
+              </div>
+            </div>
             <div className="p-2.5 bg-[#1f201e] border border-[#414945]/40 rounded-xl shadow-sm">
-              <span className="text-[10px] text-[#8a938e] uppercase font-semibold block mb-0.5">Date</span>
               <input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
+                style={{ colorScheme: 'dark' }}
                 className="text-xs font-bold text-[#e3e2e0] outline-none bg-transparent w-full cursor-pointer"
               />
             </div>
-            <div className="p-2.5 bg-[#1f201e] border border-[#414945]/40 rounded-xl shadow-sm">
-              <span className="text-[10px] text-[#8a938e] uppercase font-semibold block mb-0.5">Time</span>
+          </div>
+
+          {/* Time Picker + Quick Chips */}
+          <div>
+            <div className="flex justify-between items-center mb-1">
+              <label className="text-[10px] font-semibold text-[#8a938e] uppercase tracking-wider">
+                Start Time
+              </label>
+              <div className="flex items-center gap-1">
+                {['09:00 AM', '11:30 AM', '02:00 PM', '04:30 PM'].map((tChip) => (
+                  <button
+                    key={tChip}
+                    type="button"
+                    onClick={() => setTime(tChip)}
+                    className={`text-[9px] px-1.5 py-0.5 rounded border transition-all ${
+                      time === tChip
+                        ? 'bg-[#0e3e30] text-[#e9c349] border-[#e9c349]/50 font-bold'
+                        : 'bg-[#1f201e] text-[#c0c8c3] border-[#414945]/30 hover:text-white'
+                    }`}
+                  >
+                    {tChip.split(' ')[0]}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="p-2.5 bg-[#1f201e] border border-[#414945]/40 rounded-xl shadow-sm flex items-center justify-between">
               <input
                 type="text"
                 value={time}
@@ -334,9 +504,13 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
                 placeholder="10:00 AM"
                 className="text-xs font-bold text-[#e3e2e0] outline-none bg-transparent w-full"
               />
+              <span className="text-[10px] text-[#e9c349] font-semibold shrink-0">
+                End: {calculateEndTime(time, parseInt(duration) || 30)}
+              </span>
             </div>
           </div>
 
+          {/* Duration & Priority Grid */}
           <div className="grid grid-cols-2 gap-2.5">
             <div className="p-2.5 bg-[#1f201e] border border-[#414945]/40 rounded-xl shadow-sm">
               <span className="text-[10px] text-[#8a938e] uppercase font-semibold block mb-0.5">Duration</span>
@@ -348,8 +522,8 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
                 <option className="bg-[#1f201e] text-[#e3e2e0]" value="15">15 minutes</option>
                 <option className="bg-[#1f201e] text-[#e3e2e0]" value="30">30 minutes</option>
                 <option className="bg-[#1f201e] text-[#e3e2e0]" value="45">45 minutes</option>
-                <option className="bg-[#1f201e] text-[#e3e2e0]" value="60">60 minutes</option>
-                <option className="bg-[#1f201e] text-[#e3e2e0]" value="90">90 minutes</option>
+                <option className="bg-[#1f201e] text-[#e3e2e0]" value="60">1 hour</option>
+                <option className="bg-[#1f201e] text-[#e3e2e0]" value="90">1.5 hours</option>
                 <option className="bg-[#1f201e] text-[#e3e2e0]" value="120">2 hours</option>
               </select>
             </div>
@@ -360,26 +534,27 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
                 onChange={(e) => setPriority(e.target.value as any)}
                 className="text-xs font-bold text-[#e3e2e0] bg-transparent outline-none w-full cursor-pointer"
               >
-                <option className="bg-[#1f201e] text-[#e3e2e0]" value="low">Low</option>
-                <option className="bg-[#1f201e] text-[#e3e2e0]" value="medium">Medium</option>
-                <option className="bg-[#1f201e] text-[#e3e2e0]" value="high">High</option>
+                <option className="bg-[#1f201e] text-[#e3e2e0]" value="low">Low Priority</option>
+                <option className="bg-[#1f201e] text-[#e3e2e0]" value="medium">Medium Priority</option>
+                <option className="bg-[#1f201e] text-rose-400" value="high">High Priority</option>
               </select>
             </div>
           </div>
 
+          {/* Related Contact */}
           <div>
             <label className="text-[10px] font-semibold text-[#c0c8c3] uppercase tracking-wider block mb-1">
-              Related Contact (Optional)
+              Stakeholder / Contact (Optional)
             </label>
             <select
               value={selectedContact}
               onChange={(e) => setSelectedContact(e.target.value)}
-              className="w-full bg-[#1f201e] border border-[#414945]/40 rounded-xl px-3 py-2 text-xs text-[#e3e2e0] outline-none shadow-sm cursor-pointer"
+              className="w-full bg-[#1f201e] border border-[#414945]/40 rounded-xl px-3 py-2.5 text-xs text-[#e3e2e0] outline-none shadow-sm cursor-pointer"
             >
-              <option className="bg-[#1f201e] text-[#e3e2e0]" value="">Select contact (optional)</option>
+              <option className="bg-[#1f201e] text-[#8a938e]" value="">No contact associated</option>
               {contacts.map((c) => (
                 <option key={c.id} className="bg-[#1f201e] text-[#e3e2e0]" value={c.id}>
-                  {c.name} ({c.company})
+                  {c.name} — {c.company} ({c.category.toUpperCase()})
                 </option>
               ))}
             </select>
@@ -389,9 +564,10 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
 
       <button
         onClick={handleSubmit}
-        className="w-full py-3 rounded-2xl bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/50 text-[#e9c349] font-bold text-xs shadow-xl hover:brightness-110 active:scale-95 transition-all mt-4 font-['Space_Grotesk']"
+        className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/50 text-[#e9c349] font-bold text-xs shadow-xl hover:brightness-110 active:scale-95 transition-all mt-4 font-['Space_Grotesk'] flex items-center justify-center gap-2"
       >
-        Create Task
+        <span className="material-symbols-outlined text-[18px]">add_circle</span>
+        Save & Add to Schedule
       </button>
     </div>
   );

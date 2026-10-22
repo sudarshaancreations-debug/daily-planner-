@@ -95,7 +95,8 @@ export default function NimoraApp() {
 
   const handleAddTask = (newTask: NimoraTask) => {
     setTasks((prev) => [newTask, ...prev]);
-    setActiveTab('home');
+    setSelectedTask(newTask);
+    setActiveTab('schedule');
   };
 
   const handleDeleteTask = (id: string) => {
@@ -460,6 +461,7 @@ export default function NimoraApp() {
             onNavigate={(mod) => {
               if (mod === 5) setActiveTab('home');
               if (mod === 7) setActiveTab('add_task');
+              if (mod === 8) setActiveTab('task_details');
             }}
             onSelectTask={(task) => {
               setSelectedTask(task);
@@ -476,7 +478,10 @@ export default function NimoraApp() {
           <Screen09AddTask
             tasks={tasks}
             contacts={contacts}
-            onNavigate={() => setActiveTab('home')}
+            onNavigate={(mod) => {
+              if (mod === 6) setActiveTab('schedule');
+              else setActiveTab('home');
+            }}
             onAddTask={handleAddTask}
           />
         </div>
