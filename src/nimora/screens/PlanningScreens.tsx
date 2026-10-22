@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { NimoraTask, Contact } from '../data';
+import { downloadICS } from '@/lib/exportUtils';
 
 interface PlanningProps {
   tasks: NimoraTask[];
@@ -220,12 +221,22 @@ export function Screen08DailyPlanner({ tasks, onNavigate, onSelectTask }: Planni
           <h2 className="text-sm font-bold text-gray-900">Today</h2>
           <p className="text-[10px] text-gray-400">Tue, 20 Oct 2026</p>
         </div>
-        <button
-          onClick={() => onNavigate?.(7)}
-          className="w-7 h-7 rounded-full bg-emerald-800 text-white flex items-center justify-center text-sm font-bold shadow-sm"
-        >
-          +
-        </button>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => downloadICS(tasks, 'nimora-daily-agenda-2026-10-20.ics')}
+            className="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[10px] font-bold border border-emerald-200 flex items-center gap-1 shadow-sm transition-colors"
+            title="Download Calendar .ics"
+          >
+            <span>📅</span>
+            <span>.ics</span>
+          </button>
+          <button
+            onClick={() => onNavigate?.(7)}
+            className="w-7 h-7 rounded-full bg-emerald-800 text-white flex items-center justify-center text-sm font-bold shadow-sm"
+          >
+            +
+          </button>
+        </div>
       </div>
 
       {/* Time blocked schedule list */}
@@ -511,6 +522,13 @@ export function Screen10TaskDetails({ tasks, contacts, onNavigate, selectedTask 
       </div>
 
       <div className="flex gap-2 pt-3">
+        <button
+          onClick={() => downloadICS([task], `nimora-task-${task.id}.ics`)}
+          className="py-3 px-3 rounded-2xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold text-xs transition-all flex items-center justify-center gap-1 shadow-sm"
+          title="Export to Calendar"
+        >
+          <span>📅</span>
+        </button>
         <button
           onClick={() => onNavigate?.(15)}
           className="flex-1 py-3 rounded-2xl bg-emerald-100 text-emerald-900 font-semibold text-xs hover:bg-emerald-200 transition-all flex items-center justify-center gap-1.5"
