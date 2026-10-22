@@ -373,6 +373,11 @@ export function Screen08DailyPlanner({
     gray: 'border-l-gray-400',
   };
 
+  // Active tasks stay on top, completed tasks automatically move down to the bottom
+  const activeTasks = tasks.filter((t) => t.status !== 'completed');
+  const completedTasks = tasks.filter((t) => t.status === 'completed');
+  const orderedTasks = [...activeTasks, ...completedTasks];
+
   return (
     <div className="w-full h-full min-h-[680px] bg-[#121412] text-[#e3e2e0] flex flex-col justify-between select-none rounded-[38px] overflow-hidden relative">
       {/* Top Header */}
@@ -415,7 +420,7 @@ export function Screen08DailyPlanner({
 
       {/* Time blocked schedule list */}
       <div className="flex-1 overflow-y-auto p-4 space-y-2.5">
-        {tasks.map((task) => (
+        {orderedTasks.map((task) => (
           <SwipeableScheduleCard
             key={task.id}
             task={task}

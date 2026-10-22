@@ -64,8 +64,11 @@ export default function NimoraApp() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          setTasks(parsed);
-          setSelectedTask(parsed[0]);
+          const active = parsed.filter((t: NimoraTask) => t.status !== 'completed');
+          const completed = parsed.filter((t: NimoraTask) => t.status === 'completed');
+          const sorted = [...active, ...completed];
+          setTasks(sorted);
+          setSelectedTask(sorted[0]);
         }
       }
     } catch (e) {
@@ -101,24 +104,37 @@ export default function NimoraApp() {
   }, []);
 
   const handleToggleTask = (id: string) => {
-    setTasks((prev) =>
-      prev.map((t) =>
+    setTasks((prev) => {
+      const updated = prev.map((t) =>
         t.id === id
-          ? { ...t, status: t.status === 'completed' ? 'upcoming' : 'completed' }
+          ? { ...t, status: (t.status === 'completed' ? 'upcoming' : 'completed') as NimoraTask['status'] }
           : t
-      )
-    );
+      );
+      // Auto move completed tasks to the bottom, active tasks stay on top
+      const active = updated.filter((t) => t.status !== 'completed');
+      const completed = updated.filter((t) => t.status === 'completed');
+      const reordered = [...active, ...completed];
+      try {
+        localStorage.setItem('nimora_planner_tasks', JSON.stringify(reordered));
+      } catch (e) {
+        console.warn('Could not write to localStorage', e);
+      }
+      return reordered;
+    });
   };
 
   const handleAddTask = (newTask: NimoraTask) => {
     setTasks((prev) => {
-      const updated = [newTask, ...prev];
+      const combined = [newTask, ...prev];
+      const active = combined.filter((t) => t.status !== 'completed');
+      const completed = combined.filter((t) => t.status === 'completed');
+      const reordered = [...active, ...completed];
       try {
-        localStorage.setItem('nimora_planner_tasks', JSON.stringify(updated));
+        localStorage.setItem('nimora_planner_tasks', JSON.stringify(reordered));
       } catch (e) {
         console.warn('Could not write to localStorage', e);
       }
-      return updated;
+      return reordered;
     });
     setSelectedTask(newTask);
   };
@@ -148,8 +164,10 @@ export default function NimoraApp() {
   const progressPercent = Math.round((completedCount / totalCount) * 100);
   const remainingCount = tasks.filter((t) => t.status !== 'completed').length;
 
-  // Active high priority task
-  const activeFocusTask = tasks.find((t) => t.priority === 'high' && t.status !== 'completed') || tasks[0];
+  // Active high priority task: picks active high-priority task, then any active task, fallback to first task
+  const activeFocusTask = tasks.find((t) => t.priority === 'high' && t.status !== 'completed')
+    || tasks.find((t) => t.status !== 'completed')
+    || tasks[0];
 
   return (
     <div className="bg-[#121412] text-[#e3e2e0] min-h-screen antialiased selection:bg-[#a1d1bd] selection:text-[#05382a] relative pb-32 max-w-md mx-auto shadow-2xl">
