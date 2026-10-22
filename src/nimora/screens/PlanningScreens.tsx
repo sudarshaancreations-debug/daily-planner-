@@ -207,56 +207,71 @@ export function SwipeableScheduleCard({
     onDeleteTask?.(task.id);
   };
 
+  const showLeftActions = offsetX > 0;
+  const showRightActions = offsetX < 0;
+
   return (
-    <div className="relative overflow-hidden rounded-2xl select-none group my-1">
-      {/* Background Action Buttons Layer (Hidden underneath until slid) */}
-      <div className="absolute inset-0 flex items-center justify-between px-2 bg-[#0d0f0d] rounded-2xl border border-[#414945]/30">
-        {/* Left Side Actions (Revealed on Swipe Right) */}
-        <div className="flex items-center gap-1.5 z-0">
+    <div className="relative overflow-hidden rounded-2xl select-none my-1.5 bg-[#0f1411]">
+      {/* Background Action Buttons Layer (Completely invisible when card is closed) */}
+      <div
+        className={`absolute inset-0 flex items-center justify-between px-2 bg-[#0c100d] rounded-2xl border border-[#414945]/30 transition-opacity duration-150 ${
+          offsetX !== 0 ? 'opacity-100' : 'opacity-0 pointer-events-none invisible'
+        }`}
+      >
+        {/* Left Side Actions (Revealed ONLY when Swiping Right) */}
+        <div
+          className={`flex items-center gap-1.5 transition-all duration-150 ${
+            showLeftActions ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4 pointer-events-none invisible'
+          }`}
+        >
           <button
             type="button"
             onClick={handleEdit}
-            className="w-13 h-10 px-2 rounded-xl bg-gradient-to-r from-[#e9c349] to-[#af8d11] text-gray-950 font-bold text-xs flex flex-col items-center justify-center shadow-md active:scale-90 transition-transform cursor-pointer"
+            className="w-14 h-11 px-2 rounded-xl bg-gradient-to-br from-[#e9c349] to-[#c79e26] text-gray-950 font-bold text-xs flex flex-col items-center justify-center shadow-lg active:scale-90 transition-transform cursor-pointer"
             title="Edit Task"
           >
-            <span className="material-symbols-outlined text-[17px]">edit</span>
-            <span className="text-[9px]">Edit</span>
+            <span className="material-symbols-outlined text-[18px]">edit</span>
+            <span className="text-[10px] font-bold">Edit</span>
           </button>
           <button
             type="button"
             onClick={handleDelete}
-            className="w-13 h-10 px-2 rounded-xl bg-gradient-to-r from-rose-600 to-rose-700 text-white font-bold text-xs flex flex-col items-center justify-center shadow-md active:scale-90 transition-transform cursor-pointer"
+            className="w-14 h-11 px-2 rounded-xl bg-gradient-to-br from-rose-500 to-rose-700 text-white font-bold text-xs flex flex-col items-center justify-center shadow-lg active:scale-90 transition-transform cursor-pointer"
             title="Delete Task"
           >
-            <span className="material-symbols-outlined text-[17px]">delete</span>
-            <span className="text-[9px]">Delete</span>
+            <span className="material-symbols-outlined text-[18px]">delete</span>
+            <span className="text-[10px] font-bold">Delete</span>
           </button>
         </div>
 
-        {/* Right Side Actions (Revealed on Swipe Left) */}
-        <div className="flex items-center gap-1.5 z-0 ml-auto">
+        {/* Right Side Actions (Revealed ONLY when Swiping Left) */}
+        <div
+          className={`flex items-center gap-1.5 ml-auto transition-all duration-150 ${
+            showRightActions ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none invisible'
+          }`}
+        >
           <button
             type="button"
             onClick={handleEdit}
-            className="w-13 h-10 px-2 rounded-xl bg-gradient-to-r from-[#e9c349] to-[#af8d11] text-gray-950 font-bold text-xs flex flex-col items-center justify-center shadow-md active:scale-90 transition-transform cursor-pointer"
+            className="w-14 h-11 px-2 rounded-xl bg-gradient-to-br from-[#e9c349] to-[#c79e26] text-gray-950 font-bold text-xs flex flex-col items-center justify-center shadow-lg active:scale-90 transition-transform cursor-pointer"
             title="Edit Task"
           >
-            <span className="material-symbols-outlined text-[17px]">edit</span>
-            <span className="text-[9px]">Edit</span>
+            <span className="material-symbols-outlined text-[18px]">edit</span>
+            <span className="text-[10px] font-bold">Edit</span>
           </button>
           <button
             type="button"
             onClick={handleDelete}
-            className="w-13 h-10 px-2 rounded-xl bg-gradient-to-r from-rose-600 to-rose-700 text-white font-bold text-xs flex flex-col items-center justify-center shadow-md active:scale-90 transition-transform cursor-pointer"
+            className="w-14 h-11 px-2 rounded-xl bg-gradient-to-br from-rose-500 to-rose-700 text-white font-bold text-xs flex flex-col items-center justify-center shadow-lg active:scale-90 transition-transform cursor-pointer"
             title="Delete Task"
           >
-            <span className="material-symbols-outlined text-[17px]">delete</span>
-            <span className="text-[9px]">Delete</span>
+            <span className="material-symbols-outlined text-[18px]">delete</span>
+            <span className="text-[10px] font-bold">Delete</span>
           </button>
         </div>
       </div>
 
-      {/* Foreground Sliding Card */}
+      {/* Foreground Sliding Card (100% Solid Opaque Background: NOTHING shines through) */}
       <div
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -270,13 +285,11 @@ export function SwipeableScheduleCard({
           transform: `translateX(${offsetX}px)`,
           transition: isDragging ? 'none' : 'transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1)',
         }}
-        className={`relative z-10 glass-card specular-border p-3.5 rounded-2xl border-l-[3px] ${
+        className={`relative z-10 p-3.5 rounded-2xl border border-[#414945]/40 border-l-[3px] ${
           borderColors[task.color] || 'border-l-emerald-500'
-        } shadow-md flex items-start justify-between cursor-pointer bg-[#1f201e] hover:brightness-105 active:scale-[0.99] transition-all ${
-          isCompleted ? 'opacity-50' : ''
-        }`}
+        } shadow-md flex items-start justify-between cursor-pointer bg-[#18241e] hover:brightness-105 active:scale-[0.99] transition-all`}
       >
-        <div className="flex items-start gap-3 flex-1 min-w-0 pr-2">
+        <div className={`flex items-start gap-3 flex-1 min-w-0 pr-2 ${isCompleted ? 'opacity-55' : ''}`}>
           {/* Tactile Checkbox */}
           <button
             type="button"
@@ -299,9 +312,11 @@ export function SwipeableScheduleCard({
                 {task.category}
               </span>
             </div>
-            <h4 className={`text-xs font-bold leading-tight font-['Space_Grotesk'] mt-0.5 truncate ${
-              isCompleted ? 'line-through text-[#8a938e]' : 'text-[#e3e2e0]'
-            }`}>
+            <h4
+              className={`text-xs font-bold leading-tight font-['Space_Grotesk'] mt-0.5 truncate ${
+                isCompleted ? 'line-through text-[#8a938e]' : 'text-[#e3e2e0]'
+              }`}
+            >
               {task.title}
             </h4>
             {task.subtitle && (
@@ -311,7 +326,7 @@ export function SwipeableScheduleCard({
         </div>
 
         <div className="text-right flex items-center gap-2 shrink-0">
-          <div className="flex flex-col items-end gap-1">
+          <div className={`flex flex-col items-end gap-1 ${isCompleted ? 'opacity-55' : ''}`}>
             <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#0e3e30] text-[#e9c349] border border-[#e9c349]/30">
               {task.priority}
             </span>
