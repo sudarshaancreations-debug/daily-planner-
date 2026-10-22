@@ -9,6 +9,15 @@ export function generateICS(tasks: NimoraTask[], calendarName = 'NIMORA Daily Ag
 
   // Format date helper: 2026-10-20
   const parseTaskDateTime = (dateStr: string, timeStr: string) => {
+    // Convert dateStr (YYYY-MM-DD) and timeStr (e.g., "9:00 AM") to iCalendar datetime (YYYYMMDDTHHMMSS)
+    const [t, meridiem] = timeStr.split(' ');
+    let [hours, minutes] = t.split(':').map(Number);
+    if (meridiem === 'PM' && hours < 12) hours += 12;
+    if (meridiem === 'AM' && hours === 12) hours = 0;
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    const datePart = dateStr.replace(/-/g, ''); // YYYYMMDD
+    return `${datePart}T${pad(hours)}${pad(minutes)}00`;
+  }
     // e.g. "9:00 AM", "11:30 AM", "1:00 PM"
     const [t, meridiem] = timeStr.split(' ');
     let [hours, minutes] = t.split(':').map(Number);

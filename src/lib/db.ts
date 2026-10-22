@@ -78,7 +78,34 @@ export const db = {
     return plan;
   },
 
-  getStats(date: string) {
+  resetDemoData(): void {
+    const demoTasks: NimoraTask[] = [
+      {
+        id: 'demo-1',
+        title: 'Morning Review',
+        date: getToday(),
+        startTime: '9:00 AM',
+        endTime: '9:30 AM',
+        priority: 'high',
+        status: 'todo',
+        category: 'Work',
+        tags: ['review'],
+      },
+      {
+        id: 'demo-2',
+        title: 'Team Sync',
+        date: getToday(),
+        startTime: '10:00 AM',
+        endTime: '11:00 AM',
+        priority: 'medium',
+        status: 'todo',
+        category: 'Work',
+        tags: ['meeting'],
+      },
+    ];
+    const state = { tasks: demoTasks, plans: {} };
+    saveState(state as any);
+  },
     const tasks = this.getTasksByDate(date);
     return {
       total: tasks.length,

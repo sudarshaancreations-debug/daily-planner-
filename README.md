@@ -64,3 +64,26 @@ Endpoint: `POST /api/mcp`
 | `bulk_update_status` | Batch change task status |
 | `get_upcoming` | Get agenda for next N days |
 | `clear_completed` | Clean completed items for a date |
+
+## 📤 Export to Calendar
+
+The app provides two ways to export your tasks to iCalendar format:
+
+1. **Export current day** – Click the **Export Day** button on the top‑right of the Day view. This generates an `.ics` file containing all tasks for the selected date with correct `DTSTART`/`DTEND` values based on each task’s `date` and optional `time`.
+2. **Export all future tasks** – In the Settings screen there is an **Export All** button that creates an iCalendar file with every upcoming task (date ≥ today).
+
+Both files can be imported into Google Calendar, Apple Calendar, Outlook, or any other calendar app that supports the `.ics` format.
+
+### How to use
+```bash
+# From the UI – click the appropriate button → the file downloads automatically.
+# Or programmatically via the MCP tool `export_ics` (see the MCP JSON‑RPC docs).
+```
+
+The generated iCalendar follows the RFC 5545 spec and includes:
+- `UID` – a unique identifier for each task.
+- `SUMMARY` – the task title.
+- `DESCRIPTION` – optional description, tags, and priority.
+- `DTSTART` / `DTEND` – real dates/times derived from the task data.
+
+You can now add your planning data to any external calendar service without manual copy‑paste.

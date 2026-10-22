@@ -365,6 +365,20 @@ export function Screen18ProfileSettings({ onNavigate }: WidgetAndSettingsProps) 
             </div>
             <span className="text-gray-300 text-xs">›</span>
           </div>
+
+          {/* Go Premium – Google Pay / Apple Pay */}
+          <a
+            href="/payments"
+            className="p-3 bg-gradient-to-r from-emerald-600 to-teal-500 border border-emerald-400/40 rounded-2xl flex items-center justify-between cursor-pointer hover:opacity-90 transition-opacity shadow-sm"
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-sm">💎</span>
+              <span className="text-xs font-bold text-white">Go Premium</span>
+            </div>
+            <span className="text-[11px] font-semibold text-white/80 flex items-center gap-1">
+              Google Pay · Apple Pay <span className="text-white/60">›</span>
+            </span>
+          </a>
         </div>
 
         {/* Privacy Callout Cards matching right column of Screen 16 */}
