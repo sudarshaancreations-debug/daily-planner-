@@ -117,13 +117,14 @@ function ThumbSliderNav({ activeTab, onSelectTab }: ThumbSliderNavProps) {
 
   return (
     <div className="fixed bottom-0 left-0 w-full z-50 px-3 pb-3 max-w-md left-1/2 -translate-x-1/2 select-none">
-      {/* Slider Interactive Guide Badge */}
-      <div className="flex justify-center mb-1.5 pointer-events-none">
-        <div className="px-3 py-0.5 rounded-full liquid-glass text-[9px] font-mono tracking-widest text-[#bef264] uppercase flex items-center gap-1.5 shadow-md border border-purple-500/20">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#bef264] animate-pulse"></span>
-          <span>THUMB SLIDER · {currentHoveredTab.label.toUpperCase()}</span>
+      {/* Slider Interactive Guide Badge - Appears ONLY during active sliding gesture to keep UI clean */}
+      {isDragging && (
+        <div className="flex justify-center mb-1.5 pointer-events-none transition-opacity duration-150">
+          <div className="px-3 py-0.5 rounded-full liquid-glass text-[9px] font-mono tracking-widest text-[#bef264] uppercase flex items-center gap-1.5 shadow-md border border-purple-500/20">
+            <span>{currentHoveredTab.label.toUpperCase()}</span>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Main Thumb Slider Track */}
       <div
@@ -136,21 +137,16 @@ function ThumbSliderNav({ activeTab, onSelectTab }: ThumbSliderNavProps) {
         onMouseUp={handlePointerUp}
         className="thumb-slider-track relative h-16 rounded-full p-1.5 flex items-center justify-between cursor-grab active:cursor-grabbing shadow-2xl"
       >
-        {/* Sliding Elevated Liquid Glass Thumb Capsule */}
+        {/* Sliding Elevated Liquid Glass Thumb Capsule (Clean minimal glass surface with no dot or dash) */}
         <div
-          className="thumb-slider-capsule absolute top-1.5 bottom-1.5 rounded-full flex flex-col items-center justify-between py-1.5 transition-all"
+          className="thumb-slider-capsule absolute top-1.5 bottom-1.5 rounded-full transition-all"
           style={{
             width: 'calc(20% - 3px)',
             left: '1.5px',
             transform: `translateX(${sliderPos * 100}%)`,
             transition: isDragging ? 'none' : 'transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)',
           }}
-        >
-          {/* Top highlight indicator (Gen Z Acid Lime) */}
-          <div className="w-1.5 h-1.5 rounded-full bg-[#bef264] shadow-[0_0_10px_#bef264]"></div>
-          {/* Tactile thumb drag grip */}
-          <div className="w-4 h-0.5 rounded-full bg-white/70"></div>
-        </div>
+        />
 
         {/* 5 Destination Slots */}
         {tabs.map((tab, idx) => {
