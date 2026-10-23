@@ -16,8 +16,25 @@ interface Task {
   updatedAt: string;
 }
 
+const defaultTasks: Task[] = [
+  {
+    id: 't_default_01',
+    title: 'Executive Client Milestone Review',
+    description: 'Review project status and deliverables',
+    date: new Date().toISOString().split('T')[0],
+    time: '10:00 AM',
+    duration: 30,
+    priority: 'high',
+    status: 'todo',
+    category: 'Work',
+    tags: ['priority', 'client'],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
+
 const store: { tasks: Task[]; plans: Record<string, { notes: string; goals: string[] }> } = {
-  tasks: [],
+  tasks: [...defaultTasks],
   plans: {},
 };
 
@@ -28,7 +45,7 @@ function genId() {
 // 16 MCP tools
 const toolHandlers: Record<string, (args: Record<string, unknown>) => unknown> = {
   list_tasks: (args) => {
-    let tasks = store.tasks;
+    let tasks = store.tasks.length > 0 ? store.tasks : [...defaultTasks];
     if (args.date) tasks = tasks.filter(t => t.date === args.date);
     if (args.status) tasks = tasks.filter(t => t.status === args.status);
     if (args.category) tasks = tasks.filter(t => t.category === args.category);
