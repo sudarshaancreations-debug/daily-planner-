@@ -458,14 +458,6 @@ export function Screen07HomeDashboard({ tasks, onNavigate, onToggleTask, onSelec
     <div className="w-full h-full min-h-[680px] bg-[#0e0b1f] text-[#f8fafc] flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
       {/* Top Header */}
       <div className="p-5 pb-3 bg-[#0e0b1f]/80 border-b border-[#334155]/30">
-        <div className="flex justify-between items-center text-xs text-[#c0c8c3] mb-3">
-          <span className="font-semibold font-['Space_Grotesk']">9:41</span>
-          <div className="flex items-center gap-1.5 text-[#f8fafc]">
-            <span className="w-2 h-2 rounded-full bg-[#10B981]" />
-            <span>5G</span>
-          </div>
-        </div>
-
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[#0e3e30] text-[#bef264] font-bold flex items-center justify-center text-sm ring-2 ring-[#bef264]/30 shadow-sm font-['Space_Grotesk']">

@@ -212,7 +212,6 @@ export default function NimoraApp() {
   const [selectedContact, setSelectedContact] = useState<Contact>(INITIAL_CONTACTS[0]);
   const [assistantName, setAssistantName] = useState('Nova');
   const [isListening, setIsListening] = useState(false);
-  const [currentTime, setCurrentTime] = useState('9:41');
   const [isProUser, setIsProUser] = useState(false);
   const [isAnyDoMomentOpen, setIsAnyDoMomentOpen] = useState(false);
   const [selectedCalendarDate, setSelectedCalendarDate] = useState('2026-10-24');
@@ -283,16 +282,6 @@ export default function NimoraApp() {
       console.warn('Could not write to localStorage', e);
     }
   }, [tasks]);
-
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setCurrentTime(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 60000);
-    return () => clearInterval(interval);
-  }, []);
 
   const handleToggleTask = (id: string) => {
     setTasks((prev) => {
@@ -388,20 +377,8 @@ export default function NimoraApp() {
 
   return (
     <div className="bg-[#0e0b1f] text-[#f8fafc] min-h-screen antialiased selection:bg-[#bef264]/30 selection:text-[#bef264] relative pb-32 max-w-md mx-auto shadow-2xl">
-      {/* Native iOS Status Bar Simulation */}
-      <header className="fixed top-0 left-0 w-full z-[60] flex justify-between items-center px-4 pt-2.5 pb-1 liquid-glass-header text-[#f8fafc] select-none max-w-md left-1/2 -translate-x-1/2">
-        <span className="font-['Space_Grotesk'] text-xs font-semibold tracking-tight text-[#f8fafc]">
-          {currentTime}
-        </span>
-        <div className="flex items-center space-x-1.5 text-[#f8fafc]">
-          <span className="material-symbols-outlined text-[16px]">signal_cellular_alt</span>
-          <span className="material-symbols-outlined text-[16px]">wifi</span>
-          <span className="material-symbols-outlined text-[20px] rotate-90">battery_full</span>
-        </div>
-      </header>
-
       {/* Top Navigation Shell (Liquid Glass Material) */}
-      <nav className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-4 h-14 mt-7 liquid-glass-header shadow-sm max-w-md left-1/2 -translate-x-1/2 border-b border-purple-500/20">
+      <nav className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-4 h-14 liquid-glass-header shadow-sm max-w-md left-1/2 -translate-x-1/2 border-b border-purple-500/20">
         <div className="flex items-center space-x-2">
           {/* NIMORA Brand Logo with Asset Placeholder */}
           <div className="w-8 h-8 rounded-lg liquid-glass-pill border border-purple-400/30 flex items-center justify-center shadow-sm">
@@ -448,7 +425,7 @@ export default function NimoraApp() {
 
       {/* Main View Area */}
       {activeTab === 'home' && (
-        <main className="pt-24 px-4 space-y-4">
+        <main className="pt-16 px-4 space-y-4">
           {/* Executive Greeting & Persona Hierarchy (Utilitarian Minimalism) */}
           <section className="space-y-1">
             <div className="flex items-center justify-between">
@@ -725,7 +702,7 @@ export default function NimoraApp() {
 
       {/* Schedule View */}
       {activeTab === 'schedule' && (
-        <div className="pt-20 px-4">
+        <div className="pt-16 px-4">
           <Screen08DailyPlanner
             tasks={tasks}
             contacts={contacts}
@@ -748,7 +725,7 @@ export default function NimoraApp() {
 
       {/* Add Task View */}
       {activeTab === 'add_task' && (
-        <div className="pt-20 px-4">
+        <div className="pt-16 px-4">
           <Screen09AddTask
             tasks={tasks}
             contacts={contacts}
@@ -766,7 +743,7 @@ export default function NimoraApp() {
 
       {/* Task Details View */}
       {activeTab === 'task_details' && selectedTask && (
-        <div className="pt-20 px-4">
+        <div className="pt-16 px-4">
           <Screen10TaskDetails
             tasks={tasks}
             contacts={contacts}
@@ -784,7 +761,7 @@ export default function NimoraApp() {
 
       {/* Voice Assistant View */}
       {activeTab === 'voice' && (
-        <div className="pt-20 px-4">
+        <div className="pt-16 px-4">
           <Screen13VoiceAssistant
             contacts={contacts}
             tasks={tasks}
@@ -806,7 +783,7 @@ export default function NimoraApp() {
 
       {/* CRM & Contacts View */}
       {activeTab === 'contacts' && (
-        <div className="pt-20 px-4">
+        <div className="pt-16 px-4">
           <Screen11Contacts
             contacts={contacts}
             suggestions={INITIAL_AI_SUGGESTIONS}
@@ -823,7 +800,7 @@ export default function NimoraApp() {
 
       {/* Contact Details View */}
       {activeTab === 'contact_details' && selectedContact && (
-        <div className="pt-20 px-4">
+        <div className="pt-16 px-4">
           <Screen12ContactDetails
             contacts={contacts}
             suggestions={INITIAL_AI_SUGGESTIONS}
@@ -835,7 +812,7 @@ export default function NimoraApp() {
 
       {/* Notifications View */}
       {activeTab === 'notifications' && (
-        <div className="pt-20 px-4">
+        <div className="pt-16 px-4">
           <Screen16Notifications
             tasks={tasks}
             notifications={INITIAL_NOTIFICATIONS}
@@ -846,7 +823,7 @@ export default function NimoraApp() {
 
       {/* Widget Preview View */}
       {activeTab === 'widget' && (
-        <div className="pt-20 px-4">
+        <div className="pt-16 px-4">
           <Screen15Widget
             tasks={tasks}
             notifications={INITIAL_NOTIFICATIONS}
@@ -857,7 +834,7 @@ export default function NimoraApp() {
 
       {/* AI Suggestions View */}
       {activeTab === 'ai_suggestions' && (
-        <div className="pt-20 px-4">
+        <div className="pt-16 px-4">
           <Screen14AISuggestions
             contacts={contacts}
             suggestions={INITIAL_AI_SUGGESTIONS}
@@ -869,7 +846,7 @@ export default function NimoraApp() {
 
       {/* Settings View */}
       {activeTab === 'settings' && (
-        <div className="pt-20 px-4">
+        <div className="pt-16 px-4">
           <Screen18ProfileSettings
             tasks={tasks}
             notifications={INITIAL_NOTIFICATIONS}
@@ -886,7 +863,7 @@ export default function NimoraApp() {
 
       {/* Subscription & Pricing Plans View */}
       {activeTab === 'pricing' && (
-        <div className="pt-20 px-4">
+        <div className="pt-16 px-4">
           <Screen19SubscriptionPlans
             onNavigate={() => setActiveTab('settings')}
             onSubscriptionSuccess={() => setIsProUser(true)}

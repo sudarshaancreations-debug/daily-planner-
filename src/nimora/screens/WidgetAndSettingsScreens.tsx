@@ -21,16 +21,6 @@ export function Screen15Widget({ tasks, onNavigate }: WidgetAndSettingsProps) {
     <div
       className="w-full h-full min-h-[680px] text-[#f8fafc] flex flex-col justify-between p-6 select-none rounded-[32px] relative overflow-hidden bg-[#0e0b1f] border border-white/[0.08]"
     >
-      {/* iOS Status Bar */}
-      <div className="flex justify-between items-center text-xs text-[#8a938e] pt-2 z-10 font-mono">
-        <span>9:01</span>
-        <div className="flex items-center gap-1.5 text-[#f8fafc]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
-          <span>5G</span>
-          <span>100%</span>
-        </div>
-      </div>
-
       {/* Main Home Screen Widget Container (20% Liquid Glass Material) */}
       <div className="my-auto z-10 space-y-4">
         {/* iOS Liquid Glass Dark Widget */}

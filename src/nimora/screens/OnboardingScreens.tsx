@@ -15,16 +15,6 @@ export function Screen01Splash({ onNavigate }: ScreenProps) {
       <div className="absolute top-1/2 -right-16 w-72 h-72 rounded-full bg-emerald-400/20 blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 left-4 w-32 h-32 rounded-full bg-teal-300/10 blur-xl pointer-events-none" />
 
-      {/* Top minimal status bar */}
-      <div className="w-full flex justify-between items-center text-xs text-emerald-200/60 pt-2 z-10">
-        <span className="font-semibold">9:41</span>
-        <div className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-emerald-400" />
-          <span>5G</span>
-          <span>100%</span>
-        </div>
-      </div>
-
       {/* Center Brand Identity */}
       <div className="flex flex-col items-center text-center my-auto z-10">
         <div className="relative mb-6">
