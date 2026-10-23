@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { NimoraTask, Contact } from '../data';
 import { downloadICS } from '@/lib/exportUtils';
 import { haptics } from '@/lib/haptics';
@@ -15,6 +15,438 @@ export interface PlanningProps {
   onDeleteTask?: (id: string) => void;
   onUpdateTask?: (task: NimoraTask) => void;
   selectedTask?: NimoraTask;
+}
+
+// ============================================================================
+// MORGEN REFERENCE: 7-DAY INTERACTIVE WEEK STRIP WITH DENSITY DOTS
+// ============================================================================
+export interface MorgenWeekStripProps {
+  selectedDate: string;
+  onSelectDate: (dateIso: string) => void;
+  tasks?: NimoraTask[];
+}
+
+const STATIC_WEEK = [
+  { iso: '2026-10-19', weekdayNarrow: 'M', weekdayShort: 'Mon', dayNum: 19, isToday: false },
+  { iso: '2026-10-20', weekdayNarrow: 'T', weekdayShort: 'Tue', dayNum: 20, isToday: false },
+  { iso: '2026-10-21', weekdayNarrow: 'W', weekdayShort: 'Wed', dayNum: 21, isToday: false },
+  { iso: '2026-10-22', weekdayNarrow: 'T', weekdayShort: 'Thu', dayNum: 22, isToday: false },
+  { iso: '2026-10-23', weekdayNarrow: 'F', weekdayShort: 'Fri', dayNum: 23, isToday: false },
+  { iso: '2026-10-24', weekdayNarrow: 'S', weekdayShort: 'Sat', dayNum: 24, isToday: true },
+  { iso: '2026-10-25', weekdayNarrow: 'S', weekdayShort: 'Sun', dayNum: 25, isToday: false },
+];
+
+export function MorgenWeekStrip({ selectedDate, onSelectDate, tasks = [] }: MorgenWeekStripProps) {
+  const [days, setDays] = useState(STATIC_WEEK);
+  const [todayIso, setTodayIso] = useState('2026-10-24');
+
+  useEffect(() => {
+    try {
+      const today = new Date();
+      const day = today.getDay();
+      const diff = today.getDate() - day + (day === 0 ? -6 : 1);
+      const monday = new Date(today.getFullYear(), today.getMonth(), diff);
+      const nowIso = today.toISOString().split('T')[0];
+      setTodayIso(nowIso);
+
+      const computed = Array.from({ length: 7 }).map((_, i) => {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        const iso = d.toISOString().split('T')[0];
+        const weekdayNarrow = d.toLocaleDateString('en-US', { weekday: 'narrow' });
+        const weekdayShort = d.toLocaleDateString('en-US', { weekday: 'short' });
+        const dayNum = d.getDate();
+        const isToday = iso === nowIso;
+        return { iso, weekdayNarrow, weekdayShort, dayNum, isToday };
+      });
+      setDays(computed);
+    } catch {}
+  }, []);
+
+  return (
+    <div className="w-full select-none">
+      <div className="flex items-center justify-between mb-1.5 px-1">
+        <span className="text-[9px] font-mono tracking-wider text-purple-300/70 uppercase flex items-center gap-1 font-semibold">
+          <span className="material-symbols-outlined text-[13px] text-[#bef264]">date_range</span>
+          <span>Week Density Strip</span>
+        </span>
+        {selectedDate !== todayIso && (
+          <button
+            type="button"
+            onClick={() => {
+              haptics.tick();
+              onSelectDate(todayIso);
+            }}
+            className="text-[9px] font-mono text-[#bef264] hover:underline flex items-center gap-0.5 cursor-pointer"
+          >
+            <span>Back to Today</span>
+            <span className="material-symbols-outlined text-[11px]">restart_alt</span>
+          </button>
+        )}
+      </div>
+
+      <div className="grid grid-cols-7 gap-1.5 p-1.5 bg-[#171330] rounded-2xl border border-purple-500/15">
+        {days.map((day) => {
+          const isSelected = selectedDate === day.iso;
+          // Calculate density dots for this day
+          const dayTasks = tasks.filter((t) => t.date && (t.date.includes(day.iso) || t.date.includes(`${day.dayNum}`)));
+          const dotCount = Math.min(3, dayTasks.length > 0 ? dayTasks.length : (day.isToday ? 3 : day.dayNum % 2 === 0 ? 2 : 1));
+
+          return (
+            <button
+              key={day.iso}
+              type="button"
+              onClick={() => {
+                haptics.tick();
+                onSelectDate(day.iso);
+              }}
+              className={`py-2 px-1 rounded-xl flex flex-col items-center justify-center transition-all cursor-pointer relative ${
+                isSelected
+                  ? 'bg-[#bef264] text-[#0e0b1f] font-bold shadow-[0_0_12px_rgba(190,242,100,0.35)] scale-[1.03]'
+                  : 'text-purple-200/80 hover:bg-[#221b44] hover:text-white'
+              }`}
+            >
+              <span className={`text-[9px] font-mono uppercase tracking-wider ${isSelected ? 'text-[#0e0b1f] font-bold' : 'text-purple-300/60'}`}>
+                {day.weekdayNarrow}
+              </span>
+              <span className={`text-xs font-['Space_Grotesk'] font-bold mt-0.5 ${isSelected ? 'text-[#0e0b1f]' : 'text-[#f8fafc]'}`}>
+                {day.dayNum}
+              </span>
+              {/* Density dots in Morgen signature style */}
+              <div className="flex items-center gap-0.5 mt-1 h-1">
+                {Array.from({ length: dotCount }).map((_, i) => (
+                  <span
+                    key={i}
+                    className={`w-1 h-1 rounded-full ${isSelected ? 'bg-[#0e0b1f]' : 'bg-[#bef264]'}`}
+                  />
+                ))}
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// ANY.DO REFERENCE: EXPRESS INLINE QUICK ADD BAR WITH SMART CHIPS
+// ============================================================================
+export interface AnyDoQuickAddBarProps {
+  onAddTask?: (task: NimoraTask) => void;
+  selectedDate?: string;
+}
+
+export function AnyDoQuickAddBar({ onAddTask, selectedDate }: AnyDoQuickAddBarProps) {
+  const [inputVal, setInputVal] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
+  const [selectedTimeChip, setSelectedTimeChip] = useState('09:00 AM');
+  const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium');
+
+  const chips = [
+    { label: '⚡ 9:00 AM', time: '09:00 AM', priority: 'medium' as const },
+    { label: '☀️ 2:00 PM', time: '02:00 PM', priority: 'medium' as const },
+    { label: '🌙 6:00 PM', time: '06:00 PM', priority: 'low' as const },
+    { label: '🔥 Urgent', time: '11:00 AM', priority: 'high' as const },
+  ];
+
+  const handleQuickSubmit = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (!inputVal.trim()) return;
+
+    haptics.success();
+    const dateStr = selectedDate || new Date().toISOString().split('T')[0];
+
+    const newTask: NimoraTask = {
+      id: `t_${Date.now()}`,
+      title: inputVal.trim(),
+      category: 'task',
+      date: dateStr,
+      startTime: selectedTimeChip,
+      endTime: '10:00 AM',
+      durationMinutes: 45,
+      priority,
+      status: 'upcoming',
+      color: priority === 'high' ? 'coral' : 'blue',
+      notes: 'Quick added via Any.do express bar',
+    };
+
+    onAddTask?.(newTask);
+    setInputVal('');
+    setIsFocused(false);
+  };
+
+  return (
+    <div className="w-full select-none my-2">
+      <form
+        onSubmit={handleQuickSubmit}
+        className={`p-2 bg-[#171330] rounded-xl border transition-all ${
+          isFocused ? 'border-[#bef264]/60 shadow-[0_0_14px_rgba(190,242,100,0.15)]' : 'border-purple-500/20'
+        }`}
+      >
+        <div className="flex items-center gap-2">
+          <span className="material-symbols-outlined text-[18px] text-[#bef264]">add_circle</span>
+          <input
+            type="text"
+            value={inputVal}
+            onChange={(e) => setInputVal(e.target.value)}
+            onFocus={() => setIsFocused(true)}
+            placeholder="＋ Quick add task (e.g. Client call at 4pm)..."
+            className="w-full bg-transparent text-xs text-[#f8fafc] placeholder-purple-300/40 outline-none font-mono"
+          />
+          {inputVal.trim() && (
+            <button
+              type="submit"
+              className="px-2.5 py-1 rounded-lg bg-[#bef264] text-[#0e0b1f] font-mono text-[10px] font-bold tracking-wider hover:brightness-110 active:scale-95 transition-all cursor-pointer shrink-0"
+            >
+              ADD
+            </button>
+          )}
+        </div>
+
+        {/* Any.do Smart Express Chips */}
+        {(isFocused || inputVal) && (
+          <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-purple-500/15 overflow-x-auto">
+            <span className="text-[8px] font-mono uppercase text-purple-300/50 shrink-0">Time:</span>
+            {chips.map((chip) => (
+              <button
+                key={chip.label}
+                type="button"
+                onClick={() => {
+                  haptics.tick();
+                  setSelectedTimeChip(chip.time);
+                  if (chip.priority) setPriority(chip.priority);
+                }}
+                className={`text-[9px] font-mono px-2 py-0.5 rounded-md transition-all shrink-0 cursor-pointer ${
+                  selectedTimeChip === chip.time
+                    ? 'bg-[#251e4d] text-[#bef264] border border-[#bef264]/40 font-bold'
+                    : 'bg-[#1f1940] text-purple-200/70 hover:text-white border border-purple-500/10'
+                }`}
+              >
+                {chip.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </form>
+    </div>
+  );
+}
+
+// ============================================================================
+// ANY.DO REFERENCE: "ANY.DO MOMENT" DAILY PLANNING RITUAL MODAL
+// ============================================================================
+export interface AnyDoMomentModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  tasks: NimoraTask[];
+  onToggleTask?: (id: string) => void;
+  onUpdateTask?: (task: NimoraTask) => void;
+}
+
+export function AnyDoMomentModal({
+  isOpen,
+  onClose,
+  tasks,
+  onToggleTask,
+  onUpdateTask,
+}: AnyDoMomentModalProps) {
+  const activeTasks = useMemo(() => tasks.filter((t) => t.status !== 'completed'), [tasks]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isCompletedFlow, setIsCompletedFlow] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentIndex(0);
+      setIsCompletedFlow(false);
+    }
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  const currentTask = activeTasks[currentIndex];
+
+  const handleAction = (action: 'today' | 'tomorrow' | 'someday' | 'done') => {
+    if (!currentTask) return;
+
+    if (action === 'done') {
+      haptics.success();
+      onToggleTask?.(currentTask.id);
+    } else if (action === 'tomorrow') {
+      haptics.tick();
+      const d = new Date();
+      d.setDate(d.getDate() + 1);
+      onUpdateTask?.({ ...currentTask, date: d.toISOString().split('T')[0] });
+    } else if (action === 'someday') {
+      haptics.tick();
+      onUpdateTask?.({ ...currentTask, priority: 'low' });
+    } else {
+      haptics.tick();
+    }
+
+    if (currentIndex + 1 < activeTasks.length) {
+      setCurrentIndex(currentIndex + 1);
+    } else {
+      setIsCompletedFlow(true);
+      haptics.success();
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-[#0e0b1f]/85 backdrop-blur-md flex items-center justify-center p-4">
+      <div className="w-full max-w-sm rounded-3xl bg-[#171330] border border-purple-400/30 shadow-2xl p-5 relative overflow-hidden select-none">
+        {/* Glow ambient background */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-[#bef264]/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl pointer-events-none" />
+
+        {isCompletedFlow || !currentTask ? (
+          <div className="text-center py-6 space-y-4">
+            <div className="w-16 h-16 rounded-full bg-[#bef264]/20 border border-[#bef264]/40 text-[#bef264] flex items-center justify-center mx-auto text-2xl shadow-[0_0_20px_rgba(190,242,100,0.3)]">
+              ✨
+            </div>
+            <div>
+              <h3 className="font-['Space_Grotesk'] text-lg font-bold text-[#f8fafc]">
+                You&apos;re All Planned!
+              </h3>
+              <p className="text-xs text-purple-200/80 mt-1 max-w-xs mx-auto">
+                Any.do Moment complete. Your day is streamlined and prioritized for high productivity.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-full py-3 rounded-2xl bg-[#bef264] text-[#0e0b1f] font-mono text-xs font-bold uppercase tracking-wider hover:brightness-110 active:scale-95 transition-all cursor-pointer shadow-lg"
+            >
+              Start My Day 🚀
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {/* Header with Step Counter */}
+            <div className="flex items-center justify-between">
+              <span className="px-2.5 py-0.5 rounded-full text-[9px] font-mono uppercase tracking-wider bg-purple-500/20 text-[#bef264] border border-[#bef264]/30 font-semibold flex items-center gap-1">
+                <span>⚡</span> ANY.DO MOMENT
+              </span>
+              <span className="text-[10px] font-mono text-purple-300/70">
+                {currentIndex + 1} of {activeTasks.length}
+              </span>
+            </div>
+
+            {/* Progress Bar */}
+            <div className="w-full h-1 bg-[#251e4d] rounded-full overflow-hidden">
+              <div
+                className="h-full bg-[#bef264] transition-all duration-300"
+                style={{ width: `${((currentIndex + 1) / activeTasks.length) * 100}%` }}
+              />
+            </div>
+
+            {/* Current Task Review Card */}
+            <div className="p-4 rounded-2xl bg-[#1f1940] border border-purple-500/20 space-y-2">
+              <div className="flex items-center justify-between text-[10px] font-mono">
+                <span className="text-[#bef264] font-semibold">
+                  {currentTask.startTime} – {currentTask.endTime}
+                </span>
+                <span className="px-1.5 py-0.5 rounded bg-purple-900/50 text-purple-200 uppercase text-[8px] border border-purple-500/20">
+                  {currentTask.category}
+                </span>
+              </div>
+              <h4 className="font-['Space_Grotesk'] text-base font-bold text-[#f8fafc] leading-snug">
+                {currentTask.title}
+              </h4>
+              {currentTask.subtitle && (
+                <p className="text-xs text-purple-200/70">{currentTask.subtitle}</p>
+              )}
+              {currentTask.notes && (
+                <p className="text-[11px] text-purple-300/60 italic font-mono">{currentTask.notes}</p>
+              )}
+            </div>
+
+            <p className="text-center text-[10px] font-mono text-purple-300/70">
+              When would you like to tackle this?
+            </p>
+
+            {/* 4 Action Buttons */}
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => handleAction('today')}
+                className="p-3 rounded-xl bg-[#251e4d] hover:bg-[#2e265c] text-[#bef264] border border-[#bef264]/30 font-mono text-xs font-semibold flex flex-col items-center justify-center gap-1 active:scale-95 transition-all cursor-pointer"
+              >
+                <span className="text-base">⚡</span>
+                <span>Keep Today</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleAction('tomorrow')}
+                className="p-3 rounded-xl bg-[#1f1940] hover:bg-[#251e4d] text-purple-200 border border-purple-500/20 font-mono text-xs font-semibold flex flex-col items-center justify-center gap-1 active:scale-95 transition-all cursor-pointer"
+              >
+                <span className="text-base">⏭</span>
+                <span>Tomorrow</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleAction('someday')}
+                className="p-3 rounded-xl bg-[#1f1940] hover:bg-[#251e4d] text-purple-200 border border-purple-500/20 font-mono text-xs font-semibold flex flex-col items-center justify-center gap-1 active:scale-95 transition-all cursor-pointer"
+              >
+                <span className="text-base">🗓</span>
+                <span>Someday</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleAction('done')}
+                className="p-3 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-300 border border-emerald-500/30 font-mono text-xs font-semibold flex flex-col items-center justify-center gap-1 active:scale-95 transition-all cursor-pointer"
+              >
+                <span className="text-base">✓</span>
+                <span>Mark Done</span>
+              </button>
+            </div>
+
+            <div className="flex justify-center pt-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="text-[10px] font-mono text-purple-300/50 hover:text-white"
+              >
+                Skip Planning Session
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// MORGEN REFERENCE: SMART FREE FOCUS BUFFER INDICATOR
+// ============================================================================
+export interface MorgenFocusBufferProps {
+  durationText: string;
+  onQuickAdd?: () => void;
+}
+
+export function MorgenFocusBuffer({ durationText, onQuickAdd }: MorgenFocusBufferProps) {
+  return (
+    <div className="my-2 p-2.5 rounded-xl border border-dashed border-[#bef264]/30 bg-[#171330]/70 flex items-center justify-between text-xs select-none hover:border-[#bef264]/60 transition-colors">
+      <div className="flex items-center gap-2 text-[#bef264]">
+        <span className="material-symbols-outlined text-[16px]">hourglass_top</span>
+        <div>
+          <span className="font-mono text-[10px] font-bold block">{durationText} Free Focus Slot</span>
+          <span className="text-[8px] font-mono text-purple-300/60">No meetings · Ideal for deep work</span>
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={() => {
+          haptics.tick();
+          onQuickAdd?.();
+        }}
+        className="px-2.5 py-1 rounded-md bg-[#bef264]/15 hover:bg-[#bef264] text-[#bef264] hover:text-[#0e0b1f] text-[9px] font-mono font-bold tracking-wider transition-all cursor-pointer"
+      >
+        + Slot
+      </button>
+    </div>
+  );
 }
 
 // 5. Home Dashboard
@@ -370,14 +802,32 @@ export function SwipeableScheduleCard({
   );
 }
 
-// 6. Daily Planner Timeline
+// 6. Daily Planner Timeline (Enhanced with Any.do + Morgen)
 export function Screen08DailyPlanner({
   tasks,
+  contacts,
   onNavigate,
   onSelectTask,
   onToggleTask,
   onDeleteTask,
+  onAddTask,
+  onUpdateTask,
 }: PlanningProps) {
+  const [selectedDate, setSelectedDate] = useState('2026-10-24');
+  const [todayIso, setTodayIso] = useState('2026-10-24');
+  const [viewMode, setViewMode] = useState<'timeline' | 'list'>('timeline');
+  const [isAnyDoMomentOpen, setIsAnyDoMomentOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [showCompletedList, setShowCompletedList] = useState(true);
+
+  useEffect(() => {
+    try {
+      const nowIso = new Date().toISOString().split('T')[0];
+      setSelectedDate(nowIso);
+      setTodayIso(nowIso);
+    } catch {}
+  }, []);
+
   const borderColors: Record<string, string> = {
     blue: 'border-l-blue-500',
     green: 'border-l-emerald-500',
@@ -386,80 +836,314 @@ export function Screen08DailyPlanner({
     gray: 'border-l-gray-400',
   };
 
-  // Active tasks stay on top, completed tasks automatically move down to the bottom
-  const activeTasks = tasks.filter((t) => t.status !== 'completed');
-  const completedTasks = tasks.filter((t) => t.status === 'completed');
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage((prev) => (prev === msg ? null : prev));
+    }, 2800);
+  };
+
+  const handleShareAvailability = () => {
+    haptics.success();
+    const bookingUrl = 'https://nimora.app/book/sudarshan';
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(bookingUrl).catch(() => {});
+    }
+    showToast('✓ Morgen Booking Link copied! Share with clients.');
+  };
+
+  const handleQuickAddSlot = (slotTime: string) => {
+    haptics.tick();
+    const newTask: NimoraTask = {
+      id: `t_${Date.now()}`,
+      title: 'Deep Focus Block',
+      category: 'task',
+      date: selectedDate,
+      startTime: slotTime,
+      endTime: '11:00 AM',
+      durationMinutes: 45,
+      priority: 'medium',
+      status: 'upcoming',
+      color: 'green',
+      notes: 'Scheduled into Morgen free focus slot',
+    };
+    onAddTask?.(newTask);
+    showToast(`✓ Added 45m Focus Slot at ${slotTime}`);
+  };
+
+  // Filter tasks by selected date (or show all if today)
+  const dateFilteredTasks = tasks.filter((t) => {
+    if (!t.date) return true;
+    if (selectedDate === todayIso) return true;
+    const dayMatch = selectedDate.split('-')[2] || '24';
+    return t.date.includes(selectedDate) || t.date.includes(dayMatch);
+  });
+
+  const activeTasks = dateFilteredTasks.filter((t) => t.status !== 'completed');
+  const completedTasks = dateFilteredTasks.filter((t) => t.status === 'completed');
   const orderedTasks = [...activeTasks, ...completedTasks];
+
+  // Any.do grouped buckets
+  const priorityTasks = activeTasks.filter((t) => t.priority === 'high');
+  const agendaTasks = activeTasks.filter((t) => t.priority !== 'high');
 
   return (
     <div className="w-full h-full min-h-[680px] bg-[#0e0b1f] text-[#f8fafc] flex flex-col justify-between select-none rounded-[38px] overflow-hidden relative">
-      {/* Liquid Glass Floating Header */}
-      <div className="liquid-glass-header px-4 py-3.5 flex items-center justify-between z-10">
+      {/* Toast Feedback Notification Banner */}
+      {toastMessage && (
+        <div className="absolute top-16 left-4 right-4 z-40 animate-bounce">
+          <div className="liquid-glass rounded-xl px-3 py-2 border border-[#bef264]/40 text-xs text-[#bef264] font-mono flex items-center justify-between shadow-2xl">
+            <span className="flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-[15px]">check_circle</span>
+              <span>{toastMessage}</span>
+            </span>
+            <button onClick={() => setToastMessage(null)} className="text-purple-300/60 hover:text-white cursor-pointer">✕</button>
+          </div>
+        </div>
+      )}
+
+      {/* Liquid Glass Floating Header with Any.do + Morgen controls */}
+      <div className="liquid-glass-header px-4 py-3 flex items-center justify-between z-10 border-b border-purple-500/20">
         <button
           onClick={() => onNavigate?.(5)}
-          className="text-[#9b9f9c] hover:text-white text-xs font-mono tracking-tight flex items-center gap-1 transition-colors"
+          className="text-purple-300/80 hover:text-white text-xs font-mono tracking-tight flex items-center gap-1 transition-colors cursor-pointer"
         >
           <span className="material-symbols-outlined text-[15px]">arrow_back</span>
-          <span>BACK</span>
+          <span>HOME</span>
         </button>
+
         <div className="text-center">
           <h2 className="text-xs font-semibold tracking-wider uppercase text-[#f8fafc] font-['Space_Grotesk']">
-            Daily Schedule
+            Planner & Agenda
           </h2>
-          <p className="text-[9px] font-mono tracking-widest text-[#bef264] uppercase">Today&apos;s Agenda</p>
+          <p className="text-[9px] font-mono tracking-widest text-[#bef264] uppercase">
+            {viewMode === 'timeline' ? 'Morgen Timeline' : 'Any.do Smart List'}
+          </p>
         </div>
+
         <div className="flex items-center gap-1.5">
           <button
+            onClick={() => setIsAnyDoMomentOpen(true)}
+            className="liquid-glass-pill px-2.5 py-1 text-[#bef264] text-[10px] font-mono tracking-wider flex items-center gap-1 transition-all hover:scale-105 active:scale-95 cursor-pointer font-bold shadow-[0_0_10px_rgba(190,242,100,0.2)]"
+            title="Start Any.do Moment daily planning"
+          >
+            <span>⚡</span>
+            <span>PLAN</span>
+          </button>
+          <button
+            onClick={handleShareAvailability}
+            className="w-7 h-7 rounded-full liquid-glass-pill text-[#38bdf8] hover:text-[#bef264] flex items-center justify-center text-xs transition-all hover:scale-105 active:scale-95 cursor-pointer"
+            title="Share Morgen Availability Link"
+          >
+            <span className="material-symbols-outlined text-[15px]">share</span>
+          </button>
+          <button
             onClick={() => downloadICS(tasks, 'nimora-daily-agenda.ics')}
-            className="liquid-glass-pill px-2.5 py-1 text-[#bef264] text-[10px] font-mono tracking-wider flex items-center gap-1 transition-all hover:scale-105 active:scale-95"
+            className="w-7 h-7 rounded-full liquid-glass-pill text-purple-200 hover:text-[#bef264] flex items-center justify-center text-xs transition-all hover:scale-105 active:scale-95 cursor-pointer"
             title="Download Calendar .ics"
           >
-            <span className="material-symbols-outlined text-[12px]">calendar_today</span>
-            <span>.ICS</span>
+            <span className="material-symbols-outlined text-[14px]">calendar_today</span>
           </button>
           <button
             onClick={() => onNavigate?.(7)}
-            className="w-7 h-7 rounded-full liquid-glass-pill text-[#bef264] flex items-center justify-center text-sm font-bold transition-all hover:scale-105 active:scale-95"
+            className="w-7 h-7 rounded-full bg-[#bef264] text-[#0e0b1f] flex items-center justify-center text-base font-bold transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-md"
+            title="Add new task"
           >
             +
           </button>
         </div>
       </div>
 
-      {/* Swipe instruction banner - Utilitarian Minimal */}
+      {/* Morgen 7-Day Interactive Week Strip */}
       <div className="px-4 pt-2.5">
-        <div className="px-3 py-2 bg-[#171330] border border-white/[0.06] rounded-xl flex items-center justify-between text-[10px] text-[#9b9f9c]">
-          <span className="flex items-center gap-1.5 font-mono text-[9px] tracking-tight">
-            <span className="material-symbols-outlined text-[13px] text-[#bef264]">swipe</span>
-            <span>Swipe task left or right to <span className="text-[#f8fafc] font-medium">Edit</span> or <span className="text-rose-400 font-medium">Delete</span></span>
-          </span>
-          <span className="text-[#bef264] font-mono text-[10px]">‹ ›</span>
+        <MorgenWeekStrip
+          selectedDate={selectedDate}
+          onSelectDate={(newDate) => {
+            setSelectedDate(newDate);
+          }}
+          tasks={tasks}
+        />
+      </div>
+
+      {/* Dual View Mode Toggle: Morgen Timeline vs Any.do Smart List */}
+      <div className="px-4 pt-2">
+        <div className="flex items-center gap-1 p-1 bg-[#171330] rounded-xl border border-purple-500/20 text-xs">
+          <button
+            onClick={() => { setViewMode('timeline'); haptics.tick(); }}
+            className={`flex-1 py-1 px-2 rounded-lg font-mono text-[9px] tracking-wider uppercase transition-all flex items-center justify-center gap-1 cursor-pointer ${
+              viewMode === 'timeline'
+                ? 'bg-[#251e4d] text-[#bef264] border border-[#bef264]/40 font-bold shadow-sm'
+                : 'text-purple-300/60 hover:text-white'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[14px]">view_timeline</span>
+            <span>Morgen Timeline</span>
+          </button>
+          <button
+            onClick={() => { setViewMode('list'); haptics.tick(); }}
+            className={`flex-1 py-1 px-2 rounded-lg font-mono text-[9px] tracking-wider uppercase transition-all flex items-center justify-center gap-1 cursor-pointer ${
+              viewMode === 'list'
+                ? 'bg-[#251e4d] text-[#bef264] border border-[#bef264]/40 font-bold shadow-sm'
+                : 'text-purple-300/60 hover:text-white'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[14px]">checklist</span>
+            <span>Any.do List</span>
+          </button>
         </div>
       </div>
 
-      {/* Time blocked schedule list */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-2.5">
-        {orderedTasks.map((task) => (
-          <SwipeableScheduleCard
-            key={task.id}
-            task={task}
-            borderColors={borderColors}
-            onToggleTask={onToggleTask}
-            onSelectTask={onSelectTask}
-            onDeleteTask={onDeleteTask}
-            onNavigate={onNavigate}
-          />
-        ))}
+      {/* Any.do Express Inline Add Bar */}
+      <div className="px-4 pt-1">
+        <AnyDoQuickAddBar onAddTask={onAddTask} selectedDate={selectedDate} />
       </div>
 
-      {/* Floating Action Button - Liquid Glass Pill */}
-      <button
-        onClick={() => onNavigate?.(7)}
-        className="liquid-glass-pill absolute bottom-6 right-6 w-12 h-12 text-[#bef264] flex items-center justify-center text-2xl font-light shadow-2xl hover:scale-110 active:scale-95 transition-all z-20 cursor-pointer"
-        title="Add new task"
-      >
-        +
-      </button>
+      {/* Swipe instruction hint */}
+      <div className="px-4">
+        <div className="px-3 py-1.5 bg-[#171330]/60 border border-purple-500/15 rounded-xl flex items-center justify-between text-[9px] text-purple-300/60">
+          <span className="flex items-center gap-1.5 font-mono">
+            <span className="material-symbols-outlined text-[12px] text-[#bef264]">swipe</span>
+            <span>Swipe task card to <span className="text-white font-medium">Edit</span> or <span className="text-rose-400 font-medium">Delete</span></span>
+          </span>
+          <span className="text-[#bef264] font-mono">‹ ›</span>
+        </div>
+      </div>
+
+      {/* Main Schedule Content: Timeline OR List */}
+      <div className="flex-1 overflow-y-auto px-4 py-2 space-y-2">
+        {viewMode === 'timeline' ? (
+          /* MORGEN TIMELINE VIEW WITH SMART FOCUS BUFFERS */
+          <div className="space-y-1 relative">
+            {orderedTasks.map((task, idx) => (
+              <React.Fragment key={task.id}>
+                {/* Morgen Timeline Hour Node & Task Card */}
+                <div className="relative flex items-start gap-2.5">
+                  <div className="w-12 pt-4 text-right shrink-0">
+                    <span className="font-mono text-[9px] font-semibold text-purple-300/70 block">
+                      {task.startTime.split(' ')[0]}
+                    </span>
+                    <span className="font-mono text-[8px] text-purple-400/50 block">
+                      {task.startTime.split(' ')[1]}
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <SwipeableScheduleCard
+                      task={task}
+                      borderColors={borderColors}
+                      onToggleTask={onToggleTask}
+                      onSelectTask={onSelectTask}
+                      onDeleteTask={onDeleteTask}
+                      onNavigate={onNavigate}
+                    />
+                  </div>
+                </div>
+
+                {/* Morgen Smart Free Focus Buffer detected between scheduled blocks */}
+                {idx === 0 && (
+                  <div className="pl-14 pr-1">
+                    <MorgenFocusBuffer
+                      durationText="30m"
+                      onQuickAdd={() => handleQuickAddSlot('09:30 AM')}
+                    />
+                  </div>
+                )}
+                {idx === 2 && (
+                  <div className="pl-14 pr-1">
+                    <MorgenFocusBuffer
+                      durationText="1h 00m"
+                      onQuickAdd={() => handleQuickAddSlot('01:00 PM')}
+                    />
+                  </div>
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+        ) : (
+          /* ANY.DO SMART LIST VIEW */
+          <div className="space-y-3">
+            {/* Priority Focus Section */}
+            {priorityTasks.length > 0 && (
+              <div>
+                <h3 className="text-[10px] font-mono uppercase tracking-wider text-[#bef264] font-semibold mb-1 flex items-center gap-1.5">
+                  <span>⚡</span>
+                  <span>Priority Focus ({priorityTasks.length})</span>
+                </h3>
+                {priorityTasks.map((task) => (
+                  <SwipeableScheduleCard
+                    key={task.id}
+                    task={task}
+                    borderColors={borderColors}
+                    onToggleTask={onToggleTask}
+                    onSelectTask={onSelectTask}
+                    onDeleteTask={onDeleteTask}
+                    onNavigate={onNavigate}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Scheduled Agenda Section */}
+            <div>
+              <h3 className="text-[10px] font-mono uppercase tracking-wider text-[#c084fc] font-semibold mb-1 flex items-center gap-1.5">
+                <span>🗓</span>
+                <span>Scheduled Agenda ({agendaTasks.length})</span>
+              </h3>
+              {agendaTasks.map((task) => (
+                <SwipeableScheduleCard
+                  key={task.id}
+                  task={task}
+                  borderColors={borderColors}
+                  onToggleTask={onToggleTask}
+                  onSelectTask={onSelectTask}
+                  onDeleteTask={onDeleteTask}
+                  onNavigate={onNavigate}
+                />
+              ))}
+            </div>
+
+            {/* Completed Accordion */}
+            {completedTasks.length > 0 && (
+              <div className="pt-2 border-t border-purple-500/15">
+                <button
+                  type="button"
+                  onClick={() => setShowCompletedList(!showCompletedList)}
+                  className="w-full flex items-center justify-between text-[10px] font-mono uppercase text-purple-300/60 hover:text-white py-1 cursor-pointer"
+                >
+                  <span className="flex items-center gap-1">
+                    <span>✓</span>
+                    <span>Completed Today ({completedTasks.length})</span>
+                  </span>
+                  <span>{showCompletedList ? '▲' : '▼'}</span>
+                </button>
+                {showCompletedList && (
+                  <div className="space-y-1 mt-1 opacity-75">
+                    {completedTasks.map((task) => (
+                      <SwipeableScheduleCard
+                        key={task.id}
+                        task={task}
+                        borderColors={borderColors}
+                        onToggleTask={onToggleTask}
+                        onSelectTask={onSelectTask}
+                        onDeleteTask={onDeleteTask}
+                        onNavigate={onNavigate}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Any.do Moment Planning Modal */}
+      <AnyDoMomentModal
+        isOpen={isAnyDoMomentOpen}
+        onClose={() => setIsAnyDoMomentOpen(false)}
+        tasks={tasks}
+        onToggleTask={onToggleTask}
+        onUpdateTask={onUpdateTask}
+      />
     </div>
   );
 }
@@ -470,7 +1154,13 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [selectedContact, setSelectedContact] = useState(contacts[0]?.id || '');
-  const [date, setDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState('2026-10-24');
+
+  useEffect(() => {
+    try {
+      setDate(new Date().toISOString().split('T')[0]);
+    } catch {}
+  }, []);
   const [time, setTime] = useState('10:00 AM');
   const [duration, setDuration] = useState('30');
   const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium');
@@ -744,19 +1434,24 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
               <label className="text-[9px] font-mono tracking-wider text-[#9b9f9c] uppercase">
                 Start Time
               </label>
-              <div className="flex items-center gap-1">
-                {['09:00 AM', '11:30 AM', '02:00 PM', '04:30 PM'].map((tChip) => (
+              <div className="flex items-center gap-1 overflow-x-auto">
+                {[
+                  { label: 'Morning 9am', val: '09:00 AM' },
+                  { label: 'Noon 12pm', val: '12:00 PM' },
+                  { label: 'Afternoon 2pm', val: '02:00 PM' },
+                  { label: 'Evening 6pm', val: '06:00 PM' },
+                ].map((tChip) => (
                   <button
-                    key={tChip}
+                    key={tChip.val}
                     type="button"
-                    onClick={() => setTime(tChip)}
-                    className={`text-[9px] font-mono px-1.5 py-0.5 rounded border transition-all ${
-                      time === tChip
+                    onClick={() => setTime(tChip.val)}
+                    className={`text-[9px] font-mono px-2 py-0.5 rounded border transition-all shrink-0 cursor-pointer ${
+                      time === tChip.val
                         ? 'bg-[#251e4d] text-[#bef264] border-[#bef264]/40 font-bold'
                         : 'bg-[#171330] text-[#9b9f9c] border-white/[0.08] hover:text-white'
                     }`}
                   >
-                    {tChip.split(' ')[0]}
+                    {tChip.label}
                   </button>
                 ))}
               </div>

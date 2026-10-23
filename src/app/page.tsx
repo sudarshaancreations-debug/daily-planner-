@@ -16,6 +16,9 @@ import {
   Screen09AddTask,
   Screen10TaskDetails,
   SwipeableScheduleCard,
+  MorgenWeekStrip,
+  AnyDoMomentModal,
+  AnyDoQuickAddBar,
 } from '@/nimora/screens/PlanningScreens';
 import {
   Screen11Contacts,
@@ -211,6 +214,31 @@ export default function NimoraApp() {
   const [isListening, setIsListening] = useState(false);
   const [currentTime, setCurrentTime] = useState('9:41');
   const [isProUser, setIsProUser] = useState(false);
+  const [isAnyDoMomentOpen, setIsAnyDoMomentOpen] = useState(false);
+  const [selectedCalendarDate, setSelectedCalendarDate] = useState('2026-10-24');
+  const [globalToast, setGlobalToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      setSelectedCalendarDate(new Date().toISOString().split('T')[0]);
+    } catch {}
+  }, []);
+
+  const showGlobalToast = (msg: string) => {
+    setGlobalToast(msg);
+    setTimeout(() => {
+      setGlobalToast((prev) => (prev === msg ? null : prev));
+    }, 2800);
+  };
+
+  const handleShareAvailability = () => {
+    haptics.success();
+    const bookingUrl = 'https://nimora.app/book/sudarshan';
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(bookingUrl).catch(() => {});
+    }
+    showGlobalToast('✓ Morgen Booking Link copied! Share with clients.');
+  };
 
   // True persistent storage across reloads and mobile sessions
   useEffect(() => {
@@ -447,6 +475,17 @@ export default function NimoraApp() {
                 &ldquo;A focused day creates bigger opportunities.&rdquo;
               </p>
             </div>
+
+            {/* Morgen 7-Day Interactive Week Density Strip */}
+            <div className="pt-2">
+              <MorgenWeekStrip
+                selectedDate={selectedCalendarDate}
+                onSelectDate={(newDate) => {
+                  setSelectedCalendarDate(newDate);
+                }}
+                tasks={tasks}
+              />
+            </div>
           </section>
 
           {/* Daily Progress Gauge & Operational Metrics Bento Grid (80% Minimalist Bento) */}
@@ -499,14 +538,33 @@ export default function NimoraApp() {
                 </div>
               </div>
 
-              <button
-                onClick={() => downloadICS(tasks, 'nimora-daily-schedule.ics')}
-                aria-label="Export iCalendar"
-                className="p-2 rounded-lg minimal-btn-secondary text-purple-200 hover:text-[#bef264] active:scale-95 transition-all cursor-pointer"
-                title="Download Calendar (.ics)"
-              >
-                <span className="material-symbols-outlined text-[19px]">calendar_today</span>
-              </button>
+              {/* Any.do + Morgen Quick Actions */}
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => setIsAnyDoMomentOpen(true)}
+                  className="px-2.5 py-1.5 rounded-xl bg-[#bef264] text-[#0e0b1f] font-mono text-[10px] font-bold tracking-wider hover:brightness-110 active:scale-95 transition-all flex items-center gap-1 cursor-pointer shadow-[0_0_12px_rgba(190,242,100,0.3)]"
+                  title="Start Any.do Moment"
+                >
+                  <span>⚡</span>
+                  <span>Plan Day</span>
+                </button>
+                <button
+                  onClick={handleShareAvailability}
+                  aria-label="Share Booking Slots"
+                  className="p-2 rounded-lg minimal-btn-secondary text-purple-200 hover:text-[#bef264] active:scale-95 transition-all cursor-pointer"
+                  title="Share Morgen Booking Link"
+                >
+                  <span className="material-symbols-outlined text-[17px]">share</span>
+                </button>
+                <button
+                  onClick={() => downloadICS(tasks, 'nimora-daily-schedule.ics')}
+                  aria-label="Export iCalendar"
+                  className="p-2 rounded-lg minimal-btn-secondary text-purple-200 hover:text-[#bef264] active:scale-95 transition-all cursor-pointer"
+                  title="Download Calendar (.ics)"
+                >
+                  <span className="material-symbols-outlined text-[17px]">calendar_today</span>
+                </button>
+              </div>
             </div>
 
             {/* Quick Metrics Bento Counters */}
@@ -603,6 +661,18 @@ export default function NimoraApp() {
             </section>
           )}
 
+          {/* Any.do Express Quick Add Inline Bar */}
+          <section>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[9px] font-mono uppercase tracking-widest text-purple-300/70 font-semibold flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#bef264]"></span>
+                Any.do Fast Capture
+              </span>
+              <span className="text-[9px] font-mono text-[#bef264]">Instant Save</span>
+            </div>
+            <AnyDoQuickAddBar onAddTask={handleAddTask} selectedDate={selectedCalendarDate} />
+          </section>
+
           {/* Upcoming Tasks Section (80% Utilitarian Minimalism) */}
           <section className="space-y-2">
             <div className="flex items-center justify-between">
@@ -670,6 +740,8 @@ export default function NimoraApp() {
             }}
             onToggleTask={handleToggleTask}
             onDeleteTask={handleDeleteTask}
+            onAddTask={handleAddTask}
+            onUpdateTask={handleUpdateTask}
           />
         </div>
       )}
@@ -846,6 +918,28 @@ export default function NimoraApp() {
           </span>
         </div>
       </div>
+
+      {/* Global Toast Notification */}
+      {globalToast && (
+        <div className="fixed top-14 left-1/2 -translate-x-1/2 w-full max-w-sm px-4 z-[70] animate-bounce">
+          <div className="liquid-glass rounded-xl px-3 py-2 border border-[#bef264]/50 text-xs text-[#bef264] font-mono flex items-center justify-between shadow-2xl">
+            <span className="flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-[15px]">check_circle</span>
+              <span>{globalToast}</span>
+            </span>
+            <button onClick={() => setGlobalToast(null)} className="text-purple-300/60 hover:text-white cursor-pointer">✕</button>
+          </div>
+        </div>
+      )}
+
+      {/* Any.do Moment Planning Modal */}
+      <AnyDoMomentModal
+        isOpen={isAnyDoMomentOpen}
+        onClose={() => setIsAnyDoMomentOpen(false)}
+        tasks={tasks}
+        onToggleTask={handleToggleTask}
+        onUpdateTask={handleUpdateTask}
+      />
 
       {/* Thumb Slider Bottom Navigation [Interactive Sliding Capsule Bar] */}
       <ThumbSliderNav
