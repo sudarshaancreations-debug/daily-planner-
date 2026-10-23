@@ -462,7 +462,7 @@ export function Screen13VoiceAssistant({
           const generatedTask: NimoraTask = {
             id: `t_ai_${Date.now()}`,
             title: data.task.title || cleanText,
-            subtitle: data.task.subtitle || `Generated via ${name} (Vertex/Gemini AI)`,
+            subtitle: data.task.subtitle || `Generated via ${name} Voice Assistant`,
             category: data.task.category || 'task',
             date: data.task.date || new Date().toLocaleDateString('en-US', {
               weekday: 'short',
@@ -480,7 +480,7 @@ export function Screen13VoiceAssistant({
           };
           onAddTask?.(generatedTask);
           setCreatedTask(generatedTask);
-          setStatusMessage(`✓ ${data.source === 'google-vertex-gemini' ? 'Gemini 1.5' : name}: ${generatedTask.title}`);
+          setStatusMessage(`✓ ${name}: ${generatedTask.title}`);
           haptics.success();
           speakFeedback(data.spokenResponse || `Added ${generatedTask.title} to your schedule.`);
           return;
@@ -835,7 +835,7 @@ export function Screen13VoiceAssistant({
           </button>
         </div>
         <p className="text-[9px] font-mono text-[#8a938e] text-center">
-          Spoken voice intelligence powered by {name} & Vertex AI
+          Spoken voice intelligence powered by {name} Assistant
         </p>
       </form>
     </div>

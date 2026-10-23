@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { NimoraTask, NimoraNotification } from '../data';
 import { haptics } from '@/lib/haptics';
 import { downloadICS } from '@/lib/exportUtils';
@@ -11,6 +12,7 @@ export interface WidgetAndSettingsProps {
   onNavigate?: (screenNumber: number) => void;
   onAddTask?: (task: NimoraTask) => void;
   onResetData?: () => void;
+  onDeleteAllData?: () => void;
 }
 
 // 13. iOS Home Screen Widget
@@ -279,10 +281,12 @@ export function Screen17WhatsApp({ onNavigate }: WidgetAndSettingsProps) {
 }
 
 // 16. Settings & Privacy
-export function Screen18ProfileSettings({ tasks, onNavigate, onResetData }: WidgetAndSettingsProps) {
+export function Screen18ProfileSettings({ tasks, onNavigate, onResetData, onDeleteAllData }: WidgetAndSettingsProps) {
+  const [mounted, setMounted] = useState(false);
   const [resetMessage, setResetMessage] = useState('');
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [profileName, setProfileName] = useState('Sudarshan Mehta');
   const [profileRole, setProfileRole] = useState('Principal Architect & Founder');
   const [profileEmail, setProfileEmail] = useState('sudarshan@bespokestudio.com');
@@ -299,6 +303,10 @@ export function Screen18ProfileSettings({ tasks, onNavigate, onResetData }: Widg
     outlook: false,
     morgenBridge: true,
   });
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const toggleCalendar = (key: keyof typeof calendars) => {
     haptics.tick();
@@ -335,9 +343,17 @@ export function Screen18ProfileSettings({ tasks, onNavigate, onResetData }: Widg
     }
   };
 
+  const handleConfirmDeleteAll = () => {
+    haptics.warning();
+    onDeleteAllData?.();
+    setIsDeleteModalOpen(false);
+    setResetMessage('All tasks, local storage and cache permanently deleted!');
+    setTimeout(() => setResetMessage(''), 3000);
+  };
+
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#0e0b1f] text-[#f8fafc] flex flex-col justify-between select-none rounded-[38px] overflow-hidden relative">
-      <div className="overflow-y-auto">
+    <div className="w-full h-full min-h-[680px] bg-[#0e0b1f] text-[#f8fafc] flex flex-col justify-between select-none rounded-[38px] relative">
+      <div className="overflow-y-auto pb-28">
         {/* Header */}
         <div className="p-4 bg-[#0e0b1f]/90 border-b border-[#334155]/30 flex items-center justify-between">
           <button onClick={() => onNavigate?.(5)} className="text-[#c0c8c3] hover:text-white text-xs font-semibold flex items-center gap-1 cursor-pointer">
@@ -348,30 +364,32 @@ export function Screen18ProfileSettings({ tasks, onNavigate, onResetData }: Widg
         </div>
 
         {/* User Card (Interactive Profile Button) */}
-        <button
-          type="button"
-          onClick={() => {
-            haptics.tick();
-            setIsProfileModalOpen(true);
-          }}
-          className="w-[calc(100%-2rem)] mx-4 p-4 minimal-card m-4 rounded-2xl flex items-center justify-between border border-white/[0.08] hover:border-[#bef264]/40 hover:bg-white/[0.04] transition-all cursor-pointer text-left active:scale-[0.99] group shadow-sm"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full liquid-glass-pill text-[#bef264] font-bold flex items-center justify-center text-base shadow-sm border border-white/25 font-['Space_Grotesk'] group-hover:scale-105 transition-transform">
-              {profileName.charAt(0)}
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <h3 className="text-sm font-bold text-[#f8fafc] font-['Space_Grotesk']">{profileName}</h3>
-                <span className="text-[9px] font-mono font-bold bg-[#1b201d] text-[#bef264] px-2 py-0.5 rounded-full border border-white/[0.08]">
-                  PRO
-                </span>
+        <div className="p-4 pb-2">
+          <button
+            type="button"
+            onClick={() => {
+              haptics.tick();
+              setIsProfileModalOpen(true);
+            }}
+            className="w-full p-4 minimal-card rounded-2xl flex items-center justify-between border border-white/[0.08] hover:border-[#bef264]/40 hover:bg-white/[0.04] transition-all cursor-pointer text-left active:scale-[0.99] group shadow-sm"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full liquid-glass-pill text-[#bef264] font-bold flex items-center justify-center text-base shadow-sm border border-white/25 font-['Space_Grotesk'] group-hover:scale-105 transition-transform">
+                {profileName.charAt(0)}
               </div>
-              <p className="text-xs text-purple-300/70 font-mono truncate max-w-[200px]">{profileEmail}</p>
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <h3 className="text-sm font-bold text-[#f8fafc] font-['Space_Grotesk']">{profileName}</h3>
+                  <span className="text-[9px] font-mono font-bold bg-[#1b201d] text-[#bef264] px-2 py-0.5 rounded-full border border-white/[0.08]">
+                    PRO
+                  </span>
+                </div>
+                <p className="text-xs text-purple-300/70 font-mono truncate max-w-[200px]">{profileEmail}</p>
+              </div>
             </div>
-          </div>
-          <span className="text-xs text-purple-300/60 group-hover:text-[#bef264] group-hover:translate-x-0.5 transition-all font-mono">›</span>
-        </button>
+            <span className="text-xs text-purple-300/60 group-hover:text-[#bef264] group-hover:translate-x-0.5 transition-all font-mono">›</span>
+          </button>
+        </div>
 
         {/* Options List */}
         <div className="px-4 space-y-2">
@@ -384,50 +402,11 @@ export function Screen18ProfileSettings({ tasks, onNavigate, onResetData }: Widg
               <span className="material-symbols-outlined text-[20px] text-[#bef264]">diamond</span>
               <div>
                 <span className="text-xs font-bold text-[#f8fafc] block font-['Space_Grotesk']">Executive Membership</span>
-                <span className="text-[10px] text-[#a1d1bd]">Pro AI & MCP Agent Integration active</span>
+                <span className="text-[10px] text-[#a1d1bd]">Pro features & cloud backup active</span>
               </div>
             </div>
             <span className="text-[11px] font-mono font-semibold text-[#bef264] flex items-center gap-1">
               Plans <span className="text-[#8a938e]">›</span>
-            </span>
-          </button>
-
-          {/* Reset Demo Data Button */}
-          <button
-            onClick={handleReset}
-            className="w-full p-3 minimal-card border border-rose-500/25 rounded-2xl flex items-center justify-between cursor-pointer hover:border-rose-400/40 transition-colors text-left"
-          >
-            <div className="flex items-center gap-3">
-              <span className="material-symbols-outlined text-[18px] text-rose-300">refresh</span>
-              <div>
-                <span className="text-xs font-semibold text-rose-300 block">Reset Local Agenda</span>
-                <span className="text-[10px] text-[#8a938e]">Restore fresh initial agenda & contacts</span>
-              </div>
-            </div>
-            <span className="text-[11px] font-mono text-rose-400 font-medium">Reset ›</span>
-          </button>
-
-          {resetMessage && (
-            <div className="p-2.5 bg-emerald-950/70 border border-emerald-500/40 rounded-xl text-xs text-[#bef264] text-center font-mono">
-              {resetMessage}
-            </div>
-          )}
-
-          {/* AI Voice Engine Button */}
-          <button
-            type="button"
-            onClick={() => {
-              haptics.tick();
-              onNavigate?.(3);
-            }}
-            className="w-full p-3 minimal-card rounded-2xl flex items-center justify-between cursor-pointer hover:border-white/[0.18] transition-colors text-left"
-          >
-            <div className="flex items-center gap-3">
-              <span className="material-symbols-outlined text-[18px] text-[#bef264]">smart_toy</span>
-              <span className="text-xs font-medium text-[#f8fafc]">AI Voice Engine (Vertex/Gemini)</span>
-            </div>
-            <span className="text-[10px] font-mono font-bold text-[#bef264] flex items-center gap-1">
-              Active <span className="text-[#bef264]">›</span>
             </span>
           </button>
 
@@ -438,7 +417,7 @@ export function Screen18ProfileSettings({ tasks, onNavigate, onResetData }: Widg
               haptics.tick();
               setIsCalendarModalOpen(true);
             }}
-            className="w-full p-3 minimal-card rounded-2xl flex items-center justify-between cursor-pointer hover:border-[#bef264]/40 hover:bg-white/[0.04] transition-all text-left group"
+            className="w-full p-3.5 minimal-card rounded-2xl flex items-center justify-between cursor-pointer hover:border-[#bef264]/40 hover:bg-white/[0.04] transition-all text-left group"
           >
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-[18px] text-[#bef264] group-hover:scale-110 transition-transform">sync_alt</span>
@@ -451,6 +430,48 @@ export function Screen18ProfileSettings({ tasks, onNavigate, onResetData }: Widg
               Manage <span className="text-[#bef264]">›</span>
             </span>
           </button>
+
+          {/* Delete All Data (Destructive Action - Permanently Wipes Everything) */}
+          <button
+            type="button"
+            onClick={() => {
+              haptics.warning();
+              setIsDeleteModalOpen(true);
+            }}
+            className="w-full p-3.5 bg-rose-950/40 border border-rose-500/30 hover:border-rose-500/60 hover:bg-rose-950/60 rounded-2xl flex items-center justify-between cursor-pointer transition-all text-left group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400 group-hover:scale-105 transition-transform">
+                <span className="material-symbols-outlined text-[18px]">delete_forever</span>
+              </div>
+              <div>
+                <span className="text-xs font-bold text-rose-300 block">Delete All Data</span>
+                <span className="text-[10px] text-rose-200/60 font-mono">Permanently erase all tasks & local storage</span>
+              </div>
+            </div>
+            <span className="text-xs font-mono font-bold text-rose-400 group-hover:translate-x-0.5 transition-transform">Erase ›</span>
+          </button>
+
+          {/* Reset Demo Data Button */}
+          <button
+            onClick={handleReset}
+            className="w-full p-3 minimal-card border border-white/[0.08] rounded-2xl flex items-center justify-between cursor-pointer hover:border-white/20 transition-colors text-left"
+          >
+            <div className="flex items-center gap-3">
+              <span className="material-symbols-outlined text-[18px] text-purple-300/70">refresh</span>
+              <div>
+                <span className="text-xs font-medium text-purple-200 block">Reset Demo Agenda</span>
+                <span className="text-[10px] text-purple-300/50">Restore fresh default sample milestones</span>
+              </div>
+            </div>
+            <span className="text-[11px] font-mono text-purple-300/70 font-medium">Reset ›</span>
+          </button>
+
+          {resetMessage && (
+            <div className="p-2.5 bg-emerald-950/70 border border-emerald-500/40 rounded-xl text-xs text-[#bef264] text-center font-mono">
+              {resetMessage}
+            </div>
+          )}
         </div>
 
         {/* Privacy Callout Cards (Minimalist Editorial) */}
@@ -477,10 +498,10 @@ export function Screen18ProfileSettings({ tasks, onNavigate, onResetData }: Widg
         </div>
       </div>
 
-      {/* Connected Calendars & Sync Modal */}
-      {isCalendarModalOpen && (
+      {/* Connected Calendars & Sync Modal (Portaled to document.body for 100% reliable viewport rendering) */}
+      {mounted && isCalendarModalOpen && createPortal(
         <div
-          className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200"
+          className="fixed inset-0 bg-black/85 backdrop-blur-md z-[99999] flex items-center justify-center p-4 animate-in fade-in duration-200"
           onClick={() => setIsCalendarModalOpen(false)}
         >
           <div
@@ -686,13 +707,14 @@ export function Screen18ProfileSettings({ tasks, onNavigate, onResetData }: Widg
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
-      {/* Edit Profile & Account Details Modal */}
-      {isProfileModalOpen && (
+      {/* Edit Profile & Account Details Modal (Portaled to document.body for 100% reliable viewport rendering) */}
+      {mounted && isProfileModalOpen && createPortal(
         <div
-          className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200"
+          className="fixed inset-0 bg-black/85 backdrop-blur-md z-[99999] flex items-center justify-center p-4 animate-in fade-in duration-200"
           onClick={() => setIsProfileModalOpen(false)}
         >
           <div
@@ -833,7 +855,59 @@ export function Screen18ProfileSettings({ tasks, onNavigate, onResetData }: Widg
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Delete All Data Confirmation Modal */}
+      {mounted && isDeleteModalOpen && createPortal(
+        <div
+          className="fixed inset-0 bg-black/90 backdrop-blur-md z-[99999] flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={() => setIsDeleteModalOpen(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-sm bg-[#180c14] border border-rose-500/40 rounded-3xl p-5 shadow-2xl space-y-4"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400 shrink-0">
+                <span className="material-symbols-outlined text-2xl">warning</span>
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-white font-['Space_Grotesk']">Delete All User Data?</h3>
+                <p className="text-[11px] text-rose-200/70 font-mono">Irreversible action</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-purple-200/90 leading-relaxed">
+              This will permanently wipe all your scheduled tasks, agenda milestones, offline cache, and custom settings.
+            </p>
+
+            <div className="p-3 bg-black/40 rounded-xl border border-rose-500/20 space-y-1 text-[11px] font-mono text-rose-300">
+              <p>• All agenda tasks will be deleted</p>
+              <p>• Local storage will be purged</p>
+              <p>• Cannot be undone</p>
+            </div>
+
+            <div className="pt-2 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setIsDeleteModalOpen(false)}
+                className="flex-1 py-2.5 px-3 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] text-xs font-semibold text-purple-200 transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDeleteAll}
+                className="flex-1 py-2.5 px-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition-all cursor-pointer shadow-lg shadow-rose-950"
+              >
+                Permanently Erase
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
       )}
     </div>
   );

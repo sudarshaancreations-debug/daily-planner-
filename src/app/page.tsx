@@ -375,6 +375,16 @@ export default function NimoraApp() {
     try {
       localStorage.removeItem('nimora_planner_tasks');
     } catch {}
+    setGlobalToast('Demo agenda restored.');
+  };
+
+  const handleDeleteAllData = () => {
+    setTasks([]);
+    try {
+      localStorage.removeItem('nimora_planner_tasks');
+      localStorage.removeItem('daily-planner-data');
+    } catch {}
+    setGlobalToast('All agenda tasks permanently deleted.');
   };
 
   const completedCount = tasks.filter((t) => t.status === 'completed').length;
@@ -875,6 +885,7 @@ export default function NimoraApp() {
               else setActiveTab('home');
             }}
             onResetData={handleResetData}
+            onDeleteAllData={handleDeleteAllData}
           />
         </div>
       )}
