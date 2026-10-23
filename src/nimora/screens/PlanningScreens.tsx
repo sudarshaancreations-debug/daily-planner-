@@ -12,6 +12,7 @@ export interface PlanningProps {
   onToggleTask?: (id: string) => void;
   onSelectTask?: (task: NimoraTask) => void;
   onDeleteTask?: (id: string) => void;
+  onUpdateTask?: (task: NimoraTask) => void;
   selectedTask?: NimoraTask;
 }
 
@@ -287,7 +288,7 @@ export function SwipeableScheduleCard({
         }}
         className={`relative z-10 p-3.5 rounded-2xl border border-[#414945]/40 border-l-[3px] ${
           borderColors[task.color] || 'border-l-emerald-500'
-        } shadow-md flex items-start justify-between cursor-pointer bg-[#18241e] hover:brightness-105 active:scale-[0.99] transition-all`}
+        } shadow-md flex items-start justify-between cursor-pointer bg-[#18241e] hover:brightness-105 active:scale-[0.99] transition-all touch-pan-y`}
       >
         <div className={`flex items-start gap-3 flex-1 min-w-0 pr-2 ${isCompleted ? 'opacity-55' : ''}`}>
           {/* Tactile Checkbox */}
@@ -817,9 +818,45 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
 }
 
 // 8. Task Details & Edit
-export function Screen10TaskDetails({ tasks, contacts, onNavigate, selectedTask, onDeleteTask, onToggleTask }: PlanningProps) {
+export function Screen10TaskDetails({
+  tasks,
+  contacts,
+  onNavigate,
+  selectedTask,
+  onDeleteTask,
+  onToggleTask,
+  onUpdateTask,
+}: PlanningProps) {
   const task = selectedTask || tasks[0];
   const contact = contacts.find((c) => c.id === task?.relatedContactId);
+
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [editTitle, setEditTitle] = React.useState(task?.title || '');
+  const [editSubtitle, setEditSubtitle] = React.useState(task?.subtitle || '');
+  const [editTime, setEditTime] = React.useState(task?.startTime || '10:00 AM');
+  const [editPriority, setEditPriority] = React.useState<NimoraTask['priority']>(task?.priority || 'medium');
+
+  React.useEffect(() => {
+    if (task) {
+      setEditTitle(task.title || '');
+      setEditSubtitle(task.subtitle || '');
+      setEditTime(task.startTime || '10:00 AM');
+      setEditPriority(task.priority || 'medium');
+    }
+  }, [task]);
+
+  const handleSaveEdit = () => {
+    if (!task) return;
+    const updated: NimoraTask = {
+      ...task,
+      title: editTitle.trim() || task.title,
+      subtitle: editSubtitle.trim() || undefined,
+      startTime: editTime.trim() || task.startTime,
+      priority: editPriority,
+    };
+    onUpdateTask?.(updated);
+    setIsEditing(false);
+  };
 
   return (
     <div className="w-full h-full min-h-[680px] bg-[#121412] text-[#e3e2e0] flex flex-col justify-between p-5 select-none rounded-[38px]">
@@ -829,29 +866,81 @@ export function Screen10TaskDetails({ tasks, contacts, onNavigate, selectedTask,
           <button onClick={() => onNavigate?.(6)} className="text-[#c0c8c3] hover:text-white text-xs font-semibold flex items-center gap-1">
             ‹ Back
           </button>
-          <span className="text-xs font-bold text-[#e3e2e0] font-['Space_Grotesk']">Task Details</span>
+          <span className="text-xs font-bold text-[#e3e2e0] font-['Space_Grotesk']">
+            {isEditing ? 'Edit Task' : 'Task Details'}
+          </span>
           <button
-            onClick={() => {
-              if (task && onDeleteTask) {
-                onDeleteTask(task.id);
-                onNavigate?.(6);
-              }
-            }}
-            className="text-rose-400 hover:text-rose-300 text-xs font-bold"
-            title="Delete task"
+            type="button"
+            onClick={() => setIsEditing(!isEditing)}
+            className="text-[#e9c349] hover:underline text-xs font-bold"
           >
-            Delete
+            {isEditing ? 'Cancel' : 'Edit'}
           </button>
         </div>
 
-        {/* Task Title Header */}
-        <div className="glass-card specular-border rounded-2xl p-4 shadow-sm mb-3">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-base">📋</span>
-            <h3 className="text-base font-bold text-[#e3e2e0] font-['Space_Grotesk']">{task?.title || 'Client Call'}</h3>
+        {/* Task Title Header / Edit View */}
+        {isEditing ? (
+          <div className="glass-card specular-border rounded-2xl p-4 shadow-sm mb-3 space-y-3">
+            <div>
+              <label className="text-[10px] uppercase font-bold text-[#e9c349] block mb-1">Title</label>
+              <input
+                type="text"
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                className="w-full bg-[#18241e] border border-[#414945]/60 rounded-xl px-3 py-2 text-sm text-[#e3e2e0] font-bold focus:border-[#e9c349] outline-none"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] uppercase font-bold text-[#e9c349] block mb-1">Notes / Subtitle</label>
+              <input
+                type="text"
+                value={editSubtitle}
+                onChange={(e) => setEditSubtitle(e.target.value)}
+                placeholder="Details or notes..."
+                className="w-full bg-[#18241e] border border-[#414945]/60 rounded-xl px-3 py-2 text-xs text-[#e3e2e0] focus:border-[#e9c349] outline-none"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="text-[10px] uppercase font-bold text-[#e9c349] block mb-1">Start Time</label>
+                <input
+                  type="text"
+                  value={editTime}
+                  onChange={(e) => setEditTime(e.target.value)}
+                  placeholder="e.g. 2:00 PM"
+                  className="w-full bg-[#18241e] border border-[#414945]/60 rounded-xl px-3 py-2 text-xs text-[#e3e2e0] focus:border-[#e9c349] outline-none"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase font-bold text-[#e9c349] block mb-1">Priority</label>
+                <select
+                  value={editPriority}
+                  onChange={(e) => setEditPriority(e.target.value as NimoraTask['priority'])}
+                  className="w-full bg-[#18241e] border border-[#414945]/60 rounded-xl px-3 py-2 text-xs text-[#e3e2e0] focus:border-[#e9c349] outline-none"
+                >
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleSaveEdit}
+              className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#e9c349] to-[#c79e26] text-gray-950 font-bold text-xs shadow-md active:scale-95 transition-transform"
+            >
+              Save Changes
+            </button>
           </div>
-          <p className="text-xs text-[#c0c8c3]">{task?.subtitle || 'Reviewing project milestones'}</p>
-        </div>
+        ) : (
+          <div className="glass-card specular-border rounded-2xl p-4 shadow-sm mb-3">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-base">📋</span>
+              <h3 className="text-base font-bold text-[#e3e2e0] font-['Space_Grotesk']">{task?.title || 'Client Call'}</h3>
+            </div>
+            <p className="text-xs text-[#c0c8c3]">{task?.subtitle || 'Reviewing project milestones'}</p>
+          </div>
+        )}
 
         {/* Details Grid */}
         <div className="glass-card specular-border rounded-2xl p-4 shadow-sm space-y-3 mb-3">

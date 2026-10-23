@@ -306,6 +306,26 @@ export function Screen13VoiceAssistant({
     speakFeedback(`Hello, I am ${trimmed}. What can I organize for you today?`);
   };
 
+  const computeEndTime = (startStr: string, durMins: number = 45): string => {
+    try {
+      const match = startStr.match(/(\d{1,2}):?(\d{2})?\s*(AM|PM)?/i);
+      if (!match) return '11:45 AM';
+      let hours = parseInt(match[1], 10);
+      const minutes = match[2] ? parseInt(match[2], 10) : 0;
+      const meridiem = (match[3] || '').toUpperCase();
+      if (meridiem === 'PM' && hours < 12) hours += 12;
+      if (meridiem === 'AM' && hours === 12) hours = 0;
+      const total = hours * 60 + minutes + durMins;
+      let endH = Math.floor(total / 60) % 24;
+      const endM = total % 60;
+      const endMeridiem = endH >= 12 ? 'PM' : 'AM';
+      endH = endH % 12 || 12;
+      return `${endH}:${endM.toString().padStart(2, '0')} ${endMeridiem}`;
+    } catch {
+      return '11:45 AM';
+    }
+  };
+
   const processVoiceCommand = (text: string) => {
     if (!text || !text.trim()) return;
     const cleanText = text.trim();
@@ -389,7 +409,7 @@ export function Screen13VoiceAssistant({
       category,
       date: dateStr,
       startTime,
-      endTime: '11:45 AM',
+      endTime: computeEndTime(startTime, 45),
       durationMinutes: 45,
       priority: lower.includes('urgent') || lower.includes('high') || lower.includes('asap') ? 'high' : 'medium',
       status: 'upcoming',

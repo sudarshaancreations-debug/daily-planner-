@@ -151,6 +151,22 @@ export default function NimoraApp() {
     });
   };
 
+  const handleUpdateTask = (updatedTask: NimoraTask) => {
+    setTasks((prev) => {
+      const updated = prev.map((t) => (t.id === updatedTask.id ? updatedTask : t));
+      const active = updated.filter((t) => t.status !== 'completed');
+      const completed = updated.filter((t) => t.status === 'completed');
+      const reordered = [...active, ...completed];
+      try {
+        localStorage.setItem('nimora_planner_tasks', JSON.stringify(reordered));
+      } catch (e) {
+        console.warn('Could not write to localStorage', e);
+      }
+      return reordered;
+    });
+    setSelectedTask(updatedTask);
+  };
+
   const handleResetData = () => {
     setTasks(INITIAL_TASKS);
     setSelectedTask(INITIAL_TASKS[0]);
@@ -513,6 +529,7 @@ export default function NimoraApp() {
             }}
             onToggleTask={handleToggleTask}
             onDeleteTask={handleDeleteTask}
+            onUpdateTask={handleUpdateTask}
           />
         </div>
       )}
