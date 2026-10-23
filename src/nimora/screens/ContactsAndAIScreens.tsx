@@ -12,6 +12,8 @@ export interface ContactsAndAIProps {
   selectedContact?: Contact;
   onAddTask?: (task: NimoraTask) => void;
   onDeleteTask?: (id: string) => void;
+  onToggleTask?: (id: string) => void;
+  onUpdateTask?: (task: NimoraTask) => void;
   assistantName?: string;
   onUpdateAssistantName?: (name: string) => void;
   tasks?: NimoraTask[];
@@ -251,6 +253,8 @@ export function Screen13VoiceAssistant({
   onNavigate,
   onAddTask,
   onDeleteTask,
+  onToggleTask,
+  onUpdateTask,
   assistantName = 'Nova',
   onUpdateAssistantName,
   tasks = [],
@@ -367,7 +371,89 @@ export function Screen13VoiceAssistant({
     transcriptRef.current = ''; // prevent duplicate execution
     setStatusMessage(`Processing: "${cleanText}"`);
 
-    // 1. Clean Title: strip assistant invocation and polite prefixes
+    // 1. Rule: Query Schedule
+    if (
+      lower.includes('what') &&
+      (lower.includes('schedule') || lower.includes('today') || lower.includes('task') || lower.includes('agenda'))
+    ) {
+      const active = (tasks || []).filter((t) => t.status !== 'completed');
+      const next = active[0];
+      const msg =
+        active.length > 0
+          ? `You have ${active.length} tasks scheduled today. Next up is ${next.title} at ${next.startTime}.`
+          : 'Your schedule is completely clear for deep work.';
+      setStatusMessage(msg);
+      speakFeedback(msg);
+      haptics.tick();
+      return;
+    }
+
+    // 2. Rule: Complete / Mark Done Task
+    if (
+      lower.startsWith('mark ') ||
+      lower.includes('complete') ||
+      lower.includes('finished') ||
+      lower.startsWith('done with')
+    ) {
+      const matchingTask = (tasks || []).find((t) => {
+        const titleWords = t.title.toLowerCase().split(' ').filter((w) => w.length > 3);
+        return lower.includes(t.title.toLowerCase()) || titleWords.some((w) => lower.includes(w));
+      });
+      if (matchingTask) {
+        onToggleTask?.(matchingTask.id);
+        haptics.success();
+        setStatusMessage(`✓ Completed: ${matchingTask.title}`);
+        speakFeedback(`Marked ${matchingTask.title} as completed.`);
+        return;
+      }
+    }
+
+    // 3. Rule: Reschedule / Move Task
+    if (lower.includes('reschedule') || lower.includes('move ')) {
+      const matchingTask = (tasks || []).find((t) => {
+        const titleWords = t.title.toLowerCase().split(' ').filter((w) => w.length > 3);
+        return lower.includes(t.title.toLowerCase()) || titleWords.some((w) => lower.includes(w));
+      });
+      if (matchingTask) {
+        let newTime = '03:00 PM';
+        const timeMatch = cleanText.match(/\b(?:at\s+)?(\d{1,2}(?::\d{2})?\s*(?:am|pm)?)\b/i);
+        if (timeMatch && timeMatch[1]) {
+          let rawT = timeMatch[1].trim().toUpperCase();
+          if (!rawT.includes('AM') && !rawT.includes('PM')) {
+            const num = parseInt(rawT);
+            rawT = num >= 8 && num <= 11 ? `${num}:00 AM` : `${num}:00 PM`;
+          }
+          newTime = rawT;
+        }
+        const updated = {
+          ...matchingTask,
+          startTime: newTime,
+          endTime: computeEndTime(newTime, matchingTask.durationMinutes || 45),
+        };
+        onUpdateTask?.(updated);
+        haptics.success();
+        setStatusMessage(`✓ Rescheduled: ${matchingTask.title} to ${newTime}`);
+        speakFeedback(`Rescheduled ${matchingTask.title} to ${newTime}.`);
+        return;
+      }
+    }
+
+    // 4. Rule: Delete / Remove Task
+    if (lower.startsWith('delete ') || lower.startsWith('remove ') || lower.startsWith('cancel ')) {
+      const matchingTask = (tasks || []).find((t) => {
+        const titleWords = t.title.toLowerCase().split(' ').filter((w) => w.length > 3);
+        return lower.includes(t.title.toLowerCase()) || titleWords.some((w) => lower.includes(w));
+      });
+      if (matchingTask) {
+        onDeleteTask?.(matchingTask.id);
+        haptics.warning();
+        setStatusMessage(`✓ Deleted: ${matchingTask.title}`);
+        speakFeedback(`Removed ${matchingTask.title} from your schedule.`);
+        return;
+      }
+    }
+
+    // 5. Rule: Clean Title & Create Task
     let cleanTitle = cleanText
       .replace(
         new RegExp(`^(hey\\s+)?(${name}|assistant|nova|jarvis|aria|friday|gemini|atlas)\\s*[,.:]?\\s*`, 'i'),
@@ -381,7 +467,7 @@ export function Screen13VoiceAssistant({
 
     if (!cleanTitle) cleanTitle = cleanText;
 
-    // 2. Extract Category
+    // Extract Category
     let category: NimoraTask['category'] = 'task';
     let color: NimoraTask['color'] = 'green';
     if (lower.includes('call') || lower.includes('phone') || lower.includes('ring') || lower.includes('contact')) {
@@ -398,7 +484,7 @@ export function Screen13VoiceAssistant({
       color = 'gray';
     }
 
-    // 3. Extract Time
+    // Extract Time
     let startTime = '11:00 AM';
     const timeMatch = cleanText.match(/\b(?:at\s+)?(\d{1,2}(?::\d{2})?\s*(?:am|pm)?)\b/i);
     if (timeMatch && timeMatch[1]) {
@@ -410,7 +496,7 @@ export function Screen13VoiceAssistant({
       startTime = rawT;
     }
 
-    // 4. Extract Date
+    // Extract Date
     let dateStr = new Date().toLocaleDateString('en-US', {
       weekday: 'short',
       day: 'numeric',
@@ -428,7 +514,7 @@ export function Screen13VoiceAssistant({
       });
     }
 
-    // 5. Match Contact
+    // Match Contact
     const matchedContact = (contacts || []).find((c) =>
       lower.includes(c.name.toLowerCase().split(' ')[0]) ||
       lower.includes(c.company.toLowerCase().split(' ')[0])
@@ -462,70 +548,7 @@ export function Screen13VoiceAssistant({
   const handleCommandExecution = async (text: string) => {
     if (!text || !text.trim()) return;
     const cleanText = text.trim();
-    transcriptRef.current = '';
-    setStatusMessage(`Thinking with ${name} AI...`);
-
-    try {
-      const res = await fetch('/api/assistant/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          prompt: cleanText,
-          assistantName: name,
-          tasks: (tasks || []).map((t) => ({
-            id: t.id,
-            title: t.title,
-            startTime: t.startTime,
-            endTime: t.endTime,
-            priority: t.priority,
-            status: t.status,
-          })),
-          contacts: (contacts || []).map((c) => ({
-            name: c.name,
-            company: c.company,
-          })),
-        }),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data.success && data.task) {
-          const generatedTask: NimoraTask = {
-            id: `t_ai_${Date.now()}`,
-            title: data.task.title || cleanText,
-            subtitle: data.task.subtitle || `Generated via ${name} Voice Assistant`,
-            category: data.task.category || 'task',
-            date: data.task.date || new Date().toLocaleDateString('en-US', {
-              weekday: 'short',
-              day: 'numeric',
-              month: 'short',
-              year: 'numeric',
-            }),
-            startTime: data.task.startTime || '11:00 AM',
-            endTime: data.task.endTime || computeEndTime(data.task.startTime || '11:00 AM', data.task.durationMinutes || 45),
-            durationMinutes: data.task.durationMinutes || 45,
-            priority: data.task.priority || 'medium',
-            status: 'upcoming',
-            color: data.task.color || 'green',
-            notes: data.task.notes || `AI prompt: "${cleanText}"`,
-          };
-          onAddTask?.(generatedTask);
-          setCreatedTask(generatedTask);
-          setStatusMessage(`✓ ${name}: ${generatedTask.title}`);
-          haptics.success();
-          speakFeedback(data.spokenResponse || `Added ${generatedTask.title} to your schedule.`);
-          return;
-        } else if (data.spokenResponse) {
-          setStatusMessage(data.spokenResponse);
-          speakFeedback(data.spokenResponse);
-          haptics.tick();
-          return;
-        }
-      }
-    } catch (err) {
-      console.warn('AI Assistant API call error, falling back to local processing:', err);
-    }
-
+    // High-performance local rule-based parsing with zero API cost and instant response
     processVoiceCommand(cleanText);
   };
 

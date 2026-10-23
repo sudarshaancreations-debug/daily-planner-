@@ -869,6 +869,8 @@ export default function NimoraApp() {
             }}
             onAddTask={handleAddTask}
             onDeleteTask={handleDeleteTask}
+            onToggleTask={handleToggleTask}
+            onUpdateTask={handleUpdateTask}
           />
         </div>
       )}
