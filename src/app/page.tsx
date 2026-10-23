@@ -119,7 +119,7 @@ function ThumbSliderNav({ activeTab, onSelectTab }: ThumbSliderNavProps) {
   const currentHoveredTab = tabs[Math.max(0, Math.min(4, Math.round(sliderPos)))];
 
   return (
-    <div className="fixed bottom-0 left-0 w-full z-50 px-3 pb-3 max-w-md left-1/2 -translate-x-1/2 select-none">
+    <div className="fixed bottom-0 inset-x-0 mx-auto w-full max-w-md z-50 px-3 pb-4 pointer-events-auto select-none">
       {/* Slider Interactive Guide Badge - Appears ONLY during active sliding gesture to keep UI clean */}
       {isDragging && (
         <div className="flex justify-center mb-1.5 pointer-events-none transition-opacity duration-150">
@@ -430,15 +430,15 @@ export default function NimoraApp() {
           <section className="space-y-1">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-[9px] font-mono text-[#c084fc] tracking-widest uppercase flex items-center gap-1.5 font-semibold">
+                <span className="text-xs font-mono text-purple-300 tracking-wide flex items-center gap-1.5 font-medium">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#bef264] shadow-[0_0_6px_#bef264]"></span> Principal Architect
                 </span>
-                <h1 className="font-['Space_Grotesk'] text-2xl font-bold tracking-tight text-[#f8fafc] mt-0.5">
+                <h1 className="font-['Space_Grotesk'] text-3xl font-extrabold tracking-tight text-[#f8fafc] mt-1">
                   Good Morning, Sudarshan
                 </h1>
               </div>
               <div className="text-right">
-                <span className="text-[9px] font-mono text-purple-300/60 block uppercase tracking-wider">WED, OCT 24</span>
+                <span className="text-[10px] font-mono text-purple-300/60 block uppercase tracking-wider">WED, OCT 24</span>
                 <span className="text-xs text-[#bef264] font-medium">Bespoke Studio</span>
               </div>
             </div>
@@ -467,9 +467,9 @@ export default function NimoraApp() {
 
           {/* Daily Progress Gauge & Operational Metrics Bento Grid (80% Minimalist Bento) */}
           <section className="minimal-card rounded-2xl p-4.5 relative overflow-hidden">
-            <div className="flex items-center justify-between">
+            <div className="flex items-start justify-between gap-3">
               {/* Radial Gauge Indicator */}
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-3.5">
                 <div className="relative w-18 h-18 flex items-center justify-center shrink-0">
                   <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
                     {/* Background Ring */}
@@ -515,8 +515,8 @@ export default function NimoraApp() {
                 </div>
               </div>
 
-              {/* Any.do + Morgen Quick Actions */}
-              <div className="flex items-center gap-1.5">
+              {/* Any.do + Morgen Quick Actions - Aligned with Header Baseline */}
+              <div className="flex items-center gap-1.5 pt-1 shrink-0">
                 <button
                   onClick={() => setIsAnyDoMomentOpen(true)}
                   className="px-2.5 py-1.5 rounded-xl bg-[#bef264] text-[#0e0b1f] font-mono text-[10px] font-bold tracking-wider hover:brightness-110 active:scale-95 transition-all flex items-center gap-1 cursor-pointer shadow-[0_0_12px_rgba(190,242,100,0.3)]"
@@ -578,7 +578,7 @@ export default function NimoraApp() {
                   setSelectedTask(activeFocusTask);
                   setActiveTab('task_details');
                 }}
-                className="liquid-glass liquid-sheen rounded-2xl p-4.5 border-l-4 border-l-[#bef264] shadow-2xl cursor-pointer hover:border-purple-300/40 transition-all"
+                className="liquid-glass liquid-sheen rounded-2xl p-5 pb-5 border-l-4 border-l-[#bef264] shadow-2xl cursor-pointer hover:border-purple-300/40 transition-all"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="space-y-1">
@@ -586,7 +586,7 @@ export default function NimoraApp() {
                       <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40 uppercase tracking-wider">
                         High Priority
                       </span>
-                      <span className="text-[11px] font-mono text-[#bef264] font-semibold">
+                      <span className="text-xs font-mono text-[#bef264] font-semibold">
                         NOW · {activeFocusTask.startTime} – {activeFocusTask.endTime}
                       </span>
                     </div>
@@ -601,9 +601,9 @@ export default function NimoraApp() {
                   <span className="material-symbols-outlined text-[#bef264] text-[22px]">engineering</span>
                 </div>
 
-                {/* Quick Interaction Actions */}
+                {/* Quick Interaction Actions - Unified secondary buttons & high-contrast Done affordance */}
                 <div
-                  className="flex items-center gap-2 mt-4 pt-3 border-t border-purple-500/20"
+                  className="flex items-center gap-2 mt-4 pt-3.5 pb-1 border-t border-purple-500/20"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <a
@@ -614,24 +614,28 @@ export default function NimoraApp() {
                     Call Contact
                   </a>
                   <a
-                    className="flex-1 py-2 px-3 rounded-xl liquid-glass-pill flex items-center justify-center gap-1.5 text-[#bef264] text-xs font-semibold cursor-pointer hover:brightness-110"
+                    className="flex-1 py-2 px-3 rounded-xl minimal-btn-secondary flex items-center justify-center gap-1.5 text-xs font-semibold cursor-pointer hover:border-[#bef264]/40"
                     href="https://wa.me/919876543210"
                     target="_blank"
                     rel="noreferrer"
                   >
-                    <span className="material-symbols-outlined text-[16px]">chat</span>
+                    <span className="material-symbols-outlined text-[16px] text-emerald-400">chat</span>
                     WhatsApp
                   </a>
                   <button
                     onClick={() => handleToggleTask(activeFocusTask.id)}
-                    aria-label="Mark completed"
-                    className={`p-2 rounded-xl border border-white/20 active:scale-95 transition-all cursor-pointer ${
+                    aria-label={activeFocusTask.status === 'completed' ? 'Completed' : 'Mark task as completed'}
+                    title={activeFocusTask.status === 'completed' ? 'Completed' : 'Mark completed'}
+                    className={`px-3 py-2 rounded-xl border text-xs font-mono font-bold active:scale-95 transition-all flex items-center gap-1 cursor-pointer ${
                       activeFocusTask.status === 'completed'
-                        ? 'bg-[#bef264] text-[#0e0b1f]'
-                        : 'bg-[#171330] text-purple-200 hover:text-[#bef264]'
+                        ? 'bg-[#bef264] text-[#0e0b1f] border-[#bef264]'
+                        : 'bg-[#221b44] text-[#bef264] border-[#bef264]/40 hover:bg-[#bef264]/20 hover:border-[#bef264]'
                     }`}
                   >
-                    <span className="material-symbols-outlined text-[18px]">check</span>
+                    <span className="material-symbols-outlined text-[18px]">
+                      {activeFocusTask.status === 'completed' ? 'check_circle' : 'check'}
+                    </span>
+                    <span className="text-[10px]">DONE</span>
                   </button>
                 </div>
               </div>
@@ -641,11 +645,11 @@ export default function NimoraApp() {
           {/* Any.do Express Quick Add Inline Bar */}
           <section>
             <div className="flex items-center justify-between mb-1">
-              <span className="text-[9px] font-mono uppercase tracking-widest text-purple-300/70 font-semibold flex items-center gap-1.5">
+              <span className="text-xs font-mono text-purple-200/80 font-semibold flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#bef264]"></span>
                 Any.do Fast Capture
               </span>
-              <span className="text-[9px] font-mono text-[#bef264]">Instant Save</span>
+              <span className="text-[10px] font-mono text-[#bef264]">Instant Save</span>
             </div>
             <AnyDoQuickAddBar onAddTask={handleAddTask} selectedDate={selectedCalendarDate} />
           </section>
@@ -653,7 +657,7 @@ export default function NimoraApp() {
           {/* Upcoming Tasks Section (80% Utilitarian Minimalism) */}
           <section className="space-y-2">
             <div className="flex items-center justify-between">
-              <h2 className="text-[10px] font-mono uppercase tracking-widest text-[#c084fc] font-semibold">
+              <h2 className="text-sm font-semibold tracking-wide text-purple-200">
                 Upcoming Schedule
               </h2>
               <button
@@ -665,9 +669,9 @@ export default function NimoraApp() {
             </div>
 
             {/* Swipe instruction hint */}
-            <div className="p-2 minimal-card-subtle rounded-xl flex items-center justify-between text-[10px] text-purple-300/70 font-mono">
+            <div className="p-2.5 minimal-card-subtle rounded-xl flex items-center justify-between text-xs text-purple-200/80 font-mono">
               <span className="flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-[13px] text-[#bef264]">swipe</span>
+                <span className="material-symbols-outlined text-[14px] text-[#bef264]">swipe</span>
                 <span>Slide card horizontally to reveal actions</span>
               </span>
               <span className="text-[#bef264] font-bold">‹ ›</span>

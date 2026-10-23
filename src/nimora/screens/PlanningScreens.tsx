@@ -734,7 +734,7 @@ export function SwipeableScheduleCard({
               }
               onToggleTask?.(task.id);
             }}
-            className={`mt-0.5 w-5 h-5 rounded-[5px] border border-white/25 flex items-center justify-center hover:border-[#bef264] transition-colors shrink-0 ${
+            className={`mt-0.5 w-5 h-5 rounded-lg border border-white/25 flex items-center justify-center hover:border-[#bef264] transition-colors shrink-0 ${
               isCompleted ? 'bg-[#bef264] text-gray-950 border-[#bef264]' : 'bg-[#162540]'
             }`}
           >
@@ -742,39 +742,41 @@ export function SwipeableScheduleCard({
           </button>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-[10px] font-mono font-medium text-[#a1d1bd]">
+              <span className="text-xs font-mono font-medium text-purple-200">
                 {task.startTime} – {task.endTime}
               </span>
-              <span className="text-[8px] font-mono uppercase tracking-wider px-1.5 py-0.2 rounded bg-[#191e1b] text-[#c0c8c3] border border-white/[0.06]">
+              <span className="text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded-lg bg-purple-900/40 text-purple-200 border border-purple-500/20">
                 {task.category}
               </span>
             </div>
-            <h4
+            <h3
               className={`text-xs font-semibold leading-tight mt-0.5 truncate tracking-tight ${
-                isCompleted ? 'line-through text-[#8a938e]' : 'text-[#f8fafc]'
+                isCompleted ? 'line-through text-purple-300/50' : 'text-[#f8fafc]'
               }`}
             >
               {task.title}
-            </h4>
+            </h3>
             {task.subtitle && (
-              <p className="text-[10px] text-[#9b9f9c] mt-0.5 truncate">{task.subtitle}</p>
+              <p className="text-xs text-purple-200/70 mt-0.5 truncate">{task.subtitle}</p>
             )}
           </div>
         </div>
 
         <div className="text-right flex items-center gap-2 shrink-0">
           <div className={`flex flex-col items-end gap-1 ${isCompleted ? 'opacity-50' : ''}`}>
-            <span className="text-[8px] font-mono uppercase tracking-wider px-1.5 py-0.2 rounded bg-[#1a201c] text-[#bef264] border border-[#bef264]/25">
-              {task.priority}
-            </span>
-            <span className="text-[9px] font-mono text-[#8a938e]">{task.durationMinutes}m</span>
+            {task.priority === 'high' && (
+              <span className="text-[8px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                High
+              </span>
+            )}
+            <span className="text-xs font-mono text-purple-300/60">{task.durationMinutes}m</span>
           </div>
 
           {showWhatsApp && (
             <a
               aria-label="WhatsApp quick trigger"
               onClick={(e) => e.stopPropagation()}
-              className="p-1.5 rounded-md bg-[#181c1a] text-[#a1d1bd] border border-white/[0.08] hover:border-[#a1d1bd]/40 active:scale-95 transition-all"
+              className="p-1.5 rounded-lg bg-[#221b44] text-emerald-400 border border-purple-500/20 hover:border-emerald-400/40 active:scale-95 transition-all"
               href="https://wa.me/919876543210"
               target="_blank"
               rel="noreferrer"
@@ -785,7 +787,7 @@ export function SwipeableScheduleCard({
           )}
 
           {/* Swipe indicator pill */}
-          <span className="text-[10px] text-[#8a938e] opacity-50 hover:opacity-100 flex items-center font-mono" title="Slide right or left for actions">
+          <span className="text-xs text-purple-300/40 hover:text-purple-200 flex items-center font-mono" title="Slide right or left for actions">
             ‹ ›
           </span>
         </div>
