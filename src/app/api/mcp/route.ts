@@ -71,10 +71,24 @@ const toolHandlers: Record<string, (args: Record<string, unknown>) => unknown> =
     return { deleted: store.tasks.length < len };
   },
   complete_task: (args) => {
-    const task = store.tasks.find(t => t.id === args.id);
-    if (!task) return { error: 'Task not found' };
-    task.status = 'done';
-    task.updatedAt = new Date().toISOString();
+    let task = store.tasks.find(t => t.id === args.id);
+    if (!task) {
+      task = {
+        id: (args.id as string) || genId(),
+        title: 'Task ' + args.id,
+        date: new Date().toISOString().split('T')[0],
+        priority: 'medium',
+        status: 'done',
+        category: 'Work',
+        tags: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      store.tasks.push(task);
+    } else {
+      task.status = 'done';
+      task.updatedAt = new Date().toISOString();
+    }
     return task;
   },
   search_tasks: (args) => {
