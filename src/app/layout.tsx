@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { AgentationToolbar } from '@/components/AgentationToolbar';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,6 +50,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-[#0e0b1f] text-[#f8fafc]">
         {children}
+        <AgentationToolbar />
       </body>
     </html>
   );
