@@ -19,6 +19,7 @@ import {
   MorgenWeekStrip,
   AnyDoMomentModal,
   AnyDoQuickAddBar,
+  isDateMatching,
 } from '@/nimora/screens/PlanningScreens';
 import {
   Screen11Contacts,
@@ -227,11 +228,14 @@ export default function NimoraApp() {
   const [isProUser, setIsProUser] = useState(false);
   const [isAnyDoMomentOpen, setIsAnyDoMomentOpen] = useState(false);
   const [selectedCalendarDate, setSelectedCalendarDate] = useState('2026-10-24');
+  const [todayIso, setTodayIso] = useState('2026-10-24');
   const [globalToast, setGlobalToast] = useState<string | null>(null);
 
   useEffect(() => {
     try {
-      setSelectedCalendarDate(new Date().toISOString().split('T')[0]);
+      const now = new Date().toISOString().split('T')[0];
+      setTodayIso(now);
+      setSelectedCalendarDate(now);
     } catch {}
   }, []);
 
@@ -391,6 +395,24 @@ export default function NimoraApp() {
   const totalCount = tasks.length || 1;
   const progressPercent = Math.round((completedCount / totalCount) * 100);
   const remainingCount = tasks.filter((t) => t.status !== 'completed').length;
+
+  const isSelectedDateToday = !selectedCalendarDate || selectedCalendarDate === todayIso;
+
+  // If a specific date is selected, filter tasks for that date; otherwise show active schedule
+  const displayedTasks = tasks.filter((t) => {
+    if (isSelectedDateToday) return true;
+    return isDateMatching(t.date, selectedCalendarDate);
+  });
+
+  const formattedSelectedDate = (() => {
+    try {
+      const [y, m, d] = (selectedCalendarDate || '').split('-').map(Number);
+      const dateObj = new Date(y, m - 1, d);
+      return dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    } catch {
+      return selectedCalendarDate;
+    }
+  })();
 
   // Active high priority task: picks active high-priority task, then any active task, fallback to first task
   const activeFocusTask = tasks.find((t) => t.priority === 'high' && t.status !== 'completed')
@@ -679,15 +701,35 @@ export default function NimoraApp() {
           {/* Upcoming Tasks Section (80% Utilitarian Minimalism) */}
           <section className="space-y-2">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold tracking-wide text-purple-200">
-                Upcoming Schedule
-              </h2>
-              <button
-                onClick={() => setActiveTab('add_task')}
-                className="text-xs font-semibold text-[#bef264] hover:underline flex items-center gap-1 cursor-pointer"
-              >
-                + Add Task
-              </button>
+              <div>
+                <h2 className="text-sm font-semibold tracking-wide text-purple-200">
+                  {isSelectedDateToday ? "Today's Schedule" : `Schedule for ${formattedSelectedDate}`}
+                </h2>
+                {!isSelectedDateToday && (
+                  <p className="text-[11px] font-mono text-[#bef264]">
+                    {displayedTasks.length} milestone{displayedTasks.length === 1 ? '' : 's'} scheduled
+                  </p>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                {!isSelectedDateToday && (
+                  <button
+                    onClick={() => {
+                      haptics.tick();
+                      setSelectedCalendarDate(new Date().toISOString().split('T')[0]);
+                    }}
+                    className="text-xs font-mono text-purple-300/70 hover:text-white underline cursor-pointer"
+                  >
+                    View Today
+                  </button>
+                )}
+                <button
+                  onClick={() => setActiveTab('add_task')}
+                  className="text-xs font-semibold text-[#bef264] hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  + Add Task
+                </button>
+              </div>
             </div>
 
             {/* Swipe instruction hint */}
@@ -699,29 +741,52 @@ export default function NimoraApp() {
               <span className="text-[#bef264] font-bold">‹ ›</span>
             </div>
 
-            {tasks.map((task) => (
-              <SwipeableScheduleCard
-                key={task.id}
-                task={task}
-                borderColors={{
-                  blue: 'border-l-blue-500',
-                  green: 'border-l-emerald-500',
-                  coral: 'border-l-orange-400',
-                  orange: 'border-l-orange-400',
-                  gray: 'border-l-gray-400',
-                }}
-                showWhatsApp={true}
-                onToggleTask={handleToggleTask}
-                onSelectTask={(t) => {
-                  setSelectedTask(t);
-                  setActiveTab('task_details');
-                }}
-                onDeleteTask={handleDeleteTask}
-                onNavigate={(mod) => {
-                  if (mod === 8) setActiveTab('task_details');
-                }}
-              />
-            ))}
+            {displayedTasks.length === 0 ? (
+              <div className="minimal-card rounded-2xl p-6 text-center space-y-3 border border-dashed border-white/10 my-2">
+                <div className="w-12 h-12 mx-auto rounded-full bg-[#bef264]/10 text-[#bef264] flex items-center justify-center">
+                  <span className="material-symbols-outlined text-2xl">event_available</span>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-[#f8fafc] font-['Space_Grotesk']">
+                    No tasks scheduled for {formattedSelectedDate}
+                  </p>
+                  <p className="text-xs text-purple-300/60 mt-0.5 font-mono">
+                    Type above in Any.do Fast Capture or click below to schedule
+                  </p>
+                </div>
+                <button
+                  onClick={() => setActiveTab('add_task')}
+                  className="px-4 py-2 rounded-xl bg-[#bef264] text-[#0e0b1f] text-xs font-bold font-mono hover:brightness-110 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-[0_0_12px_rgba(190,242,100,0.3)]"
+                >
+                  <span className="material-symbols-outlined text-sm">add_circle</span>
+                  <span>+ Plan Task for {formattedSelectedDate}</span>
+                </button>
+              </div>
+            ) : (
+              displayedTasks.map((task) => (
+                <SwipeableScheduleCard
+                  key={task.id}
+                  task={task}
+                  borderColors={{
+                    blue: 'border-l-blue-500',
+                    green: 'border-l-emerald-500',
+                    coral: 'border-l-orange-400',
+                    orange: 'border-l-orange-400',
+                    gray: 'border-l-gray-400',
+                  }}
+                  showWhatsApp={true}
+                  onToggleTask={handleToggleTask}
+                  onSelectTask={(t) => {
+                    setSelectedTask(t);
+                    setActiveTab('task_details');
+                  }}
+                  onDeleteTask={handleDeleteTask}
+                  onNavigate={(mod) => {
+                    if (mod === 8) setActiveTab('task_details');
+                  }}
+                />
+              ))
+            )}
           </section>
         </main>
       )}
@@ -755,6 +820,7 @@ export default function NimoraApp() {
           <Screen09AddTask
             tasks={tasks}
             contacts={contacts}
+            selectedDate={selectedCalendarDate}
             onNavigate={(mod) => {
               if (mod === 6) setActiveTab('schedule');
               else setActiveTab('home');

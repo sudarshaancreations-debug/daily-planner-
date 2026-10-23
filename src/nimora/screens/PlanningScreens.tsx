@@ -15,10 +15,11 @@ export interface PlanningProps {
   onDeleteTask?: (id: string) => void;
   onUpdateTask?: (task: NimoraTask) => void;
   selectedTask?: NimoraTask;
+  selectedDate?: string;
 }
 
 // ============================================================================
-// MORGEN REFERENCE: 7-DAY INTERACTIVE WEEK STRIP WITH DENSITY DOTS
+// MORGEN REFERENCE: SLIDABLE INTERACTIVE DATE STRIP WITH DENSITY DOTS
 // ============================================================================
 export interface MorgenWeekStripProps {
   selectedDate: string;
@@ -26,104 +27,310 @@ export interface MorgenWeekStripProps {
   tasks?: NimoraTask[];
 }
 
-const STATIC_WEEK = [
-  { iso: '2026-10-19', weekdayNarrow: 'M', weekdayShort: 'Mon', dayNum: 19, isToday: false },
-  { iso: '2026-10-20', weekdayNarrow: 'T', weekdayShort: 'Tue', dayNum: 20, isToday: false },
-  { iso: '2026-10-21', weekdayNarrow: 'W', weekdayShort: 'Wed', dayNum: 21, isToday: false },
-  { iso: '2026-10-22', weekdayNarrow: 'T', weekdayShort: 'Thu', dayNum: 22, isToday: false },
-  { iso: '2026-10-23', weekdayNarrow: 'F', weekdayShort: 'Fri', dayNum: 23, isToday: false },
-  { iso: '2026-10-24', weekdayNarrow: 'S', weekdayShort: 'Sat', dayNum: 24, isToday: true },
-  { iso: '2026-10-25', weekdayNarrow: 'S', weekdayShort: 'Sun', dayNum: 25, isToday: false },
-];
+export interface MorgenDayItem {
+  iso: string;
+  weekdayNarrow: string;
+  weekdayShort: string;
+  dayNum: number;
+  monthShort: string;
+  monthLong: string;
+  year: number;
+  isToday: boolean;
+}
+
+export function isDateMatching(taskDate: string | undefined, targetIso: string): boolean {
+  if (!taskDate) return false;
+  if (taskDate === targetIso || taskDate.includes(targetIso)) return true;
+  try {
+    const [y, m, d] = targetIso.split('-').map(Number);
+    const targetDate = new Date(y, m - 1, d);
+    const parsed = new Date(taskDate);
+    if (!isNaN(parsed.getTime())) {
+      return (
+        parsed.getFullYear() === targetDate.getFullYear() &&
+        parsed.getMonth() === targetDate.getMonth() &&
+        parsed.getDate() === targetDate.getDate()
+      );
+    }
+  } catch {}
+  return false;
+}
+
+function generateDaysWindow(centerIso: string, todayIso: string): MorgenDayItem[] {
+  try {
+    const [cy, cm, cd] = (centerIso || todayIso).split('-').map(Number);
+    const centerDate = new Date(cy, cm - 1, cd);
+    // Spanning 14 days in the past and 75 days in the future for planning anytime
+    const startDate = new Date(centerDate);
+    startDate.setDate(startDate.getDate() - 14);
+
+    const result: MorgenDayItem[] = [];
+    for (let i = 0; i < 90; i++) {
+      const d = new Date(startDate);
+      d.setDate(startDate.getDate() + i);
+      const iso = d.toISOString().split('T')[0];
+      result.push({
+        iso,
+        weekdayNarrow: d.toLocaleDateString('en-US', { weekday: 'narrow' }),
+        weekdayShort: d.toLocaleDateString('en-US', { weekday: 'short' }),
+        dayNum: d.getDate(),
+        monthShort: d.toLocaleDateString('en-US', { month: 'short' }),
+        monthLong: d.toLocaleDateString('en-US', { month: 'long' }),
+        year: d.getFullYear(),
+        isToday: iso === todayIso,
+      });
+    }
+    return result;
+  } catch {
+    return [];
+  }
+}
 
 export function MorgenWeekStrip({ selectedDate, onSelectDate, tasks = [] }: MorgenWeekStripProps) {
-  const [days, setDays] = useState(STATIC_WEEK);
   const [todayIso, setTodayIso] = useState('2026-10-24');
+  const [days, setDays] = useState<MorgenDayItem[]>([]);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const isDraggingRef = useRef(false);
+  const startXRef = useRef(0);
+  const scrollLeftRef = useRef(0);
+  const hasDraggedRef = useRef(false);
 
   useEffect(() => {
     try {
-      const today = new Date();
-      const day = today.getDay();
-      const diff = today.getDate() - day + (day === 0 ? -6 : 1);
-      const monday = new Date(today.getFullYear(), today.getMonth(), diff);
-      const nowIso = today.toISOString().split('T')[0];
+      const nowIso = new Date().toISOString().split('T')[0];
       setTodayIso(nowIso);
-
-      const computed = Array.from({ length: 7 }).map((_, i) => {
-        const d = new Date(monday);
-        d.setDate(monday.getDate() + i);
-        const iso = d.toISOString().split('T')[0];
-        const weekdayNarrow = d.toLocaleDateString('en-US', { weekday: 'narrow' });
-        const weekdayShort = d.toLocaleDateString('en-US', { weekday: 'short' });
-        const dayNum = d.getDate();
-        const isToday = iso === nowIso;
-        return { iso, weekdayNarrow, weekdayShort, dayNum, isToday };
-      });
-      setDays(computed);
+      const initialCenter = selectedDate || nowIso;
+      setDays(generateDaysWindow(initialCenter, nowIso));
     } catch {}
   }, []);
 
+  // Ensure selectedDate is included in days range
+  useEffect(() => {
+    if (!selectedDate || days.length === 0) return;
+    const exists = days.some((d) => d.iso === selectedDate);
+    if (!exists) {
+      setDays(generateDaysWindow(selectedDate, todayIso));
+    }
+  }, [selectedDate, days, todayIso]);
+
+  // Smoothly center the selected date in the horizontal viewport
+  useEffect(() => {
+    if (!scrollContainerRef.current || !selectedDate) return;
+    const timer = setTimeout(() => {
+      const target = scrollContainerRef.current?.querySelector<HTMLElement>(`[data-date="${selectedDate}"]`);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [selectedDate, days]);
+
+  const currentMonthYear = useMemo(() => {
+    try {
+      if (!selectedDate) return 'October 2026';
+      const [y, m, d] = selectedDate.split('-').map(Number);
+      const dateObj = new Date(y, m - 1, d);
+      return dateObj.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    } catch {
+      return 'October 2026';
+    }
+  }, [selectedDate]);
+
+  const handleSlideLeft = () => {
+    haptics.tick();
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -260, behavior: 'smooth' });
+    }
+  };
+
+  const handleSlideRight = () => {
+    haptics.tick();
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 260, behavior: 'smooth' });
+    }
+  };
+
+  const handleSelectDay = (iso: string) => {
+    if (hasDraggedRef.current) return;
+    haptics.tick();
+    onSelectDate(iso);
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollContainerRef.current) return;
+    isDraggingRef.current = true;
+    hasDraggedRef.current = false;
+    startXRef.current = e.pageX - scrollContainerRef.current.offsetLeft;
+    scrollLeftRef.current = scrollContainerRef.current.scrollLeft;
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDraggingRef.current || !scrollContainerRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollContainerRef.current.offsetLeft;
+    const walk = (x - startXRef.current) * 1.4;
+    if (Math.abs(walk) > 6) {
+      hasDraggedRef.current = true;
+    }
+    scrollContainerRef.current.scrollLeft = scrollLeftRef.current - walk;
+  };
+
+  const handleMouseUp = () => {
+    isDraggingRef.current = false;
+    setTimeout(() => {
+      hasDraggedRef.current = false;
+    }, 60);
+  };
+
+  // Calculate task density count for each day
+  const getDotCount = (dayIso: string) => {
+    const matching = tasks.filter((t) => isDateMatching(t.date, dayIso));
+    if (matching.length > 0) return Math.min(3, matching.length);
+    return 0;
+  };
+
   return (
     <div className="w-full select-none">
-      <div className="flex items-center justify-between mb-1.5 px-1">
-        <span className="text-xs font-mono text-purple-200/90 flex items-center gap-1.5 font-medium">
-          <span className="material-symbols-outlined text-sm text-[#bef264]">date_range</span>
-          <span>Week density</span>
-        </span>
-        {selectedDate !== todayIso && (
-          <button
-            type="button"
-            onClick={() => {
-              haptics.tick();
-              onSelectDate(todayIso);
-            }}
-            className="text-xs font-mono text-[#bef264] hover:underline flex items-center gap-0.5 cursor-pointer"
+      {/* Month, Year, and Slide Controls Header */}
+      <div className="flex items-center justify-between mb-2 px-1">
+        <div className="flex items-center gap-2">
+          <span className="material-symbols-outlined text-[17px] text-[#bef264]">date_range</span>
+          <span className="text-xs font-bold text-white font-['Space_Grotesk'] tracking-wide">
+            {currentMonthYear}
+          </span>
+          {/* Quick Date Picker to jump to any date to plan ahead */}
+          <label
+            className="cursor-pointer text-purple-300/60 hover:text-[#bef264] transition-colors relative flex items-center p-1 rounded-md hover:bg-white/[0.06]"
+            title="Jump to any date in calendar"
           >
-            <span>Back to Today</span>
-            <span className="material-symbols-outlined text-xs">restart_alt</span>
-          </button>
-        )}
-      </div>
+            <span className="material-symbols-outlined text-[16px]">edit_calendar</span>
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => {
+                if (e.target.value) {
+                  haptics.tick();
+                  onSelectDate(e.target.value);
+                }
+              }}
+              className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+            />
+          </label>
+        </div>
 
-      <div className="grid grid-cols-7 gap-1.5 p-1.5 bg-[#171330] rounded-2xl border border-purple-500/15">
-        {days.map((day) => {
-          const isSelected = selectedDate === day.iso;
-          // Calculate density dots for this day
-          const dayTasks = tasks.filter((t) => t.date && (t.date.includes(day.iso) || t.date.includes(`${day.dayNum}`)));
-          const dotCount = Math.min(3, dayTasks.length > 0 ? dayTasks.length : (day.isToday ? 3 : day.dayNum % 2 === 0 ? 2 : 1));
-
-          return (
+        <div className="flex items-center gap-1.5">
+          {selectedDate !== todayIso && (
             <button
-              key={day.iso}
               type="button"
               onClick={() => {
                 haptics.tick();
-                onSelectDate(day.iso);
+                onSelectDate(todayIso);
               }}
-              className={`py-2 px-1 rounded-xl flex flex-col items-center justify-center transition-all cursor-pointer relative ${
-                isSelected
-                  ? 'bg-[#bef264] text-[#0e0b1f] font-bold shadow-[0_0_12px_rgba(190,242,100,0.35)] scale-[1.03]'
-                  : 'text-purple-200/80 hover:bg-[#221b44] hover:text-white'
-              }`}
+              className="text-[11px] font-mono text-[#bef264] hover:underline flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#bef264]/10 border border-[#bef264]/20 cursor-pointer transition-all active:scale-95"
             >
-              <span className={`text-[9px] font-mono uppercase tracking-wider ${isSelected ? 'text-[#0e0b1f] font-bold' : 'text-purple-300/60'}`}>
-                {day.weekdayNarrow}
-              </span>
-              <span className={`text-xs font-['Space_Grotesk'] font-bold mt-0.5 ${isSelected ? 'text-[#0e0b1f]' : 'text-[#f8fafc]'}`}>
-                {day.dayNum}
-              </span>
-              {/* Density dots in Morgen signature style */}
-              <div className="flex items-center gap-0.5 mt-1 h-1">
-                {Array.from({ length: dotCount }).map((_, i) => (
-                  <span
-                    key={i}
-                    className={`w-1 h-1 rounded-full ${isSelected ? 'bg-[#0e0b1f]' : 'bg-[#bef264]'}`}
-                  />
-                ))}
-              </div>
+              <span>Today</span>
+              <span className="material-symbols-outlined text-xs">restart_alt</span>
             </button>
-          );
-        })}
+          )}
+          <button
+            type="button"
+            onClick={handleSlideLeft}
+            aria-label="Previous days"
+            className="w-7 h-7 rounded-lg bg-[#171330] border border-purple-500/20 hover:border-[#bef264]/40 text-purple-200 hover:text-[#bef264] flex items-center justify-center text-sm font-bold transition-all active:scale-95 cursor-pointer shadow-sm"
+            title="Slide previous days"
+          >
+            ‹
+          </button>
+          <button
+            type="button"
+            onClick={handleSlideRight}
+            aria-label="Next days"
+            className="w-7 h-7 rounded-lg bg-[#171330] border border-purple-500/20 hover:border-[#bef264]/40 text-purple-200 hover:text-[#bef264] flex items-center justify-center text-sm font-bold transition-all active:scale-95 cursor-pointer shadow-sm"
+            title="Slide next days"
+          >
+            ›
+          </button>
+        </div>
+      </div>
+
+      {/* Slidable Dates Container */}
+      <div className="relative group">
+        <div className="absolute left-0 top-0 bottom-0 w-3 bg-gradient-to-r from-[#171330] to-transparent z-10 pointer-events-none rounded-l-2xl" />
+        <div className="absolute right-0 top-0 bottom-0 w-3 bg-gradient-to-l from-[#171330] to-transparent z-10 pointer-events-none rounded-r-2xl" />
+
+        <div
+          ref={scrollContainerRef}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          className="flex items-center gap-1.5 p-1.5 bg-[#171330] rounded-2xl border border-purple-500/20 overflow-x-auto scroll-smooth select-none cursor-grab active:cursor-grabbing"
+          style={{
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+            WebkitOverflowScrolling: 'touch',
+            touchAction: 'pan-x',
+          }}
+        >
+          {days.map((day) => {
+            const isSelected = selectedDate === day.iso;
+            const dotCount = getDotCount(day.iso);
+
+            return (
+              <button
+                key={day.iso}
+                data-date={day.iso}
+                type="button"
+                onClick={() => handleSelectDay(day.iso)}
+                className={`w-[48px] min-w-[48px] py-2 px-1 rounded-xl flex flex-col items-center justify-center shrink-0 transition-all cursor-pointer relative ${
+                  isSelected
+                    ? 'bg-[#bef264] text-[#0e0b1f] font-bold shadow-[0_0_14px_rgba(190,242,100,0.4)] scale-105 z-10'
+                    : day.isToday
+                    ? 'text-[#f8fafc] bg-[#221b44] border border-[#bef264]/50 hover:bg-[#2c2358]'
+                    : 'text-purple-200/80 hover:bg-[#221b44] hover:text-white'
+                }`}
+              >
+                <span
+                  className={`text-[9px] font-mono uppercase tracking-wider ${
+                    isSelected
+                      ? 'text-[#0e0b1f] font-extrabold'
+                      : day.isToday
+                      ? 'text-[#bef264] font-bold'
+                      : 'text-purple-300/60'
+                  }`}
+                >
+                  {day.weekdayNarrow}
+                </span>
+                <span
+                  className={`text-xs font-['Space_Grotesk'] font-bold mt-0.5 ${
+                    isSelected ? 'text-[#0e0b1f]' : 'text-[#f8fafc]'
+                  }`}
+                >
+                  {day.dayNum}
+                </span>
+                {/* Density dots in Morgen signature style */}
+                <div className="flex items-center gap-0.5 mt-1 h-1">
+                  {dotCount > 0 ? (
+                    Array.from({ length: dotCount }).map((_, i) => (
+                      <span
+                        key={i}
+                        className={`w-1 h-1 rounded-full ${isSelected ? 'bg-[#0e0b1f]' : 'bg-[#bef264]'}`}
+                      />
+                    ))
+                  ) : day.isToday ? (
+                    <span className={`w-1 h-1 rounded-full ${isSelected ? 'bg-[#0e0b1f]' : 'bg-purple-400/40'}`} />
+                  ) : (
+                    <span className="w-1 h-1" />
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <div className="flex items-center justify-between px-1.5 mt-1 text-[10px] font-mono text-purple-300/50">
+        <span>‹ Drag or swipe to slide dates ›</span>
+        <span>Tap any date to plan</span>
       </div>
     </div>
   );
@@ -879,8 +1086,7 @@ export function Screen08DailyPlanner({
   const dateFilteredTasks = tasks.filter((t) => {
     if (!t.date) return true;
     if (selectedDate === todayIso) return true;
-    const dayMatch = selectedDate.split('-')[2] || '24';
-    return t.date.includes(selectedDate) || t.date.includes(dayMatch);
+    return isDateMatching(t.date, selectedDate);
   });
 
   const activeTasks = dateFilteredTasks.filter((t) => t.status !== 'completed');
@@ -1015,7 +1221,28 @@ export function Screen08DailyPlanner({
 
       {/* Main Schedule Content: Timeline OR List - with pb-36 ensuring no overlap with bottom nav */}
       <div className="flex-1 overflow-y-auto px-4 py-2 pb-36 space-y-2">
-        {viewMode === 'timeline' ? (
+        {orderedTasks.length === 0 ? (
+          <div className="minimal-card rounded-2xl p-6 text-center space-y-3 border border-dashed border-white/10 my-4">
+            <div className="w-12 h-12 mx-auto rounded-full bg-[#bef264]/10 text-[#bef264] flex items-center justify-center">
+              <span className="material-symbols-outlined text-2xl">event_available</span>
+            </div>
+            <div>
+              <p className="text-sm font-bold text-[#f8fafc] font-['Space_Grotesk']">
+                No tasks planned for this date
+              </p>
+              <p className="text-xs text-purple-300/60 mt-0.5 font-mono">
+                Your schedule is wide open for focused deep work
+              </p>
+            </div>
+            <button
+              onClick={() => onNavigate?.(7)}
+              className="px-4 py-2 rounded-xl bg-[#bef264] text-[#0e0b1f] text-xs font-bold font-mono hover:brightness-110 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-[0_0_12px_rgba(190,242,100,0.3)]"
+            >
+              <span className="material-symbols-outlined text-sm">add_circle</span>
+              <span>+ Plan Task for this Day</span>
+            </button>
+          </div>
+        ) : viewMode === 'timeline' ? (
           /* MORGEN TIMELINE VIEW WITH SMART FOCUS BUFFERS */
           <div className="space-y-1 relative">
             {orderedTasks.map((task, idx) => (
@@ -1153,18 +1380,18 @@ export function Screen08DailyPlanner({
 }
 
 // 7. Create New Task
-export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningProps) {
+export function Screen09AddTask({ contacts, onNavigate, onAddTask, selectedDate }: PlanningProps) {
   const [activeTab, setActiveTab] = useState<'task' | 'followup' | 'call' | 'note'>('task');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [selectedContact, setSelectedContact] = useState(contacts[0]?.id || '');
-  const [date, setDate] = useState('2026-10-24');
+  const [date, setDate] = useState(selectedDate || '2026-10-24');
 
   useEffect(() => {
     try {
-      setDate(new Date().toISOString().split('T')[0]);
+      setDate(selectedDate || new Date().toISOString().split('T')[0]);
     } catch {}
-  }, []);
+  }, [selectedDate]);
   const [time, setTime] = useState('10:00 AM');
   const [duration, setDuration] = useState('30');
   const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium');
