@@ -282,6 +282,13 @@ export function Screen17WhatsApp({ onNavigate }: WidgetAndSettingsProps) {
 export function Screen18ProfileSettings({ tasks, onNavigate, onResetData }: WidgetAndSettingsProps) {
   const [resetMessage, setResetMessage] = useState('');
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [profileName, setProfileName] = useState('Sudarshan Mehta');
+  const [profileRole, setProfileRole] = useState('Principal Architect & Founder');
+  const [profileEmail, setProfileEmail] = useState('sudarshan@bespokestudio.com');
+  const [profilePhone, setProfilePhone] = useState('+91 98765 43210');
+  const [profileLocation, setProfileLocation] = useState('Bengaluru / Mumbai');
+  const [profileToast, setProfileToast] = useState('');
   const [isSyncing, setIsSyncing] = useState(false);
   const [lastSyncTime, setLastSyncTime] = useState('2 minutes ago');
   const [syncToast, setSyncToast] = useState('');
@@ -310,6 +317,16 @@ export function Screen18ProfileSettings({ tasks, onNavigate, onResetData }: Widg
     }, 900);
   };
 
+  const handleSaveProfile = (e: React.FormEvent) => {
+    e.preventDefault();
+    haptics.success();
+    setProfileToast('Profile updated successfully!');
+    setTimeout(() => {
+      setProfileToast('');
+      setIsProfileModalOpen(false);
+    }, 1200);
+  };
+
   const handleReset = () => {
     if (confirm('Are you sure you want to reset all tasks to initial demo state?')) {
       onResetData?.();
@@ -330,24 +347,31 @@ export function Screen18ProfileSettings({ tasks, onNavigate, onResetData }: Widg
           <span className="w-5" />
         </div>
 
-        {/* User Card (80% Minimalist Bento) */}
-        <div className="p-4 minimal-card m-4 rounded-2xl flex items-center justify-between border border-white/[0.08]">
+        {/* User Card (Interactive Profile Button) */}
+        <button
+          type="button"
+          onClick={() => {
+            haptics.tick();
+            setIsProfileModalOpen(true);
+          }}
+          className="w-[calc(100%-2rem)] mx-4 p-4 minimal-card m-4 rounded-2xl flex items-center justify-between border border-white/[0.08] hover:border-[#bef264]/40 hover:bg-white/[0.04] transition-all cursor-pointer text-left active:scale-[0.99] group shadow-sm"
+        >
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full liquid-glass-pill text-[#bef264] font-bold flex items-center justify-center text-base shadow-sm border border-white/25 font-['Space_Grotesk']">
-              S
+            <div className="w-12 h-12 rounded-full liquid-glass-pill text-[#bef264] font-bold flex items-center justify-center text-base shadow-sm border border-white/25 font-['Space_Grotesk'] group-hover:scale-105 transition-transform">
+              {profileName.charAt(0)}
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <h3 className="text-sm font-bold text-[#f8fafc] font-['Space_Grotesk']">Sudarshan</h3>
+                <h3 className="text-sm font-bold text-[#f8fafc] font-['Space_Grotesk']">{profileName}</h3>
                 <span className="text-[9px] font-mono font-bold bg-[#1b201d] text-[#bef264] px-2 py-0.5 rounded-full border border-white/[0.08]">
                   PRO
                 </span>
               </div>
-              <p className="text-xs text-[#8a938e] font-mono">sudarshan@bespokestudio.com</p>
+              <p className="text-xs text-purple-300/70 font-mono truncate max-w-[200px]">{profileEmail}</p>
             </div>
           </div>
-          <span className="text-xs text-[#8a938e] font-mono">›</span>
-        </div>
+          <span className="text-xs text-purple-300/60 group-hover:text-[#bef264] group-hover:translate-x-0.5 transition-all font-mono">›</span>
+        </button>
 
         {/* Options List */}
         <div className="px-4 space-y-2">
@@ -661,6 +685,153 @@ export function Screen18ProfileSettings({ tasks, onNavigate, onResetData }: Widg
                 Done
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Profile & Account Details Modal */}
+      {isProfileModalOpen && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={() => setIsProfileModalOpen(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-sm bg-[#120e29] border border-purple-500/30 rounded-3xl p-5 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-purple-500/20">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-[#bef264]/20 border border-[#bef264]/40 flex items-center justify-center text-[#bef264]">
+                  <span className="material-symbols-outlined text-lg">account_circle</span>
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-[#f8fafc] font-['Space_Grotesk']">Account Profile</h3>
+                  <p className="text-[10px] text-purple-300/70 font-mono">Personal & Studio Details</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  haptics.tick();
+                  setIsProfileModalOpen(false);
+                }}
+                className="w-7 h-7 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-purple-200 hover:text-white flex items-center justify-center text-xs transition-all cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            {profileToast && (
+              <div className="p-2.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-[#bef264] text-xs font-mono text-center animate-in fade-in">
+                ✓ {profileToast}
+              </div>
+            )}
+
+            {/* Profile Avatar Card */}
+            <div className="flex items-center gap-3 p-3 bg-white/[0.04] rounded-2xl border border-white/[0.08]">
+              <div className="w-14 h-14 rounded-full liquid-glass-pill text-[#bef264] font-bold flex items-center justify-center text-xl shadow-md border border-white/30 font-['Space_Grotesk']">
+                {profileName.charAt(0)}
+              </div>
+              <div>
+                <span className="text-[9px] font-mono font-bold bg-[#bef264]/20 text-[#bef264] px-2 py-0.5 rounded-full border border-[#bef264]/40 uppercase tracking-wider inline-block mb-1">
+                  Executive PRO Active
+                </span>
+                <p className="text-xs text-purple-200 font-medium">Bespoke Studio ID: #8824</p>
+                <p className="text-[10px] text-purple-300/60 font-mono">AES-256 Client-Side Key Active</p>
+              </div>
+            </div>
+
+            {/* Edit Form */}
+            <form onSubmit={handleSaveProfile} className="space-y-3">
+              <div>
+                <label className="text-[10px] font-mono text-purple-300/70 block mb-1 uppercase tracking-wider">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  value={profileName}
+                  onChange={(e) => setProfileName(e.target.value)}
+                  className="w-full bg-[#1a1438] border border-purple-500/25 rounded-xl px-3 py-2 text-xs text-white placeholder-purple-300/40 outline-none focus:border-[#bef264]/60 transition-colors"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-mono text-purple-300/70 block mb-1 uppercase tracking-wider">
+                  Designation / Role
+                </label>
+                <input
+                  type="text"
+                  value={profileRole}
+                  onChange={(e) => setProfileRole(e.target.value)}
+                  className="w-full bg-[#1a1438] border border-purple-500/25 rounded-xl px-3 py-2 text-xs text-white placeholder-purple-300/40 outline-none focus:border-[#bef264]/60 transition-colors"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-mono text-purple-300/70 block mb-1 uppercase tracking-wider">
+                  Verified Email
+                </label>
+                <div className="relative">
+                  <input
+                    type="email"
+                    value={profileEmail}
+                    onChange={(e) => setProfileEmail(e.target.value)}
+                    className="w-full bg-[#1a1438] border border-purple-500/25 rounded-xl px-3 py-2 text-xs text-white placeholder-purple-300/40 outline-none focus:border-[#bef264]/60 transition-colors font-mono"
+                    required
+                  />
+                  <span className="absolute right-2.5 top-2 text-[#bef264] text-[11px] font-mono">
+                    ✓ Verified
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-[10px] font-mono text-purple-300/70 block mb-1 uppercase tracking-wider">
+                    Phone
+                  </label>
+                  <input
+                    type="text"
+                    value={profilePhone}
+                    onChange={(e) => setProfilePhone(e.target.value)}
+                    className="w-full bg-[#1a1438] border border-purple-500/25 rounded-xl px-3 py-2 text-xs text-white placeholder-purple-300/40 outline-none focus:border-[#bef264]/60 transition-colors font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-mono text-purple-300/70 block mb-1 uppercase tracking-wider">
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    value={profileLocation}
+                    onChange={(e) => setProfileLocation(e.target.value)}
+                    className="w-full bg-[#1a1438] border border-purple-500/25 rounded-xl px-3 py-2 text-xs text-white placeholder-purple-300/40 outline-none focus:border-[#bef264]/60 transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-2 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsProfileModalOpen(false);
+                    onNavigate?.(99);
+                  }}
+                  className="flex-1 py-2 px-3 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] text-xs font-semibold text-purple-200 hover:text-white transition-all cursor-pointer text-center"
+                >
+                  Manage Plan
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2 px-3 rounded-xl bg-[#bef264] text-[#0e0b1f] text-xs font-bold hover:brightness-105 active:scale-95 transition-all cursor-pointer text-center"
+                >
+                  Save Profile
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
