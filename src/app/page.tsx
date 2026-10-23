@@ -84,9 +84,12 @@ function ThumbSliderNav({ activeTab, onSelectTab }: ThumbSliderNavProps) {
   const calculateSlotFromCoord = (clientX: number) => {
     if (!trackRef.current) return activeIndex;
     const rect = trackRef.current.getBoundingClientRect();
-    const relativeX = clientX - rect.left;
-    const clampedX = Math.max(0, Math.min(rect.width, relativeX));
-    const continuous = (clampedX / rect.width) * 5;
+    // Inner track has 6px padding (p-1.5) on left and right
+    const innerLeft = rect.left + 6;
+    const innerWidth = rect.width - 12;
+    const relativeX = clientX - innerLeft;
+    const clampedX = Math.max(0, Math.min(innerWidth, relativeX));
+    const continuous = (clampedX / innerWidth) * 5;
     return Math.max(0, Math.min(4, continuous - 0.5));
   };
 
@@ -138,57 +141,63 @@ function ThumbSliderNav({ activeTab, onSelectTab }: ThumbSliderNavProps) {
         onMouseDown={(e) => handlePointerDown(e.clientX)}
         onMouseMove={(e) => handlePointerMove(e.clientX)}
         onMouseUp={handlePointerUp}
-        className="thumb-slider-track relative h-16 rounded-full p-1.5 flex items-center justify-between cursor-grab active:cursor-grabbing shadow-2xl"
+        className="thumb-slider-track relative h-16 rounded-full p-1.5 shadow-2xl cursor-grab active:cursor-grabbing"
       >
-        {/* Sliding Elevated Liquid Glass Thumb Capsule (Clean minimal glass surface with no dot or dash) */}
-        <div
-          className="thumb-slider-capsule absolute top-1.5 bottom-1.5 rounded-full transition-all"
-          style={{
-            width: 'calc(20% - 3px)',
-            left: '1.5px',
-            transform: `translateX(${sliderPos * 100}%)`,
-            transition: isDragging ? 'none' : 'transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)',
-          }}
-        />
+        <div className="relative w-full h-full">
+          {/* Sliding Elevated Liquid Glass Thumb Capsule (Perfect sub-pixel centering with inner grid) */}
+          <div
+            className="absolute top-0 bottom-0 pointer-events-none transition-all p-0.5"
+            style={{
+              width: '20%',
+              left: 0,
+              transform: `translateX(${sliderPos * 100}%)`,
+              transition: isDragging ? 'none' : 'transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)',
+            }}
+          >
+            <div className="w-full h-full rounded-full thumb-slider-capsule" />
+          </div>
 
-        {/* 5 Destination Slots */}
-        {tabs.map((tab, idx) => {
-          const isSlotActive = Math.round(sliderPos) === idx;
-          return (
-            <button
-              key={tab.id}
-              onClick={(e) => {
-                e.stopPropagation();
-                setSliderPos(idx);
-                onSelectTab(tab.id);
-                haptics.sliderSnap();
-              }}
-              aria-label={tab.label}
-              aria-current={isSlotActive ? 'page' : undefined}
-              className={`flex-1 h-full relative z-10 flex flex-col items-center justify-center transition-all active:scale-95 cursor-pointer rounded-full ${
-                isSlotActive ? 'text-[#bef264]' : 'text-purple-300/60 hover:text-purple-200'
-              }`}
-            >
-              <span
-                className={`material-symbols-outlined text-[22px] transition-all duration-150 ${
-                  isSlotActive ? 'text-[#bef264] drop-shadow-[0_0_8px_rgba(190,242,100,0.5)] scale-105' : 'text-purple-300/60'
-                }`}
-                style={{
-                  fontVariationSettings: isSlotActive ? "'FILL' 1" : "'FILL' 0",
-                }}
-              >
-                {tab.icon}
-              </span>
-              <span
-                className={`text-[9px] font-mono tracking-tight uppercase mt-0.5 transition-colors ${
-                  isSlotActive ? 'text-[#bef264] font-extrabold underline decoration-2 underline-offset-2' : 'text-purple-300/60 font-medium'
-                }`}
-              >
-                {tab.label}
-              </span>
-            </button>
-          );
-        })}
+          {/* 5 Destination Slots */}
+          <div className="relative z-10 w-full h-full grid grid-cols-5">
+            {tabs.map((tab, idx) => {
+              const isSlotActive = Math.round(sliderPos) === idx;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSliderPos(idx);
+                    onSelectTab(tab.id);
+                    haptics.sliderSnap();
+                  }}
+                  aria-label={tab.label}
+                  aria-current={isSlotActive ? 'page' : undefined}
+                  className={`w-full h-full flex flex-col items-center justify-center transition-all active:scale-95 cursor-pointer rounded-full ${
+                    isSlotActive ? 'text-[#bef264]' : 'text-purple-300/60 hover:text-purple-200'
+                  }`}
+                >
+                  <span
+                    className={`material-symbols-outlined text-[22px] transition-all duration-150 ${
+                      isSlotActive ? 'text-[#bef264] drop-shadow-[0_0_8px_rgba(190,242,100,0.5)] scale-105' : 'text-purple-300/60'
+                    }`}
+                    style={{
+                      fontVariationSettings: isSlotActive ? "'FILL' 1" : "'FILL' 0",
+                    }}
+                  >
+                    {tab.icon}
+                  </span>
+                  <span
+                    className={`text-[9px] font-mono tracking-tight uppercase mt-0.5 transition-colors ${
+                      isSlotActive ? 'text-[#bef264] font-extrabold underline decoration-2 underline-offset-2' : 'text-purple-300/60 font-medium'
+                    }`}
+                  >
+                    {tab.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );
