@@ -110,54 +110,279 @@ export function Screen15Widget({ tasks, onNavigate }: WidgetAndSettingsProps) {
   );
 }
 
-// 14. Notifications & Snooze
-export function Screen16Notifications({ notifications, onNavigate }: WidgetAndSettingsProps) {
+// 14. Notifications & Alerts Center
+export function Screen16Notifications({ notifications: initialList = [], onNavigate }: WidgetAndSettingsProps) {
+  const [items, setItems] = useState<Array<NimoraNotification & { read?: boolean }>>(() =>
+    initialList.map((n) => ({ ...n, read: false }))
+  );
+  const [activeFilter, setActiveFilter] = useState<'all' | 'reminders' | 'ai'>('all');
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 2500);
+  };
+
+  const markAllRead = () => {
+    haptics.tick();
+    setItems((prev) => prev.map((item) => ({ ...item, read: true })));
+    showToast('✓ All notifications marked as read');
+  };
+
+  const clearAll = () => {
+    haptics.warning();
+    setItems([]);
+    showToast('Cleared all notifications');
+  };
+
+  const dismissItem = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    haptics.tick();
+    setItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const handleAction = (id: string, actionLabel: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (actionLabel.toLowerCase().includes('snooze')) {
+      haptics.tick();
+      showToast('⏰ Snoozed for 15 minutes');
+      setItems((prev) => prev.filter((item) => item.id !== id));
+    } else if (actionLabel.toLowerCase().includes('open') || actionLabel.toLowerCase().includes('done')) {
+      haptics.success();
+      onNavigate?.(6); // Navigate to schedule
+    } else if (actionLabel.toLowerCase().includes('suggestion') || actionLabel.toLowerCase().includes('view')) {
+      haptics.tick();
+      onNavigate?.(3); // Navigate to AI Suggestions / Assistant
+    } else {
+      haptics.tick();
+      setItems((prev) => prev.map((item) => (item.id === id ? { ...item, read: true } : item)));
+    }
+  };
+
+  const unreadCount = items.filter((n) => !n.read).length;
+
+  const filteredItems = items.filter((n) => {
+    if (activeFilter === 'reminders') {
+      return (
+        n.title.toLowerCase().includes('call') ||
+        n.title.toLowerCase().includes('follow up') ||
+        n.title.toLowerCase().includes('starts')
+      );
+    }
+    if (activeFilter === 'ai') {
+      return n.title.toLowerCase().includes('ai') || n.body.toLowerCase().includes('suggestion');
+    }
+    return true;
+  });
+
+  const getIconForNotification = (n: NimoraNotification) => {
+    const text = (n.title + ' ' + n.body).toLowerCase();
+    if (text.includes('call') || text.includes('meeting')) {
+      return { icon: 'call', color: 'text-sky-400 bg-sky-500/15 border-sky-500/30' };
+    }
+    if (text.includes('ai') || text.includes('suggestion')) {
+      return { icon: 'auto_awesome', color: 'text-[#bef264] bg-[#bef264]/15 border-[#bef264]/30' };
+    }
+    return { icon: 'notifications_active', color: 'text-purple-300 bg-purple-500/15 border-purple-500/30' };
+  };
+
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#0e0b1f] text-[#f8fafc] flex flex-col justify-between p-6 select-none rounded-[38px] relative overflow-hidden">
-      <div>
-        {/* iOS Lock Screen Header Clock */}
-        <div className="text-center pt-4 mb-6">
-          <span className="text-xs text-[#8a938e] block">🔒</span>
-          <h1 className="text-5xl font-extralight tracking-tight text-[#f8fafc] mt-1 font-['Space_Grotesk']">9:00</h1>
-          <p className="text-xs text-[#c0c8c3] font-medium mt-1">Tue, 20 Oct</p>
+    <div className="w-full h-full min-h-[680px] bg-[#0e0b1f] text-[#f8fafc] flex flex-col justify-between select-none rounded-[38px] overflow-hidden relative">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="absolute top-16 left-4 right-4 z-50 animate-bounce">
+          <div className="liquid-glass rounded-xl px-3.5 py-2.5 border border-[#bef264]/40 text-xs text-[#bef264] font-mono flex items-center justify-between shadow-2xl">
+            <span>{toastMessage}</span>
+            <button onClick={() => setToastMessage(null)} className="text-purple-300/60 hover:text-white cursor-pointer">✕</button>
+          </div>
+        </div>
+      )}
+
+      <div className="overflow-y-auto pb-24">
+        {/* Real App Header */}
+        <div className="p-4 bg-[#0e0b1f]/90 border-b border-[#334155]/30 flex items-center justify-between sticky top-0 z-20 backdrop-blur-md">
+          <button
+            onClick={() => onNavigate?.(5)}
+            className="text-purple-300/80 hover:text-white text-xs font-semibold flex items-center gap-1 cursor-pointer"
+          >
+            ‹ Back
+          </button>
+          <div className="flex items-center gap-1.5">
+            <h2 className="text-sm font-bold text-[#f8fafc] font-['Space_Grotesk']">
+              Notifications & Alerts
+            </h2>
+            {unreadCount > 0 && (
+              <span className="text-[10px] font-mono font-bold bg-[#bef264] text-[#0e0b1f] px-1.5 py-0.2 rounded-full">
+                {unreadCount}
+              </span>
+            )}
+          </div>
+          {items.length > 0 ? (
+            <button
+              onClick={markAllRead}
+              className="text-[11px] font-mono text-[#bef264] hover:underline cursor-pointer"
+            >
+              Mark all read
+            </button>
+          ) : (
+            <span className="w-8" />
+          )}
+        </div>
+
+        {/* Filter Tabs */}
+        <div className="p-4 pb-2">
+          <div className="flex items-center gap-1.5 p-1 bg-[#171330] rounded-xl border border-purple-500/20 text-xs">
+            <button
+              type="button"
+              onClick={() => { haptics.tick(); setActiveFilter('all'); }}
+              className={`flex-1 py-1.5 rounded-lg font-mono text-[10px] font-bold uppercase transition-all cursor-pointer ${
+                activeFilter === 'all'
+                  ? 'bg-[#251e4d] text-[#bef264] border border-[#bef264]/40 shadow-sm'
+                  : 'text-purple-300/60 hover:text-white'
+              }`}
+            >
+              All ({items.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => { haptics.tick(); setActiveFilter('reminders'); }}
+              className={`flex-1 py-1.5 rounded-lg font-mono text-[10px] font-bold uppercase transition-all cursor-pointer ${
+                activeFilter === 'reminders'
+                  ? 'bg-[#251e4d] text-[#bef264] border border-[#bef264]/40 shadow-sm'
+                  : 'text-purple-300/60 hover:text-white'
+              }`}
+            >
+              Reminders
+            </button>
+            <button
+              type="button"
+              onClick={() => { haptics.tick(); setActiveFilter('ai'); }}
+              className={`flex-1 py-1.5 rounded-lg font-mono text-[10px] font-bold uppercase transition-all cursor-pointer ${
+                activeFilter === 'ai'
+                  ? 'bg-[#251e4d] text-[#bef264] border border-[#bef264]/40 shadow-sm'
+                  : 'text-purple-300/60 hover:text-white'
+              }`}
+            >
+              AI Insights
+            </button>
+          </div>
         </div>
 
         {/* Notifications List */}
-        <div className="space-y-3">
-          {notifications.map((n) => (
-            <div
-              key={n.id}
-              className="glass-card specular-border rounded-2xl p-3.5 shadow-lg space-y-2 hover:border-[#bef264]/40 transition-all cursor-pointer"
-              onClick={() => onNavigate?.(6)}
-            >
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-4 h-4 rounded-md bg-[#0e3e30] text-[#bef264] flex items-center justify-center text-[10px] font-bold">
-                    N
-                  </span>
-                  <span className="text-[11px] font-bold text-[#f8fafc] uppercase tracking-wider font-['Space_Grotesk']">
-                    NIMORA
-                  </span>
-                </div>
-                <span className="text-[10px] text-[#8a938e]">{n.timeAgo}</span>
+        <div className="p-4 pt-1 space-y-2.5">
+          {filteredItems.length === 0 ? (
+            <div className="minimal-card rounded-2xl p-8 text-center space-y-3 border border-dashed border-white/10 my-4">
+              <div className="w-12 h-12 mx-auto rounded-full bg-[#bef264]/10 text-[#bef264] flex items-center justify-center">
+                <span className="material-symbols-outlined text-2xl">done_all</span>
               </div>
-
               <div>
-                <h4 className="text-xs font-bold text-[#f8fafc] font-['Space_Grotesk']">{n.title}</h4>
-                <p className="text-[11px] text-[#c0c8c3] mt-0.5">{n.body}</p>
+                <p className="text-sm font-bold text-[#f8fafc] font-['Space_Grotesk']">
+                  You&apos;re All Caught Up
+                </p>
+                <p className="text-xs text-purple-300/60 mt-0.5 font-mono">
+                  No pending alerts or notifications at this time
+                </p>
               </div>
+              <button
+                onClick={() => onNavigate?.(5)}
+                className="px-4 py-2 rounded-xl bg-[#bef264] text-[#0e0b1f] text-xs font-bold font-mono hover:brightness-110 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-[0_0_12px_rgba(190,242,100,0.3)]"
+              >
+                <span>Back to Today</span>
+              </button>
             </div>
-          ))}
-        </div>
-      </div>
+          ) : (
+            filteredItems.map((n) => {
+              const meta = getIconForNotification(n);
+              return (
+                <div
+                  key={n.id}
+                  onClick={() => {
+                    haptics.tick();
+                    setItems((prev) => prev.map((item) => (item.id === n.id ? { ...item, read: true } : item)));
+                  }}
+                  className={`p-4 rounded-2xl minimal-card transition-all cursor-pointer border ${
+                    !n.read
+                      ? 'border-[#bef264]/30 bg-[#161233] shadow-md'
+                      : 'border-white/[0.06] bg-[#120e29]/70 opacity-80'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                      {/* Icon Badge */}
+                      <div className={`w-9 h-9 rounded-xl border flex items-center justify-center shrink-0 ${meta.color}`}>
+                        <span className="material-symbols-outlined text-lg">{meta.icon}</span>
+                      </div>
 
-      <div className="text-center pb-2">
-        <button
-          onClick={() => onNavigate?.(5)}
-          className="text-xs text-[#c0c8c3] hover:text-white px-4 py-1.5 bg-[#162540] rounded-full border border-[#334155]/40"
-        >
-          Swipe up to unlock ›
-        </button>
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-xs font-bold text-[#f8fafc] font-['Space_Grotesk'] truncate">
+                            {n.title}
+                          </h4>
+                          {!n.read && (
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#bef264] shrink-0" />
+                          )}
+                        </div>
+                        <p className="text-[11px] text-purple-200/80 mt-1 leading-snug line-clamp-2">
+                          {n.body}
+                        </p>
+
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="text-[10px] font-mono text-purple-300/50">
+                            {n.timeAgo}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Dismiss Button */}
+                    <button
+                      type="button"
+                      onClick={(e) => dismissItem(n.id, e)}
+                      className="p-1 text-purple-300/40 hover:text-white rounded-lg transition-colors cursor-pointer shrink-0"
+                      title="Dismiss"
+                    >
+                      <span className="material-symbols-outlined text-sm">close</span>
+                    </button>
+                  </div>
+
+                  {/* Actions */}
+                  {n.actions && n.actions.length > 0 && (
+                    <div className="mt-3 pt-2.5 border-t border-purple-500/15 flex items-center justify-end gap-2">
+                      {n.actions.map((act) => (
+                        <button
+                          key={act.label}
+                          type="button"
+                          onClick={(e) => handleAction(n.id, act.label, e)}
+                          className={`py-1.5 px-3 rounded-xl text-xs font-semibold font-mono transition-all cursor-pointer ${
+                            act.primary
+                              ? 'bg-[#bef264] text-[#0e0b1f] hover:brightness-110 shadow-sm'
+                              : 'bg-white/[0.08] hover:bg-white/[0.14] text-purple-200'
+                          }`}
+                        >
+                          {act.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* Clear All action if items exist */}
+        {items.length > 0 && (
+          <div className="px-4 pt-2 text-center">
+            <button
+              type="button"
+              onClick={clearAll}
+              className="text-xs font-mono text-purple-300/50 hover:text-rose-400 transition-colors cursor-pointer"
+            >
+              Clear all notifications
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
