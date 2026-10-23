@@ -19,12 +19,12 @@ export function Screen15Widget({ tasks, onNavigate }: WidgetAndSettingsProps) {
 
   return (
     <div
-      className="w-full h-full min-h-[680px] text-[#ededec] flex flex-col justify-between p-6 select-none rounded-[32px] relative overflow-hidden bg-[#0c0f0d] border border-white/[0.08]"
+      className="w-full h-full min-h-[680px] text-[#f8fafc] flex flex-col justify-between p-6 select-none rounded-[32px] relative overflow-hidden bg-[#0a1120] border border-white/[0.08]"
     >
       {/* iOS Status Bar */}
       <div className="flex justify-between items-center text-xs text-[#8a938e] pt-2 z-10 font-mono">
         <span>9:01</span>
-        <div className="flex items-center gap-1.5 text-[#ededec]">
+        <div className="flex items-center gap-1.5 text-[#f8fafc]">
           <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
           <span>5G</span>
           <span>100%</span>
@@ -57,7 +57,7 @@ export function Screen15Widget({ tasks, onNavigate }: WidgetAndSettingsProps) {
               <p className="text-[9px] font-mono uppercase font-semibold text-[#8a938e] tracking-wider">
                 Current Focus
               </p>
-              <h3 className="text-sm font-bold text-[#ededec] mt-0.5 font-['Space_Grotesk']">{nextTask?.title}</h3>
+              <h3 className="text-sm font-bold text-[#f8fafc] mt-0.5 font-['Space_Grotesk']">{nextTask?.title}</h3>
               <p className="text-[11px] font-mono text-[#a1d1bd]">
                 {nextTask?.startTime} – {nextTask?.endTime}
               </p>
@@ -79,7 +79,7 @@ export function Screen15Widget({ tasks, onNavigate }: WidgetAndSettingsProps) {
               <p className="text-[9px] font-mono uppercase font-semibold text-[#8a938e] tracking-wider">
                 Next
               </p>
-              <p className="text-[#ededec] font-semibold">{upcomingTask?.title}</p>
+              <p className="text-[#f8fafc] font-semibold">{upcomingTask?.title}</p>
             </div>
             <span className="text-[11px] font-mono text-[#a1d1bd] font-medium">
               {upcomingTask?.startTime} – {upcomingTask?.endTime}
@@ -120,12 +120,12 @@ export function Screen15Widget({ tasks, onNavigate }: WidgetAndSettingsProps) {
 // 14. Notifications & Snooze
 export function Screen16Notifications({ notifications, onNavigate }: WidgetAndSettingsProps) {
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#121412] text-[#e3e2e0] flex flex-col justify-between p-6 select-none rounded-[38px] relative overflow-hidden">
+    <div className="w-full h-full min-h-[680px] bg-[#0a1120] text-[#f8fafc] flex flex-col justify-between p-6 select-none rounded-[38px] relative overflow-hidden">
       <div>
         {/* iOS Lock Screen Header Clock */}
         <div className="text-center pt-4 mb-6">
           <span className="text-xs text-[#8a938e] block">🔒</span>
-          <h1 className="text-5xl font-extralight tracking-tight text-[#e3e2e0] mt-1 font-['Space_Grotesk']">9:00</h1>
+          <h1 className="text-5xl font-extralight tracking-tight text-[#f8fafc] mt-1 font-['Space_Grotesk']">9:00</h1>
           <p className="text-xs text-[#c0c8c3] font-medium mt-1">Tue, 20 Oct</p>
         </div>
 
@@ -142,7 +142,7 @@ export function Screen16Notifications({ notifications, onNavigate }: WidgetAndSe
                   <span className="w-4 h-4 rounded-md bg-[#0e3e30] text-[#e9c349] flex items-center justify-center text-[10px] font-bold">
                     N
                   </span>
-                  <span className="text-[11px] font-bold text-[#e3e2e0] uppercase tracking-wider font-['Space_Grotesk']">
+                  <span className="text-[11px] font-bold text-[#f8fafc] uppercase tracking-wider font-['Space_Grotesk']">
                     NIMORA
                   </span>
                 </div>
@@ -150,7 +150,7 @@ export function Screen16Notifications({ notifications, onNavigate }: WidgetAndSe
               </div>
 
               <div>
-                <h4 className="text-xs font-bold text-[#e3e2e0] font-['Space_Grotesk']">{n.title}</h4>
+                <h4 className="text-xs font-bold text-[#f8fafc] font-['Space_Grotesk']">{n.title}</h4>
                 <p className="text-[11px] text-[#c0c8c3] mt-0.5">{n.body}</p>
               </div>
             </div>
@@ -161,7 +161,7 @@ export function Screen16Notifications({ notifications, onNavigate }: WidgetAndSe
       <div className="text-center pb-2">
         <button
           onClick={() => onNavigate?.(5)}
-          className="text-xs text-[#c0c8c3] hover:text-white px-4 py-1.5 bg-[#1f201e] rounded-full border border-[#414945]/40"
+          className="text-xs text-[#c0c8c3] hover:text-white px-4 py-1.5 bg-[#162540] rounded-full border border-[#334155]/40"
         >
           Swipe up to unlock ›
         </button>
@@ -300,14 +300,14 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
   };
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#121412] text-[#e3e2e0] flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
+    <div className="w-full h-full min-h-[680px] bg-[#0a1120] text-[#f8fafc] flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
       <div className="overflow-y-auto">
         {/* Header */}
-        <div className="p-4 bg-[#121412]/90 border-b border-[#414945]/30 flex items-center justify-between">
+        <div className="p-4 bg-[#0a1120]/90 border-b border-[#334155]/30 flex items-center justify-between">
           <button onClick={() => onNavigate?.(5)} className="text-[#c0c8c3] hover:text-white text-xs font-semibold flex items-center gap-1">
             ‹ Back
           </button>
-          <h2 className="text-sm font-bold text-[#e3e2e0] font-['Space_Grotesk']">Settings & Privacy</h2>
+          <h2 className="text-sm font-bold text-[#f8fafc] font-['Space_Grotesk']">Settings & Privacy</h2>
           <span className="w-5" />
         </div>
 
@@ -319,7 +319,7 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <h3 className="text-sm font-bold text-[#ededec] font-['Space_Grotesk']">Sudarshan</h3>
+                <h3 className="text-sm font-bold text-[#f8fafc] font-['Space_Grotesk']">Sudarshan</h3>
                 <span className="text-[9px] font-mono font-bold bg-[#1b201d] text-[#e9c349] px-2 py-0.5 rounded-full border border-white/[0.08]">
                   PRO
                 </span>
@@ -340,7 +340,7 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-[20px] text-[#e9c349]">diamond</span>
               <div>
-                <span className="text-xs font-bold text-[#ededec] block font-['Space_Grotesk']">Executive Membership</span>
+                <span className="text-xs font-bold text-[#f8fafc] block font-['Space_Grotesk']">Executive Membership</span>
                 <span className="text-[10px] text-[#a1d1bd]">Pro AI & MCP Agent Integration active</span>
               </div>
             </div>
@@ -376,7 +376,7 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
           >
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-[18px] text-[#a1d1bd]">smart_toy</span>
-              <span className="text-xs font-medium text-[#ededec]">AI Voice Engine (Vertex/Gemini)</span>
+              <span className="text-xs font-medium text-[#f8fafc]">AI Voice Engine (Vertex/Gemini)</span>
             </div>
             <span className="text-[10px] font-mono font-bold text-[#4edea3] flex items-center gap-1">
               Active <span className="text-[#8a938e]">›</span>
@@ -389,7 +389,7 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
           >
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-[18px] text-[#8a938e]">sync_alt</span>
-              <span className="text-xs font-medium text-[#ededec]">Connected Calendars & Sync</span>
+              <span className="text-xs font-medium text-[#f8fafc]">Connected Calendars & Sync</span>
             </div>
             <span className="text-[10px] font-mono text-[#8a938e] flex items-center gap-1">
               Google · Apple <span className="text-[#8a938e]">›</span>
@@ -406,7 +406,7 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
           <div className="p-3 minimal-card rounded-xl flex items-start gap-2.5 border border-white/[0.06]">
             <span className="material-symbols-outlined text-[18px] text-[#4edea3] shrink-0">security</span>
             <div>
-              <h5 className="text-xs font-semibold text-[#ededec]">Secure & Private</h5>
+              <h5 className="text-xs font-semibold text-[#f8fafc]">Secure & Private</h5>
               <p className="text-[10px] text-[#9b9f9c]">Client conversations & follow-ups are client-side encrypted.</p>
             </div>
           </div>
@@ -414,7 +414,7 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
           <div className="p-3 minimal-card rounded-xl flex items-start gap-2.5 border border-white/[0.06]">
             <span className="material-symbols-outlined text-[18px] text-[#e9c349] shrink-0">tune</span>
             <div>
-              <h5 className="text-xs font-semibold text-[#ededec]">Data Minimization</h5>
+              <h5 className="text-xs font-semibold text-[#f8fafc]">Data Minimization</h5>
               <p className="text-[10px] text-[#9b9f9c]">Only essential scheduling payloads are processed.</p>
             </div>
           </div>
@@ -542,7 +542,7 @@ export function Screen19SubscriptionPlans({
   };
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#0c0f0d] text-[#ededec] flex flex-col justify-between p-4 select-none rounded-[32px] shadow-2xl relative overflow-hidden border border-white/[0.08]">
+    <div className="w-full h-full min-h-[680px] bg-[#0a1120] text-[#f8fafc] flex flex-col justify-between p-4 select-none rounded-[32px] shadow-2xl relative overflow-hidden border border-white/[0.08]">
       {/* Top Header */}
       <div className="flex justify-between items-center pb-3 border-b border-white/[0.08]">
         <button
@@ -550,7 +550,7 @@ export function Screen19SubscriptionPlans({
             if (step === 'checkout') setStep('pricing');
             else onNavigate?.(5);
           }}
-          className="text-[#9b9f9c] hover:text-[#ededec] text-xs font-mono font-medium flex items-center gap-1 cursor-pointer transition-colors"
+          className="text-[#9b9f9c] hover:text-[#f8fafc] text-xs font-mono font-medium flex items-center gap-1 cursor-pointer transition-colors"
         >
           ‹ {step === 'checkout' ? 'Back to Pricing' : 'Back'}
         </button>
@@ -558,7 +558,7 @@ export function Screen19SubscriptionPlans({
           <span className="text-[9px] text-[#e9c349] font-mono font-bold uppercase tracking-widest block">
             {step === 'pricing' ? 'NIMORA MEMBERSHIP' : 'SECURE CHECKOUT'}
           </span>
-          <span className="text-xs font-semibold text-[#ededec] font-['Space_Grotesk']">
+          <span className="text-xs font-semibold text-[#f8fafc] font-['Space_Grotesk']">
             {step === 'pricing' ? 'Choose Your Plan' : 'Finalize Upgrade'}
           </span>
         </div>
@@ -577,7 +577,7 @@ export function Screen19SubscriptionPlans({
               <span className="text-[9px] font-mono font-semibold bg-[#161a17] text-[#e9c349] px-2.5 py-0.5 rounded-full border border-white/[0.08] tracking-wider uppercase">
                 EXECUTIVE INTELLIGENCE
               </span>
-              <h2 className="font-['Space_Grotesk'] text-xl font-bold text-[#ededec] pt-1">
+              <h2 className="font-['Space_Grotesk'] text-xl font-bold text-[#f8fafc] pt-1">
                 Elevate Your Daily Focus
               </h2>
               <p className="text-xs text-[#9b9f9c] max-w-[320px] mx-auto">
@@ -593,7 +593,7 @@ export function Screen19SubscriptionPlans({
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium font-mono transition-all cursor-pointer ${
                     billingCycle === 'monthly'
                       ? 'bg-[#1e2420] text-[#e9c349] border border-white/[0.12]'
-                      : 'text-[#8a938e] hover:text-[#ededec]'
+                      : 'text-[#8a938e] hover:text-[#f8fafc]'
                   }`}
                 >
                   Monthly
@@ -603,7 +603,7 @@ export function Screen19SubscriptionPlans({
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium font-mono flex items-center gap-1.5 transition-all cursor-pointer ${
                     billingCycle === 'annual'
                       ? 'bg-[#1e2420] text-[#e9c349] border border-white/[0.12]'
-                      : 'text-[#8a938e] hover:text-[#ededec]'
+                      : 'text-[#8a938e] hover:text-[#f8fafc]'
                   }`}
                 >
                   <span>Annual</span>
@@ -658,7 +658,7 @@ export function Screen19SubscriptionPlans({
                     {/* Plan Title & Price */}
                     <div className="flex justify-between items-baseline mt-2">
                       <div>
-                        <h3 className="font-['Space_Grotesk'] text-base font-bold text-[#ededec]">
+                        <h3 className="font-['Space_Grotesk'] text-base font-bold text-[#f8fafc]">
                           {plan.name}
                         </h3>
                         <p className="text-[11px] text-[#9b9f9c]">{plan.description}</p>
@@ -677,7 +677,7 @@ export function Screen19SubscriptionPlans({
                     {/* Feature Highlights */}
                     <div className="mt-3 pt-2.5 border-t border-white/[0.08] space-y-1">
                       {plan.features.slice(0, 4).map((f, i) => (
-                        <div key={i} className="flex items-center gap-2 text-xs text-[#ededec]">
+                        <div key={i} className="flex items-center gap-2 text-xs text-[#f8fafc]">
                           <span className="text-[#4edea3] text-[13px]">✓</span>
                           <span>{f}</span>
                         </div>
@@ -714,7 +714,7 @@ export function Screen19SubscriptionPlans({
                 <div className="w-14 h-14 rounded-full liquid-glass-pill mx-auto flex items-center justify-center text-2xl shadow-lg">
                   💎
                 </div>
-                <h3 className="font-['Space_Grotesk'] text-lg font-bold text-[#ededec]">
+                <h3 className="font-['Space_Grotesk'] text-lg font-bold text-[#f8fafc]">
                   Welcome to {currentPlan.name}!
                 </h3>
                 <p className="text-xs text-[#a1d1bd]">
@@ -727,7 +727,7 @@ export function Screen19SubscriptionPlans({
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#8a938e]">Amount Paid</span>
-                    <span className="text-[#ededec] font-bold">{receiptInfo?.amountPaid || displayPrice}</span>
+                    <span className="text-[#f8fafc] font-bold">{receiptInfo?.amountPaid || displayPrice}</span>
                   </div>
                   {receiptInfo?.receiptId && (
                     <div className="flex justify-between">
@@ -763,7 +763,7 @@ export function Screen19SubscriptionPlans({
                       <span className="text-[9px] font-mono text-[#e9c349] uppercase font-bold tracking-wider">
                         Selected Plan
                       </span>
-                      <h3 className="font-['Space_Grotesk'] text-base font-bold text-[#ededec]">
+                      <h3 className="font-['Space_Grotesk'] text-base font-bold text-[#f8fafc]">
                         {currentPlan.name}
                       </h3>
                     </div>
@@ -789,7 +789,7 @@ export function Screen19SubscriptionPlans({
                   <button
                     disabled={isProcessing}
                     onClick={() => handleCheckout('Google Pay')}
-                    className="w-full p-3.5 bg-[#131614] hover:bg-[#1a1f1b] border border-white/[0.12] rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.99] transition-all cursor-pointer"
+                    className="w-full p-3.5 bg-[#121d33] hover:bg-[#1a1f1b] border border-white/[0.12] rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.99] transition-all cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-base font-bold text-white tracking-tight font-['Space_Grotesk']">G Pay</span>
@@ -802,7 +802,7 @@ export function Screen19SubscriptionPlans({
                   <button
                     disabled={isProcessing}
                     onClick={() => handleCheckout('Apple Pay')}
-                    className="w-full p-3.5 bg-[#131614] hover:bg-[#1a1f1b] border border-white/[0.12] rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.99] transition-all cursor-pointer"
+                    className="w-full p-3.5 bg-[#121d33] hover:bg-[#1a1f1b] border border-white/[0.12] rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.99] transition-all cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-base font-bold text-white tracking-tight font-['Space_Grotesk']"> Pay</span>
@@ -815,11 +815,11 @@ export function Screen19SubscriptionPlans({
                   <button
                     disabled={isProcessing}
                     onClick={() => handleCheckout('Card & UPI')}
-                    className="w-full p-3.5 bg-[#131614] hover:bg-[#1a1f1b] border border-white/[0.12] rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.99] transition-all cursor-pointer"
+                    className="w-full p-3.5 bg-[#121d33] hover:bg-[#1a1f1b] border border-white/[0.12] rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.99] transition-all cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <span className="material-symbols-outlined text-[#a1d1bd] text-[20px]">credit_card</span>
-                      <span className="text-xs text-[#ededec]">Card, NetBanking & UPI</span>
+                      <span className="text-xs text-[#f8fafc]">Card, NetBanking & UPI</span>
                     </div>
                     <span className="text-xs text-[#8a938e] font-mono">Continue ›</span>
                   </button>
@@ -839,7 +839,7 @@ export function Screen19SubscriptionPlans({
 
       {/* Bottom Action Footer (Only in Pricing step) */}
       {step === 'pricing' && (
-        <div className="pt-2 border-t border-[#414945]/30">
+        <div className="pt-2 border-t border-[#334155]/30">
           <button
             onClick={() => setStep('checkout')}
             className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/60 text-[#e9c349] font-bold text-xs shadow-xl hover:brightness-110 active:scale-95 transition-all font-['Space_Grotesk'] flex items-center justify-center gap-2 cursor-pointer"

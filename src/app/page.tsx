@@ -31,6 +31,167 @@ import {
   Screen19SubscriptionPlans,
 } from '@/nimora/screens/WidgetAndSettingsScreens';
 
+interface ThumbSliderNavProps {
+  activeTab: string;
+  onSelectTab: (tabId: 'home' | 'schedule' | 'voice' | 'contacts' | 'settings') => void;
+  remainingCount: number;
+}
+
+function ThumbSliderNav({ activeTab, onSelectTab }: ThumbSliderNavProps) {
+  const tabs = React.useMemo(() => [
+    { id: 'home' as const, label: 'Today', icon: 'home' },
+    { id: 'schedule' as const, label: 'Schedule', icon: 'calendar_today' },
+    { id: 'voice' as const, label: 'Nova AI', icon: 'mic' },
+    { id: 'contacts' as const, label: 'Clients', icon: 'group' },
+    { id: 'settings' as const, label: 'Settings', icon: 'settings' },
+  ], []);
+
+  // Map sub-tabs to their parent root slider index
+  const getIndexForTab = (tab: string) => {
+    switch (tab) {
+      case 'home': return 0;
+      case 'schedule':
+      case 'add_task':
+      case 'task_details': return 1;
+      case 'voice': return 2;
+      case 'contacts':
+      case 'contact_details': return 3;
+      case 'settings':
+      case 'notifications':
+      case 'widget':
+      case 'pricing':
+      case 'ai_suggestions': return 4;
+      default: return 0;
+    }
+  };
+
+  const activeIndex = getIndexForTab(activeTab);
+  const trackRef = React.useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [sliderPos, setSliderPos] = useState(activeIndex); // 0 to 4 continuous
+  const lastTickRef = React.useRef(activeIndex);
+
+  useEffect(() => {
+    if (!isDragging) {
+      setSliderPos(activeIndex);
+      lastTickRef.current = activeIndex;
+    }
+  }, [activeIndex, isDragging]);
+
+  const calculateSlotFromCoord = (clientX: number) => {
+    if (!trackRef.current) return activeIndex;
+    const rect = trackRef.current.getBoundingClientRect();
+    const relativeX = clientX - rect.left;
+    const clampedX = Math.max(0, Math.min(rect.width, relativeX));
+    const continuous = (clampedX / rect.width) * 5;
+    return Math.max(0, Math.min(4, continuous - 0.5));
+  };
+
+  const handlePointerDown = (clientX: number) => {
+    setIsDragging(true);
+    const pos = calculateSlotFromCoord(clientX);
+    setSliderPos(pos);
+  };
+
+  const handlePointerMove = (clientX: number) => {
+    if (!isDragging) return;
+    const pos = calculateSlotFromCoord(clientX);
+    setSliderPos(pos);
+    const nearest = Math.max(0, Math.min(4, Math.round(pos)));
+    if (nearest !== lastTickRef.current) {
+      lastTickRef.current = nearest;
+      haptics.tabChange();
+    }
+  };
+
+  const handlePointerUp = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    const finalIndex = Math.max(0, Math.min(4, Math.round(sliderPos)));
+    setSliderPos(finalIndex);
+    onSelectTab(tabs[finalIndex].id);
+    haptics.sliderSnap();
+  };
+
+  const currentHoveredTab = tabs[Math.max(0, Math.min(4, Math.round(sliderPos)))];
+
+  return (
+    <div className="fixed bottom-0 left-0 w-full z-50 px-3 pb-3 max-w-md left-1/2 -translate-x-1/2 select-none">
+      {/* Slider Interactive Guide Badge */}
+      <div className="flex justify-center mb-1.5 pointer-events-none">
+        <div className="px-3 py-0.5 rounded-full liquid-glass text-[9px] font-mono tracking-widest text-[#38bdf8] uppercase flex items-center gap-1.5 shadow-md border border-white/15">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#f6c445] animate-pulse"></span>
+          <span>THUMB SLIDER · {currentHoveredTab.label.toUpperCase()}</span>
+        </div>
+      </div>
+
+      {/* Main Thumb Slider Track */}
+      <div
+        ref={trackRef}
+        onTouchStart={(e) => handlePointerDown(e.touches[0].clientX)}
+        onTouchMove={(e) => handlePointerMove(e.touches[0].clientX)}
+        onTouchEnd={handlePointerUp}
+        onMouseDown={(e) => handlePointerDown(e.clientX)}
+        onMouseMove={(e) => handlePointerMove(e.clientX)}
+        onMouseUp={handlePointerUp}
+        className="thumb-slider-track relative h-16 rounded-full p-1.5 flex items-center justify-between cursor-grab active:cursor-grabbing shadow-2xl"
+      >
+        {/* Sliding Elevated Liquid Glass Thumb Capsule */}
+        <div
+          className="thumb-slider-capsule absolute top-1.5 bottom-1.5 rounded-full flex flex-col items-center justify-between py-1.5 transition-all"
+          style={{
+            width: 'calc(20% - 3px)',
+            left: '1.5px',
+            transform: `translateX(${sliderPos * 100}%)`,
+            transition: isDragging ? 'none' : 'transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)',
+          }}
+        >
+          {/* Top highlight indicator */}
+          <div className="w-1.5 h-1.5 rounded-full bg-[#f6c445] shadow-[0_0_8px_#f6c445]"></div>
+          {/* Tactile thumb drag grip */}
+          <div className="w-4 h-0.5 rounded-full bg-white/60"></div>
+        </div>
+
+        {/* 5 Destination Slots */}
+        {tabs.map((tab, idx) => {
+          const isSlotActive = Math.round(sliderPos) === idx;
+          return (
+            <button
+              key={tab.id}
+              onClick={(e) => {
+                e.stopPropagation();
+                setSliderPos(idx);
+                onSelectTab(tab.id);
+                haptics.sliderSnap();
+              }}
+              aria-label={tab.label}
+              className="flex-1 h-full relative z-10 flex flex-col items-center justify-center transition-transform active:scale-95 cursor-pointer"
+            >
+              <span
+                className={`material-symbols-outlined text-[22px] transition-colors duration-150 ${
+                  isSlotActive ? 'text-[#f8fafc]' : 'text-slate-400/80 hover:text-slate-200'
+                }`}
+                style={{
+                  fontVariationSettings: isSlotActive ? "'FILL' 1" : "'FILL' 0",
+                }}
+              >
+                {tab.icon}
+              </span>
+              <span
+                className={`text-[8px] font-mono tracking-tight uppercase mt-0.5 transition-colors ${
+                  isSlotActive ? 'text-[#38bdf8] font-bold' : 'text-slate-400/70'
+                }`}
+              >
+                {tab.label}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default function NimoraApp() {
   const [activeTab, setActiveTab] = useState<
     | 'home'
@@ -202,13 +363,13 @@ export default function NimoraApp() {
     || tasks[0];
 
   return (
-    <div className="bg-[#0c0f0d] text-[#ededec] min-h-screen antialiased selection:bg-[#4edea3]/20 selection:text-[#4edea3] relative pb-32 max-w-md mx-auto shadow-2xl">
+    <div className="bg-[#0a1120] text-[#f8fafc] min-h-screen antialiased selection:bg-[#38bdf8]/20 selection:text-[#38bdf8] relative pb-32 max-w-md mx-auto shadow-2xl">
       {/* Native iOS Status Bar Simulation */}
-      <header className="fixed top-0 left-0 w-full z-[60] flex justify-between items-center px-4 pt-2.5 pb-1 liquid-glass-header text-[#ededec] select-none max-w-md left-1/2 -translate-x-1/2">
-        <span className="font-['Space_Grotesk'] text-xs font-semibold tracking-tight text-[#ededec]">
+      <header className="fixed top-0 left-0 w-full z-[60] flex justify-between items-center px-4 pt-2.5 pb-1 liquid-glass-header text-[#f8fafc] select-none max-w-md left-1/2 -translate-x-1/2">
+        <span className="font-['Space_Grotesk'] text-xs font-semibold tracking-tight text-[#f8fafc]">
           {currentTime}
         </span>
-        <div className="flex items-center space-x-1.5 text-[#ededec]">
+        <div className="flex items-center space-x-1.5 text-[#f8fafc]">
           <span className="material-symbols-outlined text-[16px]">signal_cellular_alt</span>
           <span className="material-symbols-outlined text-[16px]">wifi</span>
           <span className="material-symbols-outlined text-[20px] rotate-90">battery_full</span>
@@ -223,7 +384,7 @@ export default function NimoraApp() {
             <span className="text-[#e9c349] font-bold text-sm font-['Space_Grotesk']">N</span>
           </div>
           <div className="flex items-center space-x-2">
-            <span className="font-['Space_Grotesk'] text-base tracking-wider text-[#ededec] font-bold">
+            <span className="font-['Space_Grotesk'] text-base tracking-wider text-[#f8fafc] font-bold">
               NIMORA
             </span>
             <button
@@ -231,7 +392,7 @@ export default function NimoraApp() {
               className={`px-2 py-0.5 rounded-full text-[9px] font-mono tracking-wider hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center gap-1 ${
                 isProUser
                   ? 'liquid-glass-pill text-[#e9c349] border-white/30 font-bold shadow-[0_0_12px_rgba(233,195,73,0.3)]'
-                  : 'bg-[#181c19] text-[#e9c349] border border-[#e9c349]/30'
+                  : 'bg-[#121d33] text-[#e9c349] border border-[#e9c349]/30'
               }`}
               title={isProUser ? 'PRO Member Active' : 'View Membership Plans'}
             >
@@ -245,16 +406,16 @@ export default function NimoraApp() {
           <button
             onClick={() => setActiveTab('notifications')}
             aria-label="Notifications"
-            className="w-9 h-9 rounded-full flex items-center justify-center text-[#c0c8c3] hover:text-[#ededec] transition-colors duration-150 active:scale-95 border border-white/[0.08] bg-[#141815] relative"
+            className="w-9 h-9 rounded-full flex items-center justify-center text-slate-300 hover:text-white transition-colors duration-150 active:scale-95 border border-white/[0.08] bg-[#121d33] relative"
           >
             <span className="material-symbols-outlined text-[19px]">notifications</span>
             <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#e9c349]"></span>
           </button>
           <div
             onClick={() => setActiveTab('settings')}
-            className="w-9 h-9 rounded-full p-0.5 border border-white/20 overflow-hidden bg-[#161a17] cursor-pointer hover:border-[#e9c349]/50 transition-colors"
+            className="w-9 h-9 rounded-full p-0.5 border border-white/20 overflow-hidden bg-[#121d33] cursor-pointer hover:border-[#e9c349]/50 transition-colors"
           >
-            <div className="w-full h-full rounded-full bg-[#1b201d] flex items-center justify-center text-[#e9c349] font-['Space_Grotesk'] text-xs font-bold">
+            <div className="w-full h-full rounded-full bg-[#162540] flex items-center justify-center text-[#e9c349] font-['Space_Grotesk'] text-xs font-bold">
               SM
             </div>
           </div>
@@ -301,7 +462,7 @@ export default function NimoraApp() {
                   <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
                     {/* Background Ring */}
                     <path
-                      className="text-[#202522]"
+                      className="text-[#1e3050]"
                       d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                       fill="none"
                       stroke="currentColor"
@@ -318,24 +479,24 @@ export default function NimoraApp() {
                     />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <span className="font-['Space_Grotesk'] text-base font-bold text-[#ededec] leading-none">
+                    <span className="font-['Space_Grotesk'] text-base font-bold text-[#f8fafc] leading-none">
                       {progressPercent}%
                     </span>
-                    <span className="text-[8px] font-mono text-[#8a938e] uppercase tracking-wider mt-0.5">
+                    <span className="text-[8px] font-mono text-[#94a3b8] uppercase tracking-wider mt-0.5">
                       Done
                     </span>
                   </div>
                 </div>
                 <div>
-                  <h2 className="font-['Space_Grotesk'] text-sm text-[#ededec] font-semibold">
+                  <h2 className="font-['Space_Grotesk'] text-sm text-[#f8fafc] font-semibold">
                     Today&apos;s Agenda
                   </h2>
-                  <p className="text-xs text-[#9b9f9c] mt-0.5">
+                  <p className="text-xs text-[#94a3b8] mt-0.5">
                     {completedCount} of {tasks.length} milestones finalized
                   </p>
                   <div className="flex items-center gap-1.5 mt-1.5">
-                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#4edea3]"></span>
-                    <span className="text-xs text-[#4edea3] tracking-wide font-medium">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#34d399]"></span>
+                    <span className="text-xs text-[#34d399] tracking-wide font-medium">
                       {remainingCount} Tasks Remaining
                     </span>
                   </div>
@@ -345,7 +506,7 @@ export default function NimoraApp() {
               <button
                 onClick={() => downloadICS(tasks, 'nimora-daily-schedule.ics')}
                 aria-label="Export iCalendar"
-                className="p-2 rounded-lg minimal-btn-secondary text-[#c0c8c3] hover:text-[#e9c349] active:scale-95 transition-all cursor-pointer"
+                className="p-2 rounded-lg minimal-btn-secondary text-slate-300 hover:text-[#e9c349] active:scale-95 transition-all cursor-pointer"
                 title="Download Calendar (.ics)"
               >
                 <span className="material-symbols-outlined text-[19px]">calendar_today</span>
@@ -353,18 +514,18 @@ export default function NimoraApp() {
             </div>
 
             {/* Quick Metrics Bento Counters */}
-            <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-white/[0.06]">
-              <div className="bg-[#171b18] rounded-xl p-2.5 text-center border border-white/[0.05]">
-                <span className="font-['Space_Grotesk'] text-base font-bold text-[#a1d1bd] block">3</span>
-                <span className="text-[9px] font-mono text-[#8a938e] uppercase tracking-wider">Calls</span>
+            <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-slate-700/30">
+              <div className="bg-[#16243d] rounded-xl p-2.5 text-center border border-slate-700/40">
+                <span className="font-['Space_Grotesk'] text-base font-bold text-[#38bdf8] block">3</span>
+                <span className="text-[9px] font-mono text-[#94a3b8] uppercase tracking-wider">Calls</span>
               </div>
-              <div className="bg-[#171b18] rounded-xl p-2.5 text-center border border-white/[0.05]">
+              <div className="bg-[#16243d] rounded-xl p-2.5 text-center border border-slate-700/40">
                 <span className="font-['Space_Grotesk'] text-base font-bold text-[#e9c349] block">2</span>
-                <span className="text-[9px] font-mono text-[#8a938e] uppercase tracking-wider">Site Visits</span>
+                <span className="text-[9px] font-mono text-[#94a3b8] uppercase tracking-wider">Site Visits</span>
               </div>
-              <div className="bg-[#171b18] rounded-xl p-2.5 text-center border border-white/[0.05]">
-                <span className="font-['Space_Grotesk'] text-base font-bold text-[#4edea3] block">1</span>
-                <span className="text-[9px] font-mono text-[#8a938e] uppercase tracking-wider">Review</span>
+              <div className="bg-[#16243d] rounded-xl p-2.5 text-center border border-slate-700/40">
+                <span className="font-['Space_Grotesk'] text-base font-bold text-[#34d399] block">1</span>
+                <span className="text-[9px] font-mono text-[#94a3b8] uppercase tracking-wider">Review</span>
               </div>
             </div>
           </section>
@@ -435,8 +596,8 @@ export default function NimoraApp() {
                     aria-label="Mark completed"
                     className={`p-2 rounded-xl border border-white/20 active:scale-95 transition-all cursor-pointer ${
                       activeFocusTask.status === 'completed'
-                        ? 'bg-[#10B981] text-gray-950'
-                        : 'bg-[#1a1f1c] text-[#c0c8c3] hover:text-[#4edea3]'
+                        ? 'bg-[#34d399] text-[#0a1120]'
+                        : 'bg-[#16243d] text-slate-300 hover:text-[#34d399]'
                     }`}
                   >
                     <span className="material-symbols-outlined text-[18px]">check</span>
@@ -690,77 +851,12 @@ export default function NimoraApp() {
         </div>
       </div>
 
-      {/* Bottom Navigation Bar [20% Elevated Liquid Glass Panel] */}
-      <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 h-16 liquid-glass-nav rounded-t-2xl max-w-md left-1/2 -translate-x-1/2">
-        {/* Home Destination */}
-        <button
-          onClick={() => setActiveTab('home')}
-          aria-label="Home"
-          className={`flex flex-col items-center justify-center relative active:scale-90 transition-transform duration-150 cursor-pointer ${
-            activeTab === 'home' ? 'text-[#e9c349]' : 'text-[#8a938e] hover:text-[#ededec]'
-          }`}
-        >
-          <span className="material-symbols-outlined text-[23px]" style={{ fontVariationSettings: activeTab === 'home' ? "'FILL' 1" : "'FILL' 0" }}>
-            home
-          </span>
-          {activeTab === 'home' && (
-            <span className="w-1 h-1 bg-[#e9c349] rounded-full mt-0.5 shadow-[0_0_6px_#e9c349]"></span>
-          )}
-        </button>
-
-        {/* Timeline / Schedule Destination */}
-        <button
-          onClick={() => setActiveTab('schedule')}
-          aria-label="Schedule"
-          className={`flex flex-col items-center justify-center relative active:scale-90 transition-transform duration-150 cursor-pointer ${
-            activeTab === 'schedule' ? 'text-[#e9c349]' : 'text-[#8a938e] hover:text-[#ededec]'
-          }`}
-        >
-          <span className="material-symbols-outlined text-[23px]">calendar_today</span>
-          {activeTab === 'schedule' && (
-            <span className="w-1 h-1 bg-[#e9c349] rounded-full mt-0.5 shadow-[0_0_6px_#e9c349]"></span>
-          )}
-        </button>
-
-        {/* Nova Mic Voice Node (Liquid Glass Interactive Centerpiece) */}
-        <button
-          onClick={() => setActiveTab('voice')}
-          aria-label="Voice Nova"
-          className="flex flex-col items-center justify-center relative active:scale-90 transition-transform duration-150 cursor-pointer"
-        >
-          <div className="w-11 h-11 -mt-6 rounded-full liquid-glass-pill border border-white/35 flex items-center justify-center text-[#e9c349] shadow-lg shadow-black/60 hover:brightness-110">
-            <span className="material-symbols-outlined text-[22px]">mic</span>
-          </div>
-        </button>
-
-        {/* CRM / Stakeholders Destination */}
-        <button
-          onClick={() => setActiveTab('contacts')}
-          aria-label="Network"
-          className={`flex flex-col items-center justify-center relative active:scale-90 transition-transform duration-150 cursor-pointer ${
-            activeTab === 'contacts' ? 'text-[#e9c349]' : 'text-[#8a938e] hover:text-[#ededec]'
-          }`}
-        >
-          <span className="material-symbols-outlined text-[23px]">group</span>
-          {activeTab === 'contacts' && (
-            <span className="w-1 h-1 bg-[#e9c349] rounded-full mt-0.5 shadow-[0_0_6px_#e9c349]"></span>
-          )}
-        </button>
-
-        {/* Settings / Profile Destination */}
-        <button
-          onClick={() => setActiveTab('settings')}
-          aria-label="Settings"
-          className={`flex flex-col items-center justify-center relative active:scale-90 transition-transform duration-150 cursor-pointer ${
-            activeTab === 'settings' ? 'text-[#e9c349]' : 'text-[#8a938e] hover:text-[#ededec]'
-          }`}
-        >
-          <span className="material-symbols-outlined text-[23px]">settings</span>
-          {activeTab === 'settings' && (
-            <span className="w-1 h-1 bg-[#e9c349] rounded-full mt-0.5 shadow-[0_0_6px_#e9c349]"></span>
-          )}
-        </button>
-      </nav>
+      {/* Thumb Slider Bottom Navigation [Interactive Sliding Capsule Bar] */}
+      <ThumbSliderNav
+        activeTab={activeTab}
+        onSelectTab={(tabId) => setActiveTab(tabId)}
+        remainingCount={remainingCount}
+      />
     </div>
   );
 }

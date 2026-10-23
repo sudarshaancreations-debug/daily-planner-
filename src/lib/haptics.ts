@@ -10,6 +10,24 @@ export const haptics = {
     }
   },
 
+  // Subtle tick when thumb slides across tabs
+  tabChange: () => {
+    if (typeof window !== 'undefined' && typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate(8);
+      } catch {}
+    }
+  },
+
+  // Snap feedback when thumb slider locks into destination
+  sliderSnap: () => {
+    if (typeof window !== 'undefined' && typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate([10, 20]);
+      } catch {}
+    }
+  },
+
   // Double micro-pulse when card is slid open to reveal actions
   slideReveal: () => {
     if (typeof window !== 'undefined' && typeof navigator !== 'undefined' && 'vibrate' in navigator) {

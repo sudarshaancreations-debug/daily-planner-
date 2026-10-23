@@ -2,8 +2,8 @@
 
 @layer base {
   body {
-    background-color: #0c0f0d;
-    color: #ededec;
+    background-color: #0a1120;
+    color: #f8fafc;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Plus Jakarta Sans', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -28,28 +28,29 @@
 }
 
 /* ==========================================================================
-   80% UTILITARIAN MINIMALISM FOUNDATIONS
+   SOVEREIGN SLATE & ARCTIC ICE MINIMALISM FOUNDATIONS (80%)
    ========================================================================== */
 
-/* Clean Minimalist Surfaces (Matte Obsidian / Carbon) */
+/* Clean Minimalist Surfaces (Deep Titanium Slate) */
 .minimal-card {
-  background-color: #121513;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  background-color: #121d33;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .minimal-card:hover {
-  border-color: rgba(255, 255, 255, 0.14);
+  border-color: rgba(96, 165, 250, 0.30);
+  box-shadow: 0 4px 20px -2px rgba(10, 20, 40, 0.4);
 }
 
 .minimal-card-subtle {
-  background-color: rgba(18, 21, 19, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background-color: rgba(18, 29, 51, 0.75);
+  border: 1px solid rgba(148, 163, 184, 0.10);
 }
 
 /* Crisp Minimalist Divider */
 .minimal-divider {
-  border-color: rgba(255, 255, 255, 0.07);
+  border-color: rgba(148, 163, 184, 0.12);
 }
 
 /* Clean Editorial Tag & Status Badges */
@@ -61,27 +62,27 @@
 
 /* Minimalist Tactile Action Buttons */
 .minimal-btn-primary {
-  background-color: #ededec;
-  color: #0c0f0d;
+  background-color: #f8fafc;
+  color: #0a1120;
   font-weight: 600;
   transition: transform 0.1s ease, background-color 0.15s ease;
 }
 
 .minimal-btn-primary:active {
   transform: scale(0.97);
-  background-color: #dad9d7;
+  background-color: #e2e8f0;
 }
 
 .minimal-btn-secondary {
-  background-color: #171b19;
-  color: #ededec;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: #16243d;
+  color: #f8fafc;
+  border: 1px solid rgba(148, 163, 184, 0.18);
   transition: transform 0.1s ease, border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .minimal-btn-secondary:hover {
-  background-color: #1d221f;
-  border-color: rgba(255, 255, 255, 0.18);
+  background-color: #1e3050;
+  border-color: rgba(96, 165, 250, 0.35);
 }
 
 .minimal-btn-secondary:active {
@@ -89,25 +90,26 @@
 }
 
 /* ==========================================================================
-   20% DYNAMIC LIQUID GLASS MATERIAL SYSTEM
+   20% DYNAMIC LIQUID GLASS & FROSTED SAPPHIRE MATERIAL SYSTEM
    ========================================================================== */
 
 /* Primary Translucent Liquid Glass Material */
 .liquid-glass {
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.10) 0%,
-    rgba(14, 46, 36, 0.22) 45%,
-    rgba(255, 255, 255, 0.03) 100%
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(28, 52, 92, 0.38) 45%,
+    rgba(255, 255, 255, 0.04) 100%
   );
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-top-color: rgba(255, 255, 255, 0.32);
+  backdrop-filter: blur(28px) saturate(185%);
+  -webkit-backdrop-filter: blur(28px) saturate(185%);
+  border: 1px solid rgba(148, 163, 184, 0.20);
+  border-top-color: rgba(255, 255, 255, 0.40);
   box-shadow: 
-    0 16px 36px -6px rgba(0, 0, 0, 0.55),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.30),
-    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.35);
+    0 16px 36px -6px rgba(5, 12, 28, 0.65),
+    0 0 20px -4px rgba(56, 189, 248, 0.18),
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.38),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.40);
   position: relative;
 }
 
@@ -115,41 +117,81 @@
 .liquid-glass-pill {
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.14) 0%,
-    rgba(14, 62, 48, 0.32) 45%,
-    rgba(255, 255, 255, 0.04) 100%
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(30, 58, 102, 0.45) 45%,
+    rgba(255, 255, 255, 0.05) 100%
   );
   backdrop-filter: blur(28px) saturate(200%);
   -webkit-backdrop-filter: blur(28px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-top-color: rgba(255, 255, 255, 0.40);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-top-color: rgba(255, 255, 255, 0.50);
   box-shadow: 
-    0 14px 40px -4px rgba(0, 0, 0, 0.60),
-    0 0 20px -2px rgba(78, 222, 163, 0.15),
-    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.42),
-    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.40);
+    0 14px 40px -4px rgba(5, 12, 28, 0.65),
+    0 0 24px -2px rgba(56, 189, 248, 0.25),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.50),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.45);
 }
 
 /* Liquid Glass Top Header & Navigation Shell */
 .liquid-glass-header {
-  background: rgba(12, 15, 13, 0.75);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(10, 17, 32, 0.82);
+  backdrop-filter: blur(24px) saturate(165%);
+  -webkit-backdrop-filter: blur(24px) saturate(165%);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
   box-shadow: 
-    0 8px 30px rgba(0, 0, 0, 0.35),
-    inset 0 -1px 0 0 rgba(255, 255, 255, 0.06);
+    0 8px 30px rgba(5, 12, 28, 0.45),
+    inset 0 -1px 0 0 rgba(255, 255, 255, 0.08);
 }
 
 /* Liquid Glass Floating Bottom Navigation Bar */
 .liquid-glass-nav {
-  background: rgba(14, 18, 15, 0.78);
-  backdrop-filter: blur(28px) saturate(175%);
-  -webkit-backdrop-filter: blur(28px) saturate(175%);
-  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(12, 21, 39, 0.85);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(148, 163, 184, 0.20);
+  border-top-color: rgba(255, 255, 255, 0.35);
   box-shadow: 
-    0 -10px 36px rgba(0, 0, 0, 0.6),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.22);
+    0 16px 45px rgba(4, 9, 22, 0.70),
+    0 0 25px rgba(56, 189, 248, 0.12),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.30);
+}
+
+/* ==========================================================================
+   THUMB SLIDER NAVIGATION SYSTEM (TACTILE HORIZONTAL GESTURES)
+   ========================================================================== */
+
+/* Slider Track Base */
+.thumb-slider-track {
+  background: rgba(10, 18, 34, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  box-shadow: 
+    inset 0 2px 4px 0 rgba(0, 0, 0, 0.5),
+    0 1px 0 0 rgba(255, 255, 255, 0.08);
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Floating Magnetic Thumb Capsule */
+.thumb-slider-capsule {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(40, 78, 138, 0.55) 45%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  backdrop-filter: blur(24px) saturate(220%);
+  -webkit-backdrop-filter: blur(24px) saturate(220%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-top-color: rgba(255, 255, 255, 0.65);
+  box-shadow: 
+    0 8px 24px -2px rgba(4, 9, 22, 0.65),
+    0 0 18px 2px rgba(56, 189, 248, 0.35),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.60),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.40);
+  pointer-events: none;
 }
 
 /* Specular Fluid Sheen Reflection */
@@ -167,8 +209,8 @@
   height: 40%;
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.12) 0%,
-    rgba(255, 255, 255, 0.02) 70%,
+    rgba(255, 255, 255, 0.16) 0%,
+    rgba(255, 255, 255, 0.03) 70%,
     rgba(255, 255, 255, 0) 100%
   );
   pointer-events: none;
@@ -176,40 +218,40 @@
   border-top-right-radius: inherit;
 }
 
-/* Legacy backward-compatible aliases for glass-card and glass-pill */
+/* Legacy backward-compatible aliases */
 .glass-card {
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.08) 0%,
-    rgba(14, 46, 36, 0.20) 50%,
-    rgba(255, 255, 255, 0.02) 100%
+    rgba(255, 255, 255, 0.10) 0%,
+    rgba(28, 52, 92, 0.32) 50%,
+    rgba(255, 255, 255, 0.03) 100%
   );
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-top-color: rgba(255, 255, 255, 0.24);
-  box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(24px) saturate(165%);
+  -webkit-backdrop-filter: blur(24px) saturate(165%);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-top-color: rgba(255, 255, 255, 0.32);
+  box-shadow: 0 10px 30px -4px rgba(5, 12, 28, 0.55);
 }
 
 .glass-pill {
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.12) 0%,
-    rgba(14, 62, 48, 0.35) 50%,
-    rgba(255, 255, 255, 0.03) 100%
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(30, 58, 102, 0.40) 50%,
+    rgba(255, 255, 255, 0.04) 100%
   );
   backdrop-filter: blur(26px) saturate(180%);
   -webkit-backdrop-filter: blur(26px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.20);
-  border-top-color: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-top-color: rgba(255, 255, 255, 0.40);
   box-shadow: 
-    0 12px 36px -4px rgba(0, 0, 0, 0.55),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.35);
+    0 12px 36px -4px rgba(5, 12, 28, 0.60),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.40);
 }
 
 .specular-border {
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  border-top-color: rgba(255, 255, 255, 0.24);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-top-color: rgba(255, 255, 255, 0.30);
   position: relative;
 }
 

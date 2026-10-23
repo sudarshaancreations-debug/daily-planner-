@@ -23,12 +23,12 @@ export function Screen07HomeDashboard({ tasks, onNavigate, onToggleTask, onSelec
   const progressPercent = Math.round((completedCount / (tasks.length || 1)) * 100);
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#121412] text-[#e3e2e0] flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
+    <div className="w-full h-full min-h-[680px] bg-[#0a1120] text-[#f8fafc] flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
       {/* Top Header */}
-      <div className="p-5 pb-3 bg-[#121412]/80 border-b border-[#414945]/30">
+      <div className="p-5 pb-3 bg-[#0a1120]/80 border-b border-[#334155]/30">
         <div className="flex justify-between items-center text-xs text-[#c0c8c3] mb-3">
           <span className="font-semibold font-['Space_Grotesk']">9:41</span>
-          <div className="flex items-center gap-1.5 text-[#e3e2e0]">
+          <div className="flex items-center gap-1.5 text-[#f8fafc]">
             <span className="w-2 h-2 rounded-full bg-[#10B981]" />
             <span>5G</span>
           </div>
@@ -41,12 +41,12 @@ export function Screen07HomeDashboard({ tasks, onNavigate, onToggleTask, onSelec
             </div>
             <div>
               <p className="text-[10px] text-[#e9c349] uppercase tracking-wider font-semibold">Good Morning,</p>
-              <h2 className="text-sm font-bold text-[#e3e2e0] font-['Space_Grotesk']">Sudarshan</h2>
+              <h2 className="text-sm font-bold text-[#f8fafc] font-['Space_Grotesk']">Sudarshan</h2>
             </div>
           </div>
           <button
             onClick={() => onNavigate?.(16)}
-            className="w-8 h-8 rounded-full bg-[#1f201e] hover:bg-[#292a29] flex items-center justify-center text-[#c0c8c3] text-sm border border-[#414945]/30"
+            className="w-8 h-8 rounded-full bg-[#162540] hover:bg-[#1e3050] flex items-center justify-center text-[#c0c8c3] text-sm border border-[#334155]/30"
           >
             ⚙️
           </button>
@@ -68,7 +68,7 @@ export function Screen07HomeDashboard({ tasks, onNavigate, onToggleTask, onSelec
         {/* Today's Progress Card */}
         <div className="glass-card specular-border rounded-2xl p-4 shadow-sm flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-bold text-[#e3e2e0] font-['Space_Grotesk']">Today&apos;s Progress</h3>
+            <h3 className="text-sm font-bold text-[#f8fafc] font-['Space_Grotesk']">Today&apos;s Progress</h3>
             <p className="text-xs text-[#c0c8c3] mt-0.5">
               {completedCount} of {tasks.length} tasks completed
             </p>
@@ -78,7 +78,7 @@ export function Screen07HomeDashboard({ tasks, onNavigate, onToggleTask, onSelec
           <div className="relative w-14 h-14 flex items-center justify-center">
             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
               <path
-                className="text-[#292a29]"
+                className="text-[#1e3050]"
                 strokeWidth="3.5"
                 stroke="currentColor"
                 fill="none"
@@ -94,7 +94,7 @@ export function Screen07HomeDashboard({ tasks, onNavigate, onToggleTask, onSelec
                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
               />
             </svg>
-            <span className="absolute text-xs font-bold text-[#e3e2e0] font-['Space_Grotesk']">{progressPercent}%</span>
+            <span className="absolute text-xs font-bold text-[#f8fafc] font-['Space_Grotesk']">{progressPercent}%</span>
           </div>
         </div>
       </div>
@@ -219,10 +219,10 @@ export function SwipeableScheduleCard({
   const showRightActions = offsetX < 0;
 
   return (
-    <div className="relative overflow-hidden rounded-xl select-none my-2 bg-[#0c0f0d]">
+    <div className="relative overflow-hidden rounded-xl select-none my-2 bg-[#0a1120]">
       {/* Background Action Buttons Layer (Revealed upon swipe) */}
       <div
-        className={`absolute inset-0 flex items-center justify-between px-2 bg-[#0a0c0a] rounded-xl border border-white/[0.06] transition-opacity duration-150 ${
+        className={`absolute inset-0 flex items-center justify-between px-2 bg-[#0d1629] rounded-xl border border-white/[0.06] transition-opacity duration-150 ${
           offsetX !== 0 ? 'opacity-100' : 'opacity-0 pointer-events-none invisible'
         }`}
       >
@@ -235,7 +235,7 @@ export function SwipeableScheduleCard({
           <button
             type="button"
             onClick={handleEdit}
-            className="w-14 h-11 px-2 rounded-lg bg-[#18201b] border border-white/[0.12] text-[#e9c349] text-xs flex flex-col items-center justify-center shadow-sm active:scale-90 transition-transform cursor-pointer"
+            className="w-14 h-11 px-2 rounded-lg bg-[#162540] border border-white/[0.12] text-[#e9c349] text-xs flex flex-col items-center justify-center shadow-sm active:scale-90 transition-transform cursor-pointer"
             title="Edit Task"
           >
             <span className="material-symbols-outlined text-[17px]">edit</span>
@@ -261,7 +261,7 @@ export function SwipeableScheduleCard({
           <button
             type="button"
             onClick={handleEdit}
-            className="w-14 h-11 px-2 rounded-lg bg-[#18201b] border border-white/[0.12] text-[#e9c349] text-xs flex flex-col items-center justify-center shadow-sm active:scale-90 transition-transform cursor-pointer"
+            className="w-14 h-11 px-2 rounded-lg bg-[#162540] border border-white/[0.12] text-[#e9c349] text-xs flex flex-col items-center justify-center shadow-sm active:scale-90 transition-transform cursor-pointer"
             title="Edit Task"
           >
             <span className="material-symbols-outlined text-[17px]">edit</span>
@@ -295,7 +295,7 @@ export function SwipeableScheduleCard({
         }}
         className={`relative z-10 p-3.5 rounded-xl border border-white/[0.08] border-l-[3px] ${
           borderColors[task.color] || 'border-l-emerald-500'
-        } flex items-start justify-between cursor-pointer bg-[#131614] hover:border-white/[0.16] active:scale-[0.99] transition-all touch-pan-y`}
+        } flex items-start justify-between cursor-pointer bg-[#121d33] hover:border-white/[0.16] active:scale-[0.99] transition-all touch-pan-y`}
       >
         <div className={`flex items-start gap-3 flex-1 min-w-0 pr-2 ${isCompleted ? 'opacity-50' : ''}`}>
           {/* Tactile Checkbox */}
@@ -311,7 +311,7 @@ export function SwipeableScheduleCard({
               onToggleTask?.(task.id);
             }}
             className={`mt-0.5 w-5 h-5 rounded-[5px] border border-white/25 flex items-center justify-center hover:border-[#e9c349] transition-colors shrink-0 ${
-              isCompleted ? 'bg-[#e9c349] text-gray-950 border-[#e9c349]' : 'bg-[#181c19]'
+              isCompleted ? 'bg-[#e9c349] text-gray-950 border-[#e9c349]' : 'bg-[#162540]'
             }`}
           >
             {isCompleted && <span className="material-symbols-outlined text-[13px] font-bold">check</span>}
@@ -327,7 +327,7 @@ export function SwipeableScheduleCard({
             </div>
             <h4
               className={`text-xs font-semibold leading-tight mt-0.5 truncate tracking-tight ${
-                isCompleted ? 'line-through text-[#8a938e]' : 'text-[#ededec]'
+                isCompleted ? 'line-through text-[#8a938e]' : 'text-[#f8fafc]'
               }`}
             >
               {task.title}
@@ -392,7 +392,7 @@ export function Screen08DailyPlanner({
   const orderedTasks = [...activeTasks, ...completedTasks];
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#0c0f0d] text-[#ededec] flex flex-col justify-between select-none rounded-[38px] overflow-hidden relative">
+    <div className="w-full h-full min-h-[680px] bg-[#0a1120] text-[#f8fafc] flex flex-col justify-between select-none rounded-[38px] overflow-hidden relative">
       {/* Liquid Glass Floating Header */}
       <div className="liquid-glass-header px-4 py-3.5 flex items-center justify-between z-10">
         <button
@@ -403,7 +403,7 @@ export function Screen08DailyPlanner({
           <span>BACK</span>
         </button>
         <div className="text-center">
-          <h2 className="text-xs font-semibold tracking-wider uppercase text-[#ededec] font-['Space_Grotesk']">
+          <h2 className="text-xs font-semibold tracking-wider uppercase text-[#f8fafc] font-['Space_Grotesk']">
             Daily Schedule
           </h2>
           <p className="text-[9px] font-mono tracking-widest text-[#e9c349] uppercase">Today&apos;s Agenda</p>
@@ -428,10 +428,10 @@ export function Screen08DailyPlanner({
 
       {/* Swipe instruction banner - Utilitarian Minimal */}
       <div className="px-4 pt-2.5">
-        <div className="px-3 py-2 bg-[#121513] border border-white/[0.06] rounded-xl flex items-center justify-between text-[10px] text-[#9b9f9c]">
+        <div className="px-3 py-2 bg-[#121d33] border border-white/[0.06] rounded-xl flex items-center justify-between text-[10px] text-[#9b9f9c]">
           <span className="flex items-center gap-1.5 font-mono text-[9px] tracking-tight">
             <span className="material-symbols-outlined text-[13px] text-[#e9c349]">swipe</span>
-            <span>Swipe task left or right to <span className="text-[#ededec] font-medium">Edit</span> or <span className="text-rose-400 font-medium">Delete</span></span>
+            <span>Swipe task left or right to <span className="text-[#f8fafc] font-medium">Edit</span> or <span className="text-rose-400 font-medium">Delete</span></span>
           </span>
           <span className="text-[#e9c349] font-mono text-[10px]">‹ ›</span>
         </div>
@@ -598,13 +598,13 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
   };
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#0c0f0d] text-[#ededec] flex flex-col justify-between p-5 select-none rounded-[38px] shadow-2xl">
+    <div className="w-full h-full min-h-[680px] bg-[#0a1120] text-[#f8fafc] flex flex-col justify-between p-5 select-none rounded-[38px] shadow-2xl">
       <div>
         {/* Top bar - Liquid Glass Pill Header */}
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-[#e9c349] text-[20px]">add_task</span>
-            <h2 className="text-xs font-semibold tracking-wider uppercase text-[#ededec] font-['Space_Grotesk']">
+            <h2 className="text-xs font-semibold tracking-wider uppercase text-[#f8fafc] font-['Space_Grotesk']">
               Add New Task
             </h2>
           </div>
@@ -617,7 +617,7 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
         </div>
 
         {/* Item type tabs - Utilitarian Minimal */}
-        <div className="grid grid-cols-4 gap-1.5 p-1 bg-[#121513] rounded-xl mb-4 border border-white/[0.08]">
+        <div className="grid grid-cols-4 gap-1.5 p-1 bg-[#121d33] rounded-xl mb-4 border border-white/[0.08]">
           {(
             [
               { id: 'task', label: 'Task', icon: 'task_alt' },
@@ -631,8 +631,8 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
               onClick={() => setActiveTab(tab.id)}
               className={`py-2 px-1 rounded-lg text-[10px] font-mono tracking-tight flex flex-col items-center gap-1 transition-all ${
                 activeTab === tab.id
-                  ? 'bg-[#18241e] text-[#e9c349] border border-[#e9c349]/30 font-semibold'
-                  : 'text-[#9b9f9c] hover:text-[#ededec]'
+                  ? 'bg-[#182845] text-[#e9c349] border border-[#e9c349]/30 font-semibold'
+                  : 'text-[#9b9f9c] hover:text-[#f8fafc]'
               }`}
             >
               <span className="material-symbols-outlined text-[15px]">{tab.icon}</span>
@@ -671,7 +671,7 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
                 if (errorMessage) setErrorMessage('');
               }}
               placeholder="e.g. Site inspection at Skyline Tower B"
-              className={`w-full bg-[#121513] border rounded-xl px-3.5 py-2.5 text-xs text-[#ededec] outline-none shadow-sm placeholder-[#555d58] transition-colors ${
+              className={`w-full bg-[#121d33] border rounded-xl px-3.5 py-2.5 text-xs text-[#f8fafc] outline-none shadow-sm placeholder-[#555d58] transition-colors ${
                 errorMessage ? 'border-rose-500 ring-1 ring-rose-500' : 'border-white/[0.08] focus:border-[#e9c349]/50'
               }`}
             />
@@ -693,7 +693,7 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Add key milestones, deliverables or location notes..."
-              className="w-full bg-[#121513] border border-white/[0.08] rounded-xl px-3.5 py-2 text-xs text-[#ededec] outline-none focus:border-[#e9c349]/50 resize-none shadow-sm placeholder-[#555d58]"
+              className="w-full bg-[#121d33] border border-white/[0.08] rounded-xl px-3.5 py-2 text-xs text-[#f8fafc] outline-none focus:border-[#e9c349]/50 resize-none shadow-sm placeholder-[#555d58]"
             />
           </div>
 
@@ -707,33 +707,33 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
                 <button
                   type="button"
                   onClick={() => handleQuickDate(0)}
-                  className="text-[9px] font-mono px-2 py-0.5 rounded bg-[#121513] hover:bg-[#181c19] text-[#4edea3] border border-white/[0.08]"
+                  className="text-[9px] font-mono px-2 py-0.5 rounded bg-[#121d33] hover:bg-[#162540] text-[#4edea3] border border-white/[0.08]"
                 >
                   Today
                 </button>
                 <button
                   type="button"
                   onClick={() => handleQuickDate(1)}
-                  className="text-[9px] font-mono px-2 py-0.5 rounded bg-[#121513] hover:bg-[#181c19] text-[#4edea3] border border-white/[0.08]"
+                  className="text-[9px] font-mono px-2 py-0.5 rounded bg-[#121d33] hover:bg-[#162540] text-[#4edea3] border border-white/[0.08]"
                 >
                   Tomorrow
                 </button>
                 <button
                   type="button"
                   onClick={() => handleQuickDate(7)}
-                  className="text-[9px] font-mono px-2 py-0.5 rounded bg-[#121513] hover:bg-[#181c19] text-[#4edea3] border border-white/[0.08]"
+                  className="text-[9px] font-mono px-2 py-0.5 rounded bg-[#121d33] hover:bg-[#162540] text-[#4edea3] border border-white/[0.08]"
                 >
                   +7d
                 </button>
               </div>
             </div>
-            <div className="p-2.5 bg-[#121513] border border-white/[0.08] rounded-xl shadow-sm">
+            <div className="p-2.5 bg-[#121d33] border border-white/[0.08] rounded-xl shadow-sm">
               <input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 style={{ colorScheme: 'dark' }}
-                className="text-xs font-mono font-medium text-[#ededec] outline-none bg-transparent w-full cursor-pointer"
+                className="text-xs font-mono font-medium text-[#f8fafc] outline-none bg-transparent w-full cursor-pointer"
               />
             </div>
           </div>
@@ -752,8 +752,8 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
                     onClick={() => setTime(tChip)}
                     className={`text-[9px] font-mono px-1.5 py-0.5 rounded border transition-all ${
                       time === tChip
-                        ? 'bg-[#18241e] text-[#e9c349] border-[#e9c349]/40 font-bold'
-                        : 'bg-[#121513] text-[#9b9f9c] border-white/[0.08] hover:text-white'
+                        ? 'bg-[#182845] text-[#e9c349] border-[#e9c349]/40 font-bold'
+                        : 'bg-[#121d33] text-[#9b9f9c] border-white/[0.08] hover:text-white'
                     }`}
                   >
                     {tChip.split(' ')[0]}
@@ -761,13 +761,13 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
                 ))}
               </div>
             </div>
-            <div className="p-2.5 bg-[#121513] border border-white/[0.08] rounded-xl shadow-sm flex items-center justify-between">
+            <div className="p-2.5 bg-[#121d33] border border-white/[0.08] rounded-xl shadow-sm flex items-center justify-between">
               <input
                 type="text"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
                 placeholder="10:00 AM"
-                className="text-xs font-mono font-medium text-[#ededec] outline-none bg-transparent w-full"
+                className="text-xs font-mono font-medium text-[#f8fafc] outline-none bg-transparent w-full"
               />
               <span className="text-[9px] font-mono text-[#e9c349] tracking-wider shrink-0 uppercase">
                 End: {calculateEndTime(time, parseInt(duration) || 30)}
@@ -777,31 +777,31 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
 
           {/* Duration & Priority Grid */}
           <div className="grid grid-cols-2 gap-2.5">
-            <div className="p-2.5 bg-[#121513] border border-white/[0.08] rounded-xl shadow-sm">
+            <div className="p-2.5 bg-[#121d33] border border-white/[0.08] rounded-xl shadow-sm">
               <span className="text-[9px] font-mono text-[#9b9f9c] uppercase block mb-0.5">Duration</span>
               <select
                 value={duration}
                 onChange={(e) => setDuration(e.target.value)}
-                className="text-xs font-mono font-medium text-[#ededec] bg-transparent outline-none w-full cursor-pointer"
+                className="text-xs font-mono font-medium text-[#f8fafc] bg-transparent outline-none w-full cursor-pointer"
               >
-                <option className="bg-[#121513] text-[#ededec]" value="15">15 minutes</option>
-                <option className="bg-[#121513] text-[#ededec]" value="30">30 minutes</option>
-                <option className="bg-[#121513] text-[#ededec]" value="45">45 minutes</option>
-                <option className="bg-[#121513] text-[#ededec]" value="60">1 hour</option>
-                <option className="bg-[#121513] text-[#ededec]" value="90">1.5 hours</option>
-                <option className="bg-[#121513] text-[#ededec]" value="120">2 hours</option>
+                <option className="bg-[#121d33] text-[#f8fafc]" value="15">15 minutes</option>
+                <option className="bg-[#121d33] text-[#f8fafc]" value="30">30 minutes</option>
+                <option className="bg-[#121d33] text-[#f8fafc]" value="45">45 minutes</option>
+                <option className="bg-[#121d33] text-[#f8fafc]" value="60">1 hour</option>
+                <option className="bg-[#121d33] text-[#f8fafc]" value="90">1.5 hours</option>
+                <option className="bg-[#121d33] text-[#f8fafc]" value="120">2 hours</option>
               </select>
             </div>
-            <div className="p-2.5 bg-[#121513] border border-white/[0.08] rounded-xl shadow-sm">
+            <div className="p-2.5 bg-[#121d33] border border-white/[0.08] rounded-xl shadow-sm">
               <span className="text-[9px] font-mono text-[#9b9f9c] uppercase block mb-0.5">Priority</span>
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as any)}
-                className="text-xs font-mono font-medium text-[#ededec] bg-transparent outline-none w-full cursor-pointer"
+                className="text-xs font-mono font-medium text-[#f8fafc] bg-transparent outline-none w-full cursor-pointer"
               >
-                <option className="bg-[#121513] text-[#ededec]" value="low">Low Priority</option>
-                <option className="bg-[#121513] text-[#ededec]" value="medium">Medium Priority</option>
-                <option className="bg-[#121513] text-rose-400" value="high">High Priority</option>
+                <option className="bg-[#121d33] text-[#f8fafc]" value="low">Low Priority</option>
+                <option className="bg-[#121d33] text-[#f8fafc]" value="medium">Medium Priority</option>
+                <option className="bg-[#121d33] text-rose-400" value="high">High Priority</option>
               </select>
             </div>
           </div>
@@ -814,11 +814,11 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask }: PlanningPro
             <select
               value={selectedContact}
               onChange={(e) => setSelectedContact(e.target.value)}
-              className="w-full bg-[#121513] border border-white/[0.08] rounded-xl px-3 py-2.5 text-xs text-[#ededec] font-mono outline-none shadow-sm cursor-pointer"
+              className="w-full bg-[#121d33] border border-white/[0.08] rounded-xl px-3 py-2.5 text-xs text-[#f8fafc] font-mono outline-none shadow-sm cursor-pointer"
             >
-              <option className="bg-[#121513] text-[#9b9f9c]" value="">No contact associated</option>
+              <option className="bg-[#121d33] text-[#9b9f9c]" value="">No contact associated</option>
               {contacts.map((c) => (
-                <option key={c.id} className="bg-[#121513] text-[#ededec]" value={c.id}>
+                <option key={c.id} className="bg-[#121d33] text-[#f8fafc]" value={c.id}>
                   {c.name} — {c.company} ({c.category.toUpperCase()})
                 </option>
               ))}
@@ -881,7 +881,7 @@ export function Screen10TaskDetails({
   };
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#0c0f0d] text-[#ededec] flex flex-col justify-between p-5 select-none rounded-[38px]">
+    <div className="w-full h-full min-h-[680px] bg-[#0a1120] text-[#f8fafc] flex flex-col justify-between p-5 select-none rounded-[38px]">
       <div>
         {/* Header - Liquid Glass Pill Navigation */}
         <div className="flex justify-between items-center mb-4">
@@ -892,7 +892,7 @@ export function Screen10TaskDetails({
             <span className="material-symbols-outlined text-[15px]">arrow_back</span>
             <span>BACK</span>
           </button>
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#ededec] font-['Space_Grotesk']">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#f8fafc] font-['Space_Grotesk']">
             {isEditing ? 'Edit Task' : 'Task Details'}
           </span>
           <button
@@ -913,7 +913,7 @@ export function Screen10TaskDetails({
                 type="text"
                 value={editTitle}
                 onChange={(e) => setEditTitle(e.target.value)}
-                className="w-full bg-[#121513] border border-white/[0.08] rounded-xl px-3 py-2 text-sm text-[#ededec] font-medium focus:border-[#e9c349]/50 outline-none"
+                className="w-full bg-[#121d33] border border-white/[0.08] rounded-xl px-3 py-2 text-sm text-[#f8fafc] font-medium focus:border-[#e9c349]/50 outline-none"
               />
             </div>
             <div>
@@ -923,7 +923,7 @@ export function Screen10TaskDetails({
                 value={editSubtitle}
                 onChange={(e) => setEditSubtitle(e.target.value)}
                 placeholder="Details or notes..."
-                className="w-full bg-[#121513] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-[#ededec] focus:border-[#e9c349]/50 outline-none font-mono"
+                className="w-full bg-[#121d33] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-[#f8fafc] focus:border-[#e9c349]/50 outline-none font-mono"
               />
             </div>
             <div className="grid grid-cols-2 gap-2">
@@ -934,7 +934,7 @@ export function Screen10TaskDetails({
                   value={editTime}
                   onChange={(e) => setEditTime(e.target.value)}
                   placeholder="e.g. 2:00 PM"
-                  className="w-full bg-[#121513] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-[#ededec] focus:border-[#e9c349]/50 outline-none font-mono"
+                  className="w-full bg-[#121d33] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-[#f8fafc] focus:border-[#e9c349]/50 outline-none font-mono"
                 />
               </div>
               <div>
@@ -942,11 +942,11 @@ export function Screen10TaskDetails({
                 <select
                   value={editPriority}
                   onChange={(e) => setEditPriority(e.target.value as NimoraTask['priority'])}
-                  className="w-full bg-[#121513] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-[#ededec] focus:border-[#e9c349]/50 outline-none font-mono"
+                  className="w-full bg-[#121d33] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-[#f8fafc] focus:border-[#e9c349]/50 outline-none font-mono"
                 >
-                  <option className="bg-[#121513]" value="low">Low</option>
-                  <option className="bg-[#121513]" value="medium">Medium</option>
-                  <option className="bg-[#121513]" value="high">High</option>
+                  <option className="bg-[#121d33]" value="low">Low</option>
+                  <option className="bg-[#121d33]" value="medium">Medium</option>
+                  <option className="bg-[#121d33]" value="high">High</option>
                 </select>
               </div>
             </div>
@@ -962,7 +962,7 @@ export function Screen10TaskDetails({
           <div className="minimal-card rounded-2xl p-4 shadow-sm mb-3">
             <div className="flex items-center gap-2 mb-1">
               <span className="material-symbols-outlined text-[18px] text-[#e9c349]">task_alt</span>
-              <h3 className="text-sm font-semibold text-[#ededec] font-['Space_Grotesk']">{task?.title || 'Client Call'}</h3>
+              <h3 className="text-sm font-semibold text-[#f8fafc] font-['Space_Grotesk']">{task?.title || 'Client Call'}</h3>
             </div>
             <p className="text-xs text-[#9b9f9c]">{task?.subtitle || 'Reviewing project milestones'}</p>
           </div>
@@ -972,17 +972,17 @@ export function Screen10TaskDetails({
         <div className="minimal-card rounded-2xl p-4 shadow-sm space-y-3 mb-3">
           <div className="flex justify-between items-center text-xs">
             <span className="text-[#9b9f9c] font-mono text-[10px] uppercase">Date</span>
-            <span className="font-mono text-xs text-[#ededec]">{task?.date || 'Today'}</span>
+            <span className="font-mono text-xs text-[#f8fafc]">{task?.date || 'Today'}</span>
           </div>
           <div className="flex justify-between items-center text-xs">
             <span className="text-[#9b9f9c] font-mono text-[10px] uppercase">Time</span>
-            <span className="font-mono text-xs text-[#ededec]">
+            <span className="font-mono text-xs text-[#f8fafc]">
               {task?.startTime} – {task?.endTime}
             </span>
           </div>
           <div className="flex justify-between items-center text-xs">
             <span className="text-[#9b9f9c] font-mono text-[10px] uppercase">Duration</span>
-            <span className="font-mono text-xs text-[#ededec]">{task?.durationMinutes} min</span>
+            <span className="font-mono text-xs text-[#f8fafc]">{task?.durationMinutes} min</span>
           </div>
           <div className="flex justify-between items-center text-xs">
             <span className="text-[#9b9f9c] font-mono text-[10px] uppercase">Priority</span>
@@ -995,7 +995,7 @@ export function Screen10TaskDetails({
             <span className={`font-mono text-[9px] uppercase px-2 py-0.5 rounded-full ${
               task?.status === 'completed'
                 ? 'bg-emerald-950/60 text-[#4edea3] border border-[#4edea3]/30'
-                : 'bg-[#181c19] text-[#9b9f9c] border border-white/[0.08]'
+                : 'bg-[#162540] text-[#9b9f9c] border border-white/[0.08]'
             }`}>
               {task?.status}
             </span>
@@ -1017,7 +1017,7 @@ export function Screen10TaskDetails({
                   {contact.name[0]}
                 </div>
                 <div>
-                  <h4 className="text-xs font-medium text-[#ededec]">{contact.name}</h4>
+                  <h4 className="text-xs font-medium text-[#f8fafc]">{contact.name}</h4>
                   <p className="text-[10px] text-[#9b9f9c] font-mono">{contact.company}</p>
                 </div>
               </div>
@@ -1040,7 +1040,7 @@ export function Screen10TaskDetails({
           }}
           className={`w-full py-3 rounded-2xl font-mono text-xs tracking-wider uppercase transition-all cursor-pointer ${
             task?.status === 'completed'
-              ? 'bg-[#121513] text-[#9b9f9c] border border-white/[0.08] hover:text-white'
+              ? 'bg-[#121d33] text-[#9b9f9c] border border-white/[0.08] hover:text-white'
               : 'liquid-glass-pill liquid-sheen text-[#4edea3] font-semibold hover:scale-[1.02] shadow-lg'
           }`}
         >

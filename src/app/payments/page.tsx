@@ -8,7 +8,7 @@ export default function PaymentsPage() {
   const router = useRouter();
 
   return (
-    <div className="bg-[#121412] text-[#e3e2e0] min-h-screen antialiased selection:bg-[#a1d1bd] selection:text-[#05382a] relative py-6 px-4 max-w-md mx-auto shadow-2xl">
+    <div className="bg-[#0a1120] text-[#f8fafc] min-h-screen antialiased selection:bg-[#38bdf8]/20 selection:text-[#38bdf8] relative py-6 px-4 max-w-md mx-auto shadow-2xl">
       <Screen19SubscriptionPlans onNavigate={() => router.push('/')} />
     </div>
   );

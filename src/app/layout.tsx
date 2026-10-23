@@ -47,7 +47,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-full flex flex-col bg-[#121412] text-[#e3e2e0]">
+      <body className="min-h-full flex flex-col bg-[#0a1120] text-[#f8fafc]">
         {children}
       </body>
     </html>
