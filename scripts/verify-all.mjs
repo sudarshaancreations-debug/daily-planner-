@@ -153,6 +153,47 @@ async function runTests() {
     }
   });
 
+  // 9. AI Assistant Chat Endpoint Verification
+  await assertTest('AI Assistant chat endpoint responds with valid JSON schema', async () => {
+    const res = await fetch(`${BASE_URL}/api/assistant/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prompt: 'Schedule client debrief with Arun Mehta tomorrow at 10 AM',
+        assistantName: 'Nova',
+      }),
+    });
+    if (!res.ok) throw new Error(`Status ${res.status}`);
+    const data = await res.json();
+    if (typeof data !== 'object' || data === null) {
+      throw new Error(`Expected object response, got: ${typeof data}`);
+    }
+    // Either live gemini response or graceful fallback signal
+    if (!('fallback' in data) && !('success' in data)) {
+      throw new Error(`Unexpected assistant payload structure: ${JSON.stringify(data)}`);
+    }
+  });
+
+  // 10. Checkout & Payments Endpoint Verification
+  await assertTest('Checkout endpoint handles subscription purchase with receipt activation', async () => {
+    const res = await fetch(`${BASE_URL}/api/checkout`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        planId: 'pro',
+        billingCycle: 'annual',
+      }),
+    });
+    if (!res.ok) throw new Error(`Status ${res.status}`);
+    const data = await res.json();
+    if (!data.success) {
+      throw new Error(`Checkout failed: ${JSON.stringify(data)}`);
+    }
+    if (data.provider === 'instant_verified' && !data.receiptId) {
+      throw new Error(`Missing receiptId in instant activation`);
+    }
+  });
+
   // Summary
   console.log(`\n========================================`);
   console.log(`🏁 Test Summary: ${passed} Passed, ${failed} Failed`);

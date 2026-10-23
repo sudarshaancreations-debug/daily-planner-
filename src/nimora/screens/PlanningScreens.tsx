@@ -3,6 +3,7 @@
 import React, { useState, useRef } from 'react';
 import { NimoraTask, Contact } from '../data';
 import { downloadICS } from '@/lib/exportUtils';
+import { haptics } from '@/lib/haptics';
 
 export interface PlanningProps {
   tasks: NimoraTask[];
@@ -149,8 +150,10 @@ export function SwipeableScheduleCard({
     setIsDragging(false);
     if (offsetX > 45) {
       setOffsetX(130);
+      haptics.slideReveal();
     } else if (offsetX < -45) {
       setOffsetX(-130);
+      haptics.slideReveal();
     } else {
       setOffsetX(0);
     }
@@ -179,8 +182,10 @@ export function SwipeableScheduleCard({
     setIsDragging(false);
     if (offsetX > 45) {
       setOffsetX(130);
+      haptics.slideReveal();
     } else if (offsetX < -45) {
       setOffsetX(-130);
+      haptics.slideReveal();
     } else {
       setOffsetX(0);
     }
@@ -197,6 +202,7 @@ export function SwipeableScheduleCard({
 
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
+    haptics.tick();
     setOffsetX(0);
     onSelectTask?.(task);
     onNavigate?.(8);
@@ -204,6 +210,7 @@ export function SwipeableScheduleCard({
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
+    haptics.warning();
     setOffsetX(0);
     onDeleteTask?.(task.id);
   };
@@ -296,6 +303,11 @@ export function SwipeableScheduleCard({
             type="button"
             onClick={(e) => {
               e.stopPropagation();
+              if (isCompleted) {
+                haptics.tick();
+              } else {
+                haptics.success();
+              }
               onToggleTask?.(task.id);
             }}
             className={`mt-0.5 w-5 h-5 rounded border border-[#e9c349]/50 flex items-center justify-center hover:bg-[#e9c349]/20 transition-colors shrink-0 ${

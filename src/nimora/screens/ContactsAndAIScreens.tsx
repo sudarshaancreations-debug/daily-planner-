@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Contact, AISuggestion, NimoraTask } from '../data';
+import { haptics } from '@/lib/haptics';
 
 export interface ContactsAndAIProps {
   contacts: Contact[];
@@ -13,6 +14,7 @@ export interface ContactsAndAIProps {
   onDeleteTask?: (id: string) => void;
   assistantName?: string;
   onUpdateAssistantName?: (name: string) => void;
+  tasks?: NimoraTask[];
 }
 
 // 9. Contacts & Follow-ups
@@ -251,6 +253,7 @@ export function Screen13VoiceAssistant({
   onDeleteTask,
   assistantName = 'Nova',
   onUpdateAssistantName,
+  tasks = [],
 }: ContactsAndAIProps) {
   const [name, setName] = useState(assistantName);
   const [isEditingName, setIsEditingName] = useState(false);
@@ -420,8 +423,79 @@ export function Screen13VoiceAssistant({
 
     onAddTask?.(newTask);
     setCreatedTask(newTask);
+    haptics.success();
     setStatusMessage(`✓ Added to Schedule: ${newTask.title}`);
     speakFeedback(`Added ${newTask.title} to your schedule for ${startTime}.`);
+  };
+
+  const handleCommandExecution = async (text: string) => {
+    if (!text || !text.trim()) return;
+    const cleanText = text.trim();
+    transcriptRef.current = '';
+    setStatusMessage(`Thinking with ${name} AI...`);
+
+    try {
+      const res = await fetch('/api/assistant/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: cleanText,
+          assistantName: name,
+          tasks: (tasks || []).map((t) => ({
+            id: t.id,
+            title: t.title,
+            startTime: t.startTime,
+            endTime: t.endTime,
+            priority: t.priority,
+            status: t.status,
+          })),
+          contacts: (contacts || []).map((c) => ({
+            name: c.name,
+            company: c.company,
+          })),
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.task) {
+          const generatedTask: NimoraTask = {
+            id: `t_ai_${Date.now()}`,
+            title: data.task.title || cleanText,
+            subtitle: data.task.subtitle || `Generated via ${name} (Vertex/Gemini AI)`,
+            category: data.task.category || 'task',
+            date: data.task.date || new Date().toLocaleDateString('en-US', {
+              weekday: 'short',
+              day: 'numeric',
+              month: 'short',
+              year: 'numeric',
+            }),
+            startTime: data.task.startTime || '11:00 AM',
+            endTime: data.task.endTime || computeEndTime(data.task.startTime || '11:00 AM', data.task.durationMinutes || 45),
+            durationMinutes: data.task.durationMinutes || 45,
+            priority: data.task.priority || 'medium',
+            status: 'upcoming',
+            color: data.task.color || 'green',
+            notes: data.task.notes || `AI prompt: "${cleanText}"`,
+          };
+          onAddTask?.(generatedTask);
+          setCreatedTask(generatedTask);
+          setStatusMessage(`✓ ${data.source === 'google-vertex-gemini' ? 'Gemini 1.5' : name}: ${generatedTask.title}`);
+          haptics.success();
+          speakFeedback(data.spokenResponse || `Added ${generatedTask.title} to your schedule.`);
+          return;
+        } else if (data.spokenResponse) {
+          setStatusMessage(data.spokenResponse);
+          speakFeedback(data.spokenResponse);
+          haptics.tick();
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn('AI Assistant API call error, falling back to local processing:', err);
+    }
+
+    processVoiceCommand(cleanText);
   };
 
   const stopRecording = () => {
@@ -433,12 +507,14 @@ export function Screen13VoiceAssistant({
     setIsRecording(false);
     const spoken = transcriptRef.current.trim();
     if (spoken) {
-      processVoiceCommand(spoken);
+      handleCommandExecution(spoken);
     }
   };
 
   const toggleRecording = () => {
     if (typeof window === 'undefined') return;
+
+    haptics.tick();
 
     if (isRecording) {
       stopRecording();
@@ -457,7 +533,7 @@ export function Screen13VoiceAssistant({
         setTranscript(sample);
         transcriptRef.current = sample;
         setIsRecording(false);
-        processVoiceCommand(sample);
+        handleCommandExecution(sample);
       }, 1600);
       return;
     }
@@ -502,7 +578,7 @@ export function Screen13VoiceAssistant({
         setIsRecording(false);
         const captured = transcriptRef.current.trim();
         if (captured) {
-          processVoiceCommand(captured);
+          handleCommandExecution(captured);
         }
       };
 
@@ -521,7 +597,7 @@ export function Screen13VoiceAssistant({
     const text = typedInput.trim();
     setTypedInput('');
     setTranscript(text);
-    processVoiceCommand(text);
+    handleCommandExecution(text);
   };
 
   return (

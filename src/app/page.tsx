@@ -10,6 +10,7 @@ import {
   Contact,
 } from '@/nimora/data';
 import { downloadICS } from '@/lib/exportUtils';
+import { haptics } from '@/lib/haptics';
 import {
   Screen08DailyPlanner,
   Screen09AddTask,
@@ -52,10 +53,15 @@ export default function NimoraApp() {
   const [assistantName, setAssistantName] = useState('Nova');
   const [isListening, setIsListening] = useState(false);
   const [currentTime, setCurrentTime] = useState('9:41');
+  const [isProUser, setIsProUser] = useState(false);
 
   // True persistent storage across reloads and mobile sessions
   useEffect(() => {
     try {
+      const savedStatus = localStorage.getItem('nimora_subscription_status');
+      if (savedStatus === 'pro') {
+        setIsProUser(true);
+      }
       const savedName = localStorage.getItem('nimora_assistant_name');
       if (savedName) {
         setAssistantName(savedName);
@@ -105,6 +111,14 @@ export default function NimoraApp() {
 
   const handleToggleTask = (id: string) => {
     setTasks((prev) => {
+      const target = prev.find((t) => t.id === id);
+      if (target) {
+        if (target.status === 'completed') {
+          haptics.tick();
+        } else {
+          haptics.success();
+        }
+      }
       const updated = prev.map((t) =>
         t.id === id
           ? { ...t, status: (t.status === 'completed' ? 'upcoming' : 'completed') as NimoraTask['status'] }
@@ -124,6 +138,7 @@ export default function NimoraApp() {
   };
 
   const handleAddTask = (newTask: NimoraTask) => {
+    haptics.success();
     setTasks((prev) => {
       const combined = [newTask, ...prev];
       const active = combined.filter((t) => t.status !== 'completed');
@@ -140,6 +155,7 @@ export default function NimoraApp() {
   };
 
   const handleDeleteTask = (id: string) => {
+    haptics.warning();
     setTasks((prev) => {
       const updated = prev.filter((t) => t.id !== id);
       try {
@@ -212,10 +228,15 @@ export default function NimoraApp() {
             </span>
             <button
               onClick={() => setActiveTab('pricing')}
-              className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#af8d11]/30 text-[#e9c349] border border-[#e9c349]/30 tracking-widest hover:scale-105 active:scale-95 transition-transform cursor-pointer"
-              title="View Membership Plans"
+              className={`px-1.5 py-0.5 rounded text-[9px] font-bold tracking-widest hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center gap-1 ${
+                isProUser
+                  ? 'bg-gradient-to-r from-[#0e3e30] to-[#124233] text-[#e9c349] border border-[#e9c349] shadow-[0_0_12px_rgba(233,195,73,0.35)]'
+                  : 'bg-[#af8d11]/30 text-[#e9c349] border border-[#e9c349]/30'
+              }`}
+              title={isProUser ? 'PRO Member Active' : 'View Membership Plans'}
             >
-              PRO
+              {isProUser && <span className="text-[10px]">★</span>}
+              <span>PRO</span>
             </button>
           </div>
         </div>
@@ -539,6 +560,7 @@ export default function NimoraApp() {
         <div className="pt-20 px-4">
           <Screen13VoiceAssistant
             contacts={contacts}
+            tasks={tasks}
             suggestions={INITIAL_AI_SUGGESTIONS}
             assistantName={assistantName}
             onUpdateAssistantName={handleUpdateAssistantName}
@@ -640,6 +662,7 @@ export default function NimoraApp() {
         <div className="pt-20 px-4">
           <Screen19SubscriptionPlans
             onNavigate={() => setActiveTab('settings')}
+            onSubscriptionSuccess={() => setIsProUser(true)}
           />
         </div>
       )}

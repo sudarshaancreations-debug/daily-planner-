@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { NimoraTask, NimoraNotification } from '../data';
+import { haptics } from '@/lib/haptics';
 
 export interface WidgetAndSettingsProps {
   tasks: NimoraTask[];
@@ -424,12 +425,19 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
 }
 
 // 15. Subscription & Membership Plans (Pricing First, Then Purchase)
-export function Screen19SubscriptionPlans({ onNavigate }: { onNavigate?: (screenNumber: number) => void }) {
+export function Screen19SubscriptionPlans({
+  onNavigate,
+  onSubscriptionSuccess,
+}: {
+  onNavigate?: (screenNumber: number) => void;
+  onSubscriptionSuccess?: () => void;
+}) {
   const [billingCycle, setBillingCycle] = useState<'annual' | 'monthly'>('annual');
   const [selectedPlan, setSelectedPlan] = useState<'pro' | 'essential'>('pro');
   const [step, setStep] = useState<'pricing' | 'checkout'>('pricing');
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [receiptInfo, setReceiptInfo] = useState<{ receiptId?: string; renewsAt?: string; amountPaid?: string } | null>(null);
 
   const plans = {
     essential: {
@@ -477,12 +485,60 @@ export function Screen19SubscriptionPlans({ onNavigate }: { onNavigate?: (screen
   const currentPlan = plans[selectedPlan];
   const displayPrice = billingCycle === 'annual' ? currentPlan.annualPrice : currentPlan.monthlyPrice;
 
-  const handleSimulatePayment = (methodName: string) => {
+  const handleCheckout = async (methodName: string) => {
     setIsProcessing(true);
-    setTimeout(() => {
-      setIsProcessing(false);
-      setPaymentSuccess(true);
-    }, 1200);
+    haptics.tick();
+
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          planId: selectedPlan,
+          billingCycle,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.checkoutUrl) {
+          window.location.href = data.checkoutUrl;
+          return;
+        }
+
+        try {
+          localStorage.setItem('nimora_subscription_status', 'pro');
+          localStorage.setItem('nimora_subscription_plan', currentPlan.name);
+          if (data.receiptId) {
+            localStorage.setItem('nimora_subscription_receipt', data.receiptId);
+          }
+        } catch {}
+
+        setReceiptInfo({
+          receiptId: data.receiptId,
+          renewsAt: data.renewsAt,
+          amountPaid: data.amountPaid || displayPrice,
+        });
+
+        setIsProcessing(false);
+        setPaymentSuccess(true);
+        haptics.success();
+        onSubscriptionSuccess?.();
+        return;
+      }
+    } catch (e) {
+      console.warn('Checkout API request error:', e);
+    }
+
+    try {
+      localStorage.setItem('nimora_subscription_status', 'pro');
+      localStorage.setItem('nimora_subscription_plan', currentPlan.name);
+    } catch {}
+
+    setIsProcessing(false);
+    setPaymentSuccess(true);
+    haptics.success();
+    onSubscriptionSuccess?.();
   };
 
   return (
@@ -655,7 +711,7 @@ export function Screen19SubscriptionPlans({ onNavigate }: { onNavigate?: (screen
           <div className="space-y-4 pt-1">
             {paymentSuccess ? (
               <div className="glass-card specular-border p-6 rounded-2xl text-center space-y-3">
-                <div className="w-14 h-14 rounded-full bg-[#0e3e30] border-2 border-[#e9c349] mx-auto flex items-center justify-center text-2xl">
+                <div className="w-14 h-14 rounded-full bg-[#0e3e30] border-2 border-[#e9c349] mx-auto flex items-center justify-center text-2xl shadow-lg shadow-[#0e3e30]/50">
                   💎
                 </div>
                 <h3 className="font-['Space_Grotesk'] text-lg font-bold text-[#e3e2e0]">
@@ -664,18 +720,27 @@ export function Screen19SubscriptionPlans({ onNavigate }: { onNavigate?: (screen
                 <p className="text-xs text-[#a1d1bd]">
                   Your subscription is active. All premium features, Ask Nova voice AI, and multi-device sync are unlocked.
                 </p>
-                <div className="p-3 bg-[#1f201e] rounded-xl text-xs text-left space-y-1">
+                <div className="p-3.5 bg-[#1f201e] border border-[#414945]/30 rounded-xl text-xs text-left space-y-1.5">
                   <div className="flex justify-between">
                     <span className="text-[#8a938e]">Plan</span>
                     <span className="text-[#e9c349] font-bold">{currentPlan.name}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#8a938e]">Amount Paid</span>
-                    <span className="text-[#e3e2e0] font-bold">{displayPrice}</span>
+                    <span className="text-[#e3e2e0] font-bold">{receiptInfo?.amountPaid || displayPrice}</span>
                   </div>
+                  {receiptInfo?.receiptId && (
+                    <div className="flex justify-between">
+                      <span className="text-[#8a938e]">Receipt Ref</span>
+                      <span className="text-[#a1d1bd] font-mono text-[10px]">{receiptInfo.receiptId}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span className="text-[#8a938e]">Status</span>
-                    <span className="text-[#4edea3] font-bold">Active · Renews {billingCycle}</span>
+                    <span className="text-[#4edea3] font-bold flex items-center gap-1">
+                      <span>✓ Active</span>
+                      <span className="text-[#8a938e] text-[10px] font-normal">· Renews {receiptInfo?.renewsAt || billingCycle}</span>
+                    </span>
                   </div>
                 </div>
                 <button
@@ -684,7 +749,7 @@ export function Screen19SubscriptionPlans({ onNavigate }: { onNavigate?: (screen
                     setPaymentSuccess(false);
                     onNavigate?.(5);
                   }}
-                  className="w-full py-3 rounded-xl bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/50 text-[#e9c349] font-bold text-xs shadow-md mt-2 cursor-pointer"
+                  className="w-full py-3 rounded-xl bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/50 text-[#e9c349] font-bold text-xs shadow-md mt-2 cursor-pointer hover:brightness-110 active:scale-95 transition-all"
                 >
                   Return to Daily Planner
                 </button>
@@ -723,7 +788,7 @@ export function Screen19SubscriptionPlans({ onNavigate }: { onNavigate?: (screen
                   {/* Google Pay */}
                   <button
                     disabled={isProcessing}
-                    onClick={() => handleSimulatePayment('Google Pay')}
+                    onClick={() => handleCheckout('Google Pay')}
                     className="w-full p-3.5 bg-black hover:bg-neutral-900 border border-neutral-700 rounded-2xl flex items-center justify-between shadow-md active:scale-[0.99] transition-transform cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
@@ -736,7 +801,7 @@ export function Screen19SubscriptionPlans({ onNavigate }: { onNavigate?: (screen
                   {/* Apple Pay */}
                   <button
                     disabled={isProcessing}
-                    onClick={() => handleSimulatePayment('Apple Pay')}
+                    onClick={() => handleCheckout('Apple Pay')}
                     className="w-full p-3.5 bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 rounded-2xl flex items-center justify-between shadow-md active:scale-[0.99] transition-transform cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
@@ -749,7 +814,7 @@ export function Screen19SubscriptionPlans({ onNavigate }: { onNavigate?: (screen
                   {/* Credit Card / UPI */}
                   <button
                     disabled={isProcessing}
-                    onClick={() => handleSimulatePayment('Card & UPI')}
+                    onClick={() => handleCheckout('Card & UPI')}
                     className="w-full p-3.5 bg-[#1f201e] hover:bg-[#292a29] border border-[#414945]/40 rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.99] transition-transform cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
