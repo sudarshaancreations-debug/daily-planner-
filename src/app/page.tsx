@@ -870,6 +870,8 @@ export default function NimoraApp() {
               if (mod === 12) setActiveTab('widget');
               else if (mod === 13) setActiveTab('notifications');
               else if (mod === 99) setActiveTab('pricing');
+              else if (mod === 3) setActiveTab('voice');
+              else if (mod === 5) setActiveTab('home');
               else setActiveTab('home');
             }}
             onResetData={handleResetData}

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { NimoraTask, NimoraNotification } from '../data';
 import { haptics } from '@/lib/haptics';
+import { downloadICS } from '@/lib/exportUtils';
 
 export interface WidgetAndSettingsProps {
   tasks: NimoraTask[];
@@ -278,8 +279,36 @@ export function Screen17WhatsApp({ onNavigate }: WidgetAndSettingsProps) {
 }
 
 // 16. Settings & Privacy
-export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSettingsProps) {
+export function Screen18ProfileSettings({ tasks, onNavigate, onResetData }: WidgetAndSettingsProps) {
   const [resetMessage, setResetMessage] = useState('');
+  const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [lastSyncTime, setLastSyncTime] = useState('2 minutes ago');
+  const [syncToast, setSyncToast] = useState('');
+  const [syncFrequency, setSyncFrequency] = useState<'realtime' | '15m' | 'hourly'>('realtime');
+  const [calendars, setCalendars] = useState({
+    gcal: true,
+    appleCal: true,
+    outlook: false,
+    morgenBridge: true,
+  });
+
+  const toggleCalendar = (key: keyof typeof calendars) => {
+    haptics.tick();
+    setCalendars((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const handleSyncNow = () => {
+    haptics.tick();
+    setIsSyncing(true);
+    setTimeout(() => {
+      setIsSyncing(false);
+      setLastSyncTime('Just now');
+      setSyncToast('Synced 24 events from Google & Apple Calendars');
+      haptics.success();
+      setTimeout(() => setSyncToast(''), 3000);
+    }, 900);
+  };
 
   const handleReset = () => {
     if (confirm('Are you sure you want to reset all tasks to initial demo state?')) {
@@ -290,11 +319,11 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
   };
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#0e0b1f] text-[#f8fafc] flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
+    <div className="w-full h-full min-h-[680px] bg-[#0e0b1f] text-[#f8fafc] flex flex-col justify-between select-none rounded-[38px] overflow-hidden relative">
       <div className="overflow-y-auto">
         {/* Header */}
         <div className="p-4 bg-[#0e0b1f]/90 border-b border-[#334155]/30 flex items-center justify-between">
-          <button onClick={() => onNavigate?.(5)} className="text-[#c0c8c3] hover:text-white text-xs font-semibold flex items-center gap-1">
+          <button onClick={() => onNavigate?.(5)} className="text-[#c0c8c3] hover:text-white text-xs font-semibold flex items-center gap-1 cursor-pointer">
             ‹ Back
           </button>
           <h2 className="text-sm font-bold text-[#f8fafc] font-['Space_Grotesk']">Settings & Privacy</h2>
@@ -360,31 +389,44 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
             </div>
           )}
 
-          <div
-            onClick={() => onNavigate?.(3)}
-            className="p-3 minimal-card rounded-2xl flex items-center justify-between cursor-pointer hover:border-white/[0.14] transition-colors"
+          {/* AI Voice Engine Button */}
+          <button
+            type="button"
+            onClick={() => {
+              haptics.tick();
+              onNavigate?.(3);
+            }}
+            className="w-full p-3 minimal-card rounded-2xl flex items-center justify-between cursor-pointer hover:border-white/[0.18] transition-colors text-left"
           >
             <div className="flex items-center gap-3">
-              <span className="material-symbols-outlined text-[18px] text-[#a1d1bd]">smart_toy</span>
+              <span className="material-symbols-outlined text-[18px] text-[#bef264]">smart_toy</span>
               <span className="text-xs font-medium text-[#f8fafc]">AI Voice Engine (Vertex/Gemini)</span>
             </div>
             <span className="text-[10px] font-mono font-bold text-[#bef264] flex items-center gap-1">
-              Active <span className="text-[#8a938e]">›</span>
+              Active <span className="text-[#bef264]">›</span>
             </span>
-          </div>
+          </button>
 
-          <div
-            onClick={() => onNavigate?.(4)}
-            className="p-3 minimal-card rounded-2xl flex items-center justify-between cursor-pointer hover:border-white/[0.14] transition-colors"
+          {/* Connected Calendars & Sync Button - Fully Interactive */}
+          <button
+            type="button"
+            onClick={() => {
+              haptics.tick();
+              setIsCalendarModalOpen(true);
+            }}
+            className="w-full p-3 minimal-card rounded-2xl flex items-center justify-between cursor-pointer hover:border-[#bef264]/40 hover:bg-white/[0.04] transition-all text-left group"
           >
             <div className="flex items-center gap-3">
-              <span className="material-symbols-outlined text-[18px] text-[#8a938e]">sync_alt</span>
-              <span className="text-xs font-medium text-[#f8fafc]">Connected Calendars & Sync</span>
+              <span className="material-symbols-outlined text-[18px] text-[#bef264] group-hover:scale-110 transition-transform">sync_alt</span>
+              <div>
+                <span className="text-xs font-medium text-[#f8fafc] block">Connected Calendars & Sync</span>
+                <span className="text-[10px] font-mono text-purple-300/70">Google · Apple · CalDAV</span>
+              </div>
             </div>
-            <span className="text-[10px] font-mono text-[#8a938e] flex items-center gap-1">
-              Google · Apple <span className="text-[#8a938e]">›</span>
+            <span className="text-[10px] font-mono text-[#bef264] flex items-center gap-1 font-semibold">
+              Manage <span className="text-[#bef264]">›</span>
             </span>
-          </div>
+          </button>
         </div>
 
         {/* Privacy Callout Cards (Minimalist Editorial) */}
@@ -410,6 +452,218 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
           </div>
         </div>
       </div>
+
+      {/* Connected Calendars & Sync Modal */}
+      {isCalendarModalOpen && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={() => setIsCalendarModalOpen(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-sm bg-[#120e29] border border-purple-500/30 rounded-3xl p-5 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto"
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-purple-500/20">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-[#bef264]/20 border border-[#bef264]/40 flex items-center justify-center text-[#bef264]">
+                  <span className="material-symbols-outlined text-lg">sync_alt</span>
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-[#f8fafc] font-['Space_Grotesk']">Connected Calendars</h3>
+                  <p className="text-[10px] text-purple-300/70 font-mono">Two-way automatic sync</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  haptics.tick();
+                  setIsCalendarModalOpen(false);
+                }}
+                className="w-7 h-7 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-purple-200 hover:text-white flex items-center justify-center text-xs transition-all cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Sync Status Banner */}
+            <div className="p-3 bg-[#1a1438] rounded-2xl border border-purple-500/20 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#bef264] shadow-[0_0_8px_#bef264] animate-pulse" />
+                <div>
+                  <span className="text-xs font-semibold text-[#f8fafc] block">Live Status: Active</span>
+                  <span className="text-[10px] text-purple-300/60 font-mono">Last sync: {lastSyncTime}</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleSyncNow}
+                disabled={isSyncing}
+                className="px-2.5 py-1.5 rounded-lg bg-[#bef264] text-[#0e0b1f] font-mono text-[10px] font-bold tracking-wider hover:brightness-110 active:scale-95 transition-all flex items-center gap-1 cursor-pointer disabled:opacity-50"
+              >
+                <span className={`material-symbols-outlined text-sm ${isSyncing ? 'animate-spin' : ''}`}>
+                  sync
+                </span>
+                <span>{isSyncing ? 'Syncing...' : 'Sync Now'}</span>
+              </button>
+            </div>
+
+            {syncToast && (
+              <div className="p-2 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-[#bef264] text-xs font-mono text-center animate-in fade-in">
+                ✓ {syncToast}
+              </div>
+            )}
+
+            {/* Connected Providers List */}
+            <div className="space-y-2">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-purple-300/70 block px-1">
+                Connected Accounts
+              </span>
+
+              {/* Google Calendar */}
+              <div className="p-3 bg-white/[0.04] rounded-2xl border border-white/[0.08] flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-blue-400">
+                    <span className="material-symbols-outlined text-base">calendar_today</span>
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold text-[#f8fafc] block">Google Calendar</span>
+                    <span className="text-[10px] text-purple-300/60 font-mono truncate max-w-[150px] block">
+                      sudarshan@bespokestudio.com
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => toggleCalendar('gcal')}
+                  className={`w-10 h-6 rounded-full transition-colors flex items-center px-0.5 cursor-pointer ${
+                    calendars.gcal ? 'bg-[#bef264] justify-end' : 'bg-white/10 justify-start'
+                  }`}
+                >
+                  <div className={`w-5 h-5 rounded-full shadow-md ${calendars.gcal ? 'bg-[#0e0b1f]' : 'bg-gray-400'}`} />
+                </button>
+              </div>
+
+              {/* Apple Calendar */}
+              <div className="p-3 bg-white/[0.04] rounded-2xl border border-white/[0.08] flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-red-500/15 border border-red-500/30 flex items-center justify-center text-red-400">
+                    <span className="material-symbols-outlined text-base">event</span>
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold text-[#f8fafc] block">Apple Calendar (iCloud)</span>
+                    <span className="text-[10px] text-purple-300/60 font-mono">Architect Studio, Personal</span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => toggleCalendar('appleCal')}
+                  className={`w-10 h-6 rounded-full transition-colors flex items-center px-0.5 cursor-pointer ${
+                    calendars.appleCal ? 'bg-[#bef264] justify-end' : 'bg-white/10 justify-start'
+                  }`}
+                >
+                  <div className={`w-5 h-5 rounded-full shadow-md ${calendars.appleCal ? 'bg-[#0e0b1f]' : 'bg-gray-400'}`} />
+                </button>
+              </div>
+
+              {/* Morgen CalDAV Bridge */}
+              <div className="p-3 bg-white/[0.04] rounded-2xl border border-white/[0.08] flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-[#bef264]/15 border border-[#bef264]/30 flex items-center justify-center text-[#bef264]">
+                    <span className="material-symbols-outlined text-base">multiple_stop</span>
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold text-[#f8fafc] block">Morgen CalDAV Bridge</span>
+                    <span className="text-[10px] text-purple-300/60 font-mono">Real-time bi-directional link</span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => toggleCalendar('morgenBridge')}
+                  className={`w-10 h-6 rounded-full transition-colors flex items-center px-0.5 cursor-pointer ${
+                    calendars.morgenBridge ? 'bg-[#bef264] justify-end' : 'bg-white/10 justify-start'
+                  }`}
+                >
+                  <div className={`w-5 h-5 rounded-full shadow-md ${calendars.morgenBridge ? 'bg-[#0e0b1f]' : 'bg-gray-400'}`} />
+                </button>
+              </div>
+
+              {/* Outlook */}
+              <div className="p-3 bg-white/[0.04] rounded-2xl border border-white/[0.08] flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400">
+                    <span className="material-symbols-outlined text-base">mail</span>
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold text-[#f8fafc] block">Microsoft Outlook 365</span>
+                    <span className="text-[10px] text-purple-300/60 font-mono">
+                      {calendars.outlook ? 'Connected' : 'Not connected'}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => toggleCalendar('outlook')}
+                  className="px-2.5 py-1 rounded-lg bg-white/[0.08] hover:bg-white/[0.15] text-xs font-mono text-purple-200 hover:text-white transition-all cursor-pointer"
+                >
+                  {calendars.outlook ? 'Disconnect' : 'Connect +'}
+                </button>
+              </div>
+            </div>
+
+            {/* Sync Frequency Preference */}
+            <div className="space-y-1.5 pt-1">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-purple-300/70 block px-1">
+                Sync Frequency
+              </span>
+              <div className="grid grid-cols-3 gap-1.5 p-1 bg-[#1a1438] rounded-xl border border-purple-500/15 text-xs">
+                {(['realtime', '15m', 'hourly'] as const).map((freq) => (
+                  <button
+                    key={freq}
+                    type="button"
+                    onClick={() => {
+                      haptics.tick();
+                      setSyncFrequency(freq);
+                    }}
+                    className={`py-1.5 rounded-lg font-mono text-[10px] uppercase font-bold transition-all cursor-pointer ${
+                      syncFrequency === freq
+                        ? 'bg-[#bef264] text-[#0e0b1f] shadow-sm'
+                        : 'text-purple-300/60 hover:text-white'
+                    }`}
+                  >
+                    {freq === 'realtime' ? '⚡ Real-time' : freq === '15m' ? '15 Min' : 'Hourly'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Export & Actions */}
+            <div className="pt-2 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  haptics.tick();
+                  downloadICS(tasks || [], 'nimora-connected-schedule.ics');
+                }}
+                className="flex-1 py-2 px-3 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] text-xs font-semibold text-purple-200 hover:text-[#bef264] flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-sm">download</span>
+                <span>Export .ics</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  haptics.success();
+                  setIsCalendarModalOpen(false);
+                }}
+                className="flex-1 py-2 px-3 rounded-xl bg-[#bef264] text-[#0e0b1f] text-xs font-bold hover:brightness-105 active:scale-95 transition-all cursor-pointer text-center"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
