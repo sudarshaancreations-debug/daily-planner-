@@ -13,16 +13,16 @@ export async function POST(req: NextRequest) {
 
     const planPrices = {
       essential: {
-        name: 'Professional Starter',
-        priceMonthly: 13.99,
-        priceAnnualPerMonth: 9.99,
-        annualTotal: 119.88,
+        name: 'Essential Starter',
+        priceMonthly: 6.99,
+        priceAnnualPerMonth: 5.99,
+        annualTotal: 71.88,
       },
       pro: {
-        name: 'Executive AI & MCP',
-        priceMonthly: 19.99,
-        priceAnnualPerMonth: 15.99,
-        annualTotal: 191.88,
+        name: 'Executive Membership',
+        priceMonthly: 7.99,
+        priceAnnualPerMonth: 6.99,
+        annualTotal: 83.88,
       },
     };
 
