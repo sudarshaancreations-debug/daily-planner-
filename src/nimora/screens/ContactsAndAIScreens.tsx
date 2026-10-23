@@ -31,12 +31,12 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
   });
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#0a1120] text-[#f8fafc] flex flex-col justify-between select-none rounded-[32px] overflow-hidden border border-white/[0.08]">
+    <div className="w-full h-full min-h-[680px] bg-[#0e0b1f] text-[#f8fafc] flex flex-col justify-between select-none rounded-[32px] overflow-hidden border border-white/[0.08]">
       {/* Top Header */}
       <div className="p-4 bg-[#0e120f] border-b border-white/[0.08]">
         <div className="flex justify-between items-center mb-3">
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-[#e9c349] text-[20px]">group</span>
+            <span className="material-symbols-outlined text-[#bef264] text-[20px]">group</span>
             <h2 className="text-base font-bold text-[#f8fafc] font-['Space_Grotesk']">CRM & Network</h2>
           </div>
           <span className="text-[10px] font-mono text-[#a1d1bd] font-medium">{filtered.length} Contacts</span>
@@ -49,7 +49,7 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search clients, architects, vendors..."
-            className="w-full bg-[#151916] border border-white/[0.08] rounded-xl pl-9 pr-3 py-2 text-xs text-[#f8fafc] outline-none focus:border-[#e9c349] placeholder-[#8a938e]"
+            className="w-full bg-[#151916] border border-white/[0.08] rounded-xl pl-9 pr-3 py-2 text-xs text-[#f8fafc] outline-none focus:border-[#bef264] placeholder-[#8a938e]"
           />
           <span className="material-symbols-outlined absolute left-2.5 top-2.5 text-[18px] text-[#8a938e]">search</span>
         </div>
@@ -62,7 +62,7 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
               onClick={() => setFilter(cat)}
               className={`px-3 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer ${
                 filter === cat
-                  ? 'bg-[#1e2420] text-[#e9c349] border border-white/[0.15]'
+                  ? 'bg-[#1e2420] text-[#bef264] border border-white/[0.15]'
                   : 'minimal-btn-secondary text-[#8a938e] hover:text-[#f8fafc]'
               }`}
             >
@@ -92,7 +92,7 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
                 <p className="text-[10px] text-[#9b9f9c]">{contact.company} · {contact.title}</p>
                 <div className="flex items-center gap-2 mt-1">
                   {contact.followUpCount > 0 ? (
-                    <span className="text-[8px] font-mono uppercase tracking-wider text-[#e9c349] bg-[#1a201c] border border-[#e9c349]/25 px-1.5 py-0.2 rounded">
+                    <span className="text-[8px] font-mono uppercase tracking-wider text-[#bef264] bg-[#1a201c] border border-[#bef264]/25 px-1.5 py-0.2 rounded">
                       {contact.followUpCount} {contact.followUpCount === 1 ? 'follow-up' : 'follow-ups'}
                     </span>
                   ) : (
@@ -127,14 +127,14 @@ export function Screen12ContactDetails({ contacts, onNavigate, selectedContact }
   const [activeTab, setActiveTab] = useState<'overview' | 'history' | 'followups' | 'notes'>('history');
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#0a1120] text-[#f8fafc] flex flex-col justify-between select-none rounded-[32px] overflow-hidden border border-white/[0.08]">
+    <div className="w-full h-full min-h-[680px] bg-[#0e0b1f] text-[#f8fafc] flex flex-col justify-between select-none rounded-[32px] overflow-hidden border border-white/[0.08]">
       {/* Header Profile Card */}
       <div className="p-4 bg-[#0e120f] border-b border-white/[0.08]">
         <div className="flex justify-between items-center mb-3">
           <button onClick={() => onNavigate?.(9)} className="text-[#9b9f9c] hover:text-[#f8fafc] text-xs font-mono font-medium flex items-center gap-1 cursor-pointer">
             ‹ Contacts
           </button>
-          <span className="text-[9px] font-mono uppercase tracking-wider text-[#e9c349] bg-[#162540] px-2 py-0.5 rounded-full border border-white/[0.08]">
+          <span className="text-[9px] font-mono uppercase tracking-wider text-[#bef264] bg-[#162540] px-2 py-0.5 rounded-full border border-white/[0.08]">
             {contact.category}
           </span>
         </div>
@@ -161,13 +161,13 @@ export function Screen12ContactDetails({ contacts, onNavigate, selectedContact }
             href={`https://wa.me/${contact.phone.replace(/[^0-9]/g, '')}`}
             target="_blank"
             rel="noreferrer"
-            className="flex-1 py-2 liquid-glass-pill rounded-xl text-xs font-semibold text-[#4edea3] flex items-center justify-center gap-1.5 hover:brightness-110 cursor-pointer"
+            className="flex-1 py-2 liquid-glass-pill rounded-xl text-xs font-semibold text-[#bef264] flex items-center justify-center gap-1.5 hover:brightness-110 cursor-pointer"
           >
             <span className="material-symbols-outlined text-[15px]">chat</span> WhatsApp
           </a>
           <a
             href={`mailto:${contact.email}`}
-            className="flex-1 py-2 minimal-btn-secondary rounded-xl text-xs font-medium text-[#e9c349] flex items-center justify-center gap-1.5 cursor-pointer"
+            className="flex-1 py-2 minimal-btn-secondary rounded-xl text-xs font-medium text-[#bef264] flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <span className="material-symbols-outlined text-[15px]">mail</span> Email
           </a>
@@ -175,14 +175,14 @@ export function Screen12ContactDetails({ contacts, onNavigate, selectedContact }
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-[#334155]/30 bg-[#0a1120] px-4 text-xs font-semibold">
+      <div className="flex border-b border-[#334155]/30 bg-[#0e0b1f] px-4 text-xs font-semibold">
         {(['overview', 'history', 'followups', 'notes'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`py-2 px-3 border-b-2 capitalize transition-all ${
               activeTab === tab
-                ? 'border-[#e9c349] text-[#e9c349]'
+                ? 'border-[#bef264] text-[#bef264]'
                 : 'border-transparent text-[#8a938e] hover:text-[#c0c8c3]'
             }`}
           >
@@ -200,11 +200,11 @@ export function Screen12ContactDetails({ contacts, onNavigate, selectedContact }
             <span>{contact.phone}</span>
           </div>
           <div className="flex items-center gap-2 text-[#c0c8c3]">
-            <span className="material-symbols-outlined text-[16px] text-[#e9c349]">mail</span>
+            <span className="material-symbols-outlined text-[16px] text-[#bef264]">mail</span>
             <span>{contact.email}</span>
           </div>
           <div className="flex items-center gap-2 text-[#c0c8c3]">
-            <span className="material-symbols-outlined text-[16px] text-[#4edea3]">location_on</span>
+            <span className="material-symbols-outlined text-[16px] text-[#bef264]">location_on</span>
             <span>{contact.location}</span>
           </div>
         </div>
@@ -219,7 +219,7 @@ export function Screen12ContactDetails({ contacts, onNavigate, selectedContact }
               <div key={i} className="glass-card specular-border rounded-xl p-3 shadow-sm">
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-xs font-bold text-[#f8fafc] flex items-center gap-1.5 font-['Space_Grotesk']">
-                    <span className="material-symbols-outlined text-[16px] text-[#e9c349]">
+                    <span className="material-symbols-outlined text-[16px] text-[#bef264]">
                       {interaction.type === 'whatsapp' ? 'chat' : interaction.type === 'call' ? 'call' : 'event_note'}
                     </span>
                     <span>{interaction.title}</span>
@@ -233,10 +233,10 @@ export function Screen12ContactDetails({ contacts, onNavigate, selectedContact }
         </div>
       </div>
 
-      <div className="p-4 bg-[#0a1120] border-t border-[#334155]/30">
+      <div className="p-4 bg-[#0e0b1f] border-t border-[#334155]/30">
         <button
           onClick={() => onNavigate?.(7)}
-          className="w-full py-3 rounded-2xl bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/50 text-[#e9c349] font-bold text-xs shadow-lg hover:brightness-110 active:scale-95 transition-all font-['Space_Grotesk']"
+          className="w-full py-3 rounded-2xl bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#bef264]/50 text-[#bef264] font-bold text-xs shadow-lg hover:brightness-110 active:scale-95 transition-all font-['Space_Grotesk']"
         >
           + Add Follow-up Task
         </button>
@@ -601,7 +601,7 @@ export function Screen13VoiceAssistant({
   };
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#0a1120] text-[#f8fafc] flex flex-col justify-between p-5 select-none rounded-[32px] relative overflow-hidden shadow-2xl border border-white/[0.08]">
+    <div className="w-full h-full min-h-[680px] bg-[#0e0b1f] text-[#f8fafc] flex flex-col justify-between p-5 select-none rounded-[32px] relative overflow-hidden shadow-2xl border border-white/[0.08]">
       {/* Top Bar with Name Customizer (Minimalist Editorial) */}
       <div className="flex justify-between items-center text-xs text-[#a1d1bd] z-10 pb-2 border-b border-white/[0.08]">
         <div className="flex items-center gap-2">
@@ -610,7 +610,7 @@ export function Screen13VoiceAssistant({
           </span>
           <button
             onClick={() => setIsEditingName(!isEditingName)}
-            className="px-2 py-0.5 rounded-full minimal-btn-secondary text-[#e9c349] text-[9px] font-mono flex items-center gap-1 hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+            className="px-2 py-0.5 rounded-full minimal-btn-secondary text-[#bef264] text-[9px] font-mono flex items-center gap-1 hover:brightness-110 active:scale-95 transition-all cursor-pointer"
             title="Change voice assistant name"
           >
             <span className="material-symbols-outlined text-[12px]">edit</span>
@@ -619,7 +619,7 @@ export function Screen13VoiceAssistant({
         </div>
         <button
           onClick={() => onNavigate?.(6)}
-          className="text-[#e9c349] hover:underline flex items-center gap-1 font-semibold text-xs cursor-pointer font-mono"
+          className="text-[#bef264] hover:underline flex items-center gap-1 font-semibold text-xs cursor-pointer font-mono"
         >
           Daily Schedule ›
         </button>
@@ -629,7 +629,7 @@ export function Screen13VoiceAssistant({
       {isEditingName && (
         <div className="p-3 minimal-card rounded-2xl shadow-2xl z-20 space-y-2.5 my-2 border border-white/[0.12]">
           <div className="flex justify-between items-center">
-            <span className="text-[9px] uppercase font-mono font-bold text-[#e9c349] tracking-wider">
+            <span className="text-[9px] uppercase font-mono font-bold text-[#bef264] tracking-wider">
               Change Assistant Name
             </span>
             <button
@@ -645,7 +645,7 @@ export function Screen13VoiceAssistant({
               value={customNameInput}
               onChange={(e) => setCustomNameInput(e.target.value)}
               placeholder="e.g. Jarvis, Friday, Aria..."
-              className="flex-1 bg-[#161a17] border border-white/[0.12] rounded-xl px-3 py-1.5 text-xs text-white outline-none focus:border-[#e9c349]"
+              className="flex-1 bg-[#161a17] border border-white/[0.12] rounded-xl px-3 py-1.5 text-xs text-white outline-none focus:border-[#bef264]"
             />
             <button
               onClick={() => handleSaveAssistantName(customNameInput)}
@@ -663,7 +663,7 @@ export function Screen13VoiceAssistant({
                 onClick={() => handleSaveAssistantName(preset)}
                 className={`text-[10px] px-2 py-0.5 rounded-full border transition-all cursor-pointer font-mono ${
                   name === preset
-                    ? 'bg-[#e9c349] text-gray-950 font-bold border-[#e9c349]'
+                    ? 'bg-[#bef264] text-gray-950 font-bold border-[#bef264]'
                     : 'bg-[#161a17] text-[#c0c8c3] border-white/[0.08] hover:border-[#a1d1bd]'
                 }`}
               >
@@ -676,7 +676,7 @@ export function Screen13VoiceAssistant({
 
       {/* Central Visualizer (20% Liquid Glass Hero Orb) */}
       <div className="my-auto flex flex-col items-center text-center z-10 space-y-3">
-        <span className="text-[9px] uppercase font-mono tracking-widest text-[#e9c349] font-medium bg-[#161a17] px-3 py-1 rounded-full border border-white/[0.08]">
+        <span className="text-[9px] uppercase font-mono tracking-widest text-[#bef264] font-medium bg-[#161a17] px-3 py-1 rounded-full border border-white/[0.08]">
           VOICE INTELLIGENCE
         </span>
 
@@ -693,12 +693,12 @@ export function Screen13VoiceAssistant({
         {/* Created Task Confirmation Card */}
         {createdTask && (
           <div className="minimal-card p-3.5 rounded-2xl max-w-[310px] w-full border border-white/20 text-left shadow-2xl relative overflow-hidden">
-            <div className="flex items-center justify-between text-[9px] font-mono text-[#e9c349] font-semibold">
+            <div className="flex items-center justify-between text-[9px] font-mono text-[#bef264] font-semibold">
               <span className="flex items-center gap-1">
                 <span className="material-symbols-outlined text-[14px]">check_circle</span>
                 TASK ADDED
               </span>
-              <span className="bg-[#1b201d] px-1.5 py-0.5 rounded text-[#e9c349] uppercase border border-white/[0.06]">
+              <span className="bg-[#1b201d] px-1.5 py-0.5 rounded text-[#bef264] uppercase border border-white/[0.06]">
                 {createdTask.startTime}
               </span>
             </div>
@@ -752,7 +752,7 @@ export function Screen13VoiceAssistant({
         {/* Audio Wave Visuals & Liquid Glass Mic Button */}
         <div className="relative w-40 h-40 flex items-center justify-center my-2">
           <div
-            className={`absolute inset-0 rounded-full bg-[#4edea3]/10 blur-2xl ${
+            className={`absolute inset-0 rounded-full bg-[#bef264]/10 blur-2xl ${
               isRecording ? 'animate-ping' : 'animate-pulse'
             }`}
           />
@@ -762,7 +762,7 @@ export function Screen13VoiceAssistant({
             {[35, 65, 95, 55, 85, 45, 75, 50, 30].map((h, i) => (
               <div
                 key={i}
-                className="w-1.5 rounded-full bg-gradient-to-t from-[#4edea3] to-[#e9c349] transition-all"
+                className="w-1.5 rounded-full bg-gradient-to-t from-[#bef264] to-[#bef264] transition-all"
                 style={{
                   height: isRecording ? `${h}%` : '20%',
                   transitionDuration: '300ms',
@@ -777,7 +777,7 @@ export function Screen13VoiceAssistant({
             className={`absolute w-20 h-20 rounded-full flex items-center justify-center text-3xl transition-all cursor-pointer ${
               isRecording
                 ? 'bg-rose-500 text-white scale-110 shadow-[0_0_30px_rgba(244,63,94,0.6)] animate-pulse'
-                : 'liquid-glass-pill border-2 border-white/40 text-[#e9c349] hover:scale-105 active:scale-95 shadow-[0_0_36px_rgba(78,222,163,0.25)]'
+                : 'liquid-glass-pill border-2 border-white/40 text-[#bef264] hover:scale-105 active:scale-95 shadow-[0_0_36px_rgba(78,222,163,0.25)]'
             }`}
           >
             <span className="material-symbols-outlined text-[30px]">
@@ -792,24 +792,24 @@ export function Screen13VoiceAssistant({
 
         {/* Quick Voice Shortcuts (Minimalist Bento Card) */}
         <div className="minimal-card rounded-xl p-3 max-w-[300px] text-left space-y-1.5 border border-white/[0.08]">
-          <p className="text-[9px] font-mono text-[#e9c349] uppercase font-bold tracking-wider">
+          <p className="text-[9px] font-mono text-[#bef264] uppercase font-bold tracking-wider">
             Quick commands:
           </p>
           <button
             onClick={() => processVoiceCommand('Schedule site inspection with Arun at 10 AM')}
-            className="text-[11px] text-[#c0c8c3] hover:text-[#e9c349] block text-left transition-colors cursor-pointer"
+            className="text-[11px] text-[#c0c8c3] hover:text-[#bef264] block text-left transition-colors cursor-pointer"
           >
             • &ldquo;Schedule site inspection with Arun at 10 AM&rdquo;
           </button>
           <button
             onClick={() => processVoiceCommand('Add call with Priya Desai regarding revision drawings')}
-            className="text-[11px] text-[#c0c8c3] hover:text-[#e9c349] block text-left transition-colors cursor-pointer"
+            className="text-[11px] text-[#c0c8c3] hover:text-[#bef264] block text-left transition-colors cursor-pointer"
           >
             • &ldquo;Add call with Priya Desai regarding revision drawings&rdquo;
           </button>
           <button
             onClick={() => processVoiceCommand('Review foundation load calculations tomorrow at 3 PM')}
-            className="text-[11px] text-[#c0c8c3] hover:text-[#e9c349] block text-left transition-colors cursor-pointer"
+            className="text-[11px] text-[#c0c8c3] hover:text-[#bef264] block text-left transition-colors cursor-pointer"
           >
             • &ldquo;Review foundation load calculations tomorrow at 3 PM&rdquo;
           </button>
@@ -865,13 +865,13 @@ export function Screen14AISuggestions({ suggestions, onNavigate, onAddTask }: Co
   };
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#0a1120] text-[#f8fafc] flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
+    <div className="w-full h-full min-h-[680px] bg-[#0e0b1f] text-[#f8fafc] flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
       {/* Top Header */}
-      <div className="p-4 bg-[#0a1120]/90 border-b border-[#334155]/30 flex items-center justify-between">
+      <div className="p-4 bg-[#0e0b1f]/90 border-b border-[#334155]/30 flex items-center justify-between">
         <button onClick={() => onNavigate?.(5)} className="text-[#c0c8c3] hover:text-white text-xs font-semibold flex items-center gap-1">
           ‹ Back
         </button>
-        <div className="flex items-center gap-1.5 text-[#e9c349]">
+        <div className="flex items-center gap-1.5 text-[#bef264]">
           <span className="material-symbols-outlined text-[18px]">auto_awesome</span>
           <span className="text-sm font-bold text-[#f8fafc] font-['Space_Grotesk']">AI Suggestions</span>
         </div>
@@ -902,8 +902,8 @@ export function Screen14AISuggestions({ suggestions, onNavigate, onAddTask }: Co
                   disabled={isAdded}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
                     isAdded
-                      ? 'bg-[#10B981]/20 text-[#4edea3] border border-[#4edea3]/40'
-                      : 'bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/50 text-[#e9c349] hover:brightness-110 shadow-sm active:scale-95'
+                      ? 'bg-[#10B981]/20 text-[#bef264] border border-[#bef264]/40'
+                      : 'bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#bef264]/50 text-[#bef264] hover:brightness-110 shadow-sm active:scale-95'
                   }`}
                 >
                   {isAdded ? 'Added ✓' : suggestion.actionText}

@@ -19,7 +19,7 @@ export function Screen15Widget({ tasks, onNavigate }: WidgetAndSettingsProps) {
 
   return (
     <div
-      className="w-full h-full min-h-[680px] text-[#f8fafc] flex flex-col justify-between p-6 select-none rounded-[32px] relative overflow-hidden bg-[#0a1120] border border-white/[0.08]"
+      className="w-full h-full min-h-[680px] text-[#f8fafc] flex flex-col justify-between p-6 select-none rounded-[32px] relative overflow-hidden bg-[#0e0b1f] border border-white/[0.08]"
     >
       {/* iOS Status Bar */}
       <div className="flex justify-between items-center text-xs text-[#8a938e] pt-2 z-10 font-mono">
@@ -41,12 +41,12 @@ export function Screen15Widget({ tasks, onNavigate }: WidgetAndSettingsProps) {
           {/* Widget Header */}
           <div className="flex justify-between items-center mb-3">
             <div className="flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-[15px] text-[#e9c349]">bolt</span>
+              <span className="material-symbols-outlined text-[15px] text-[#bef264]">bolt</span>
               <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#a1d1bd]">
                 NIMORA
               </span>
             </div>
-            <span className="text-[9px] font-mono font-bold text-[#e9c349] uppercase tracking-wider bg-white/10 px-2 py-0.5 rounded-full border border-white/20">
+            <span className="text-[9px] font-mono font-bold text-[#bef264] uppercase tracking-wider bg-white/10 px-2 py-0.5 rounded-full border border-white/20">
               NOW
             </span>
           </div>
@@ -91,7 +91,7 @@ export function Screen15Widget({ tasks, onNavigate }: WidgetAndSettingsProps) {
         <div className="flex justify-center">
           <button
             onClick={() => onNavigate?.(11)}
-            className="w-12 h-12 rounded-full liquid-glass-pill border border-white/35 flex items-center justify-center text-xl text-[#e9c349] shadow-lg hover:scale-110 active:scale-95 transition-all cursor-pointer"
+            className="w-12 h-12 rounded-full liquid-glass-pill border border-white/35 flex items-center justify-center text-xl text-[#bef264] shadow-lg hover:scale-110 active:scale-95 transition-all cursor-pointer"
           >
             <span className="material-symbols-outlined text-[24px]">mic</span>
           </button>
@@ -120,7 +120,7 @@ export function Screen15Widget({ tasks, onNavigate }: WidgetAndSettingsProps) {
 // 14. Notifications & Snooze
 export function Screen16Notifications({ notifications, onNavigate }: WidgetAndSettingsProps) {
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#0a1120] text-[#f8fafc] flex flex-col justify-between p-6 select-none rounded-[38px] relative overflow-hidden">
+    <div className="w-full h-full min-h-[680px] bg-[#0e0b1f] text-[#f8fafc] flex flex-col justify-between p-6 select-none rounded-[38px] relative overflow-hidden">
       <div>
         {/* iOS Lock Screen Header Clock */}
         <div className="text-center pt-4 mb-6">
@@ -134,12 +134,12 @@ export function Screen16Notifications({ notifications, onNavigate }: WidgetAndSe
           {notifications.map((n) => (
             <div
               key={n.id}
-              className="glass-card specular-border rounded-2xl p-3.5 shadow-lg space-y-2 hover:border-[#e9c349]/40 transition-all cursor-pointer"
+              className="glass-card specular-border rounded-2xl p-3.5 shadow-lg space-y-2 hover:border-[#bef264]/40 transition-all cursor-pointer"
               onClick={() => onNavigate?.(6)}
             >
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-1.5">
-                  <span className="w-4 h-4 rounded-md bg-[#0e3e30] text-[#e9c349] flex items-center justify-center text-[10px] font-bold">
+                  <span className="w-4 h-4 rounded-md bg-[#0e3e30] text-[#bef264] flex items-center justify-center text-[10px] font-bold">
                     N
                   </span>
                   <span className="text-[11px] font-bold text-[#f8fafc] uppercase tracking-wider font-['Space_Grotesk']">
@@ -300,10 +300,10 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
   };
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#0a1120] text-[#f8fafc] flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
+    <div className="w-full h-full min-h-[680px] bg-[#0e0b1f] text-[#f8fafc] flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
       <div className="overflow-y-auto">
         {/* Header */}
-        <div className="p-4 bg-[#0a1120]/90 border-b border-[#334155]/30 flex items-center justify-between">
+        <div className="p-4 bg-[#0e0b1f]/90 border-b border-[#334155]/30 flex items-center justify-between">
           <button onClick={() => onNavigate?.(5)} className="text-[#c0c8c3] hover:text-white text-xs font-semibold flex items-center gap-1">
             ‹ Back
           </button>
@@ -314,13 +314,13 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
         {/* User Card (80% Minimalist Bento) */}
         <div className="p-4 minimal-card m-4 rounded-2xl flex items-center justify-between border border-white/[0.08]">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full liquid-glass-pill text-[#e9c349] font-bold flex items-center justify-center text-base shadow-sm border border-white/25 font-['Space_Grotesk']">
+            <div className="w-12 h-12 rounded-full liquid-glass-pill text-[#bef264] font-bold flex items-center justify-center text-base shadow-sm border border-white/25 font-['Space_Grotesk']">
               S
             </div>
             <div>
               <div className="flex items-center gap-1.5">
                 <h3 className="text-sm font-bold text-[#f8fafc] font-['Space_Grotesk']">Sudarshan</h3>
-                <span className="text-[9px] font-mono font-bold bg-[#1b201d] text-[#e9c349] px-2 py-0.5 rounded-full border border-white/[0.08]">
+                <span className="text-[9px] font-mono font-bold bg-[#1b201d] text-[#bef264] px-2 py-0.5 rounded-full border border-white/[0.08]">
                   PRO
                 </span>
               </div>
@@ -338,13 +338,13 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
             className="w-full p-3.5 liquid-glass liquid-sheen rounded-2xl flex items-center justify-between cursor-pointer hover:border-white/30 transition-all shadow-md active:scale-[0.99] text-left border border-white/20"
           >
             <div className="flex items-center gap-3">
-              <span className="material-symbols-outlined text-[20px] text-[#e9c349]">diamond</span>
+              <span className="material-symbols-outlined text-[20px] text-[#bef264]">diamond</span>
               <div>
                 <span className="text-xs font-bold text-[#f8fafc] block font-['Space_Grotesk']">Executive Membership</span>
                 <span className="text-[10px] text-[#a1d1bd]">Pro AI & MCP Agent Integration active</span>
               </div>
             </div>
-            <span className="text-[11px] font-mono font-semibold text-[#e9c349] flex items-center gap-1">
+            <span className="text-[11px] font-mono font-semibold text-[#bef264] flex items-center gap-1">
               Plans <span className="text-[#8a938e]">›</span>
             </span>
           </button>
@@ -365,7 +365,7 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
           </button>
 
           {resetMessage && (
-            <div className="p-2.5 bg-emerald-950/70 border border-emerald-500/40 rounded-xl text-xs text-[#4edea3] text-center font-mono">
+            <div className="p-2.5 bg-emerald-950/70 border border-emerald-500/40 rounded-xl text-xs text-[#bef264] text-center font-mono">
               {resetMessage}
             </div>
           )}
@@ -378,7 +378,7 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
               <span className="material-symbols-outlined text-[18px] text-[#a1d1bd]">smart_toy</span>
               <span className="text-xs font-medium text-[#f8fafc]">AI Voice Engine (Vertex/Gemini)</span>
             </div>
-            <span className="text-[10px] font-mono font-bold text-[#4edea3] flex items-center gap-1">
+            <span className="text-[10px] font-mono font-bold text-[#bef264] flex items-center gap-1">
               Active <span className="text-[#8a938e]">›</span>
             </span>
           </div>
@@ -404,7 +404,7 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
           </h4>
 
           <div className="p-3 minimal-card rounded-xl flex items-start gap-2.5 border border-white/[0.06]">
-            <span className="material-symbols-outlined text-[18px] text-[#4edea3] shrink-0">security</span>
+            <span className="material-symbols-outlined text-[18px] text-[#bef264] shrink-0">security</span>
             <div>
               <h5 className="text-xs font-semibold text-[#f8fafc]">Secure & Private</h5>
               <p className="text-[10px] text-[#9b9f9c]">Client conversations & follow-ups are client-side encrypted.</p>
@@ -412,7 +412,7 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
           </div>
 
           <div className="p-3 minimal-card rounded-xl flex items-start gap-2.5 border border-white/[0.06]">
-            <span className="material-symbols-outlined text-[18px] text-[#e9c349] shrink-0">tune</span>
+            <span className="material-symbols-outlined text-[18px] text-[#bef264] shrink-0">tune</span>
             <div>
               <h5 className="text-xs font-semibold text-[#f8fafc]">Data Minimization</h5>
               <p className="text-[10px] text-[#9b9f9c]">Only essential scheduling payloads are processed.</p>
@@ -542,7 +542,7 @@ export function Screen19SubscriptionPlans({
   };
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#0a1120] text-[#f8fafc] flex flex-col justify-between p-4 select-none rounded-[32px] shadow-2xl relative overflow-hidden border border-white/[0.08]">
+    <div className="w-full h-full min-h-[680px] bg-[#0e0b1f] text-[#f8fafc] flex flex-col justify-between p-4 select-none rounded-[32px] shadow-2xl relative overflow-hidden border border-white/[0.08]">
       {/* Top Header */}
       <div className="flex justify-between items-center pb-3 border-b border-white/[0.08]">
         <button
@@ -555,7 +555,7 @@ export function Screen19SubscriptionPlans({
           ‹ {step === 'checkout' ? 'Back to Pricing' : 'Back'}
         </button>
         <div className="text-center">
-          <span className="text-[9px] text-[#e9c349] font-mono font-bold uppercase tracking-widest block">
+          <span className="text-[9px] text-[#bef264] font-mono font-bold uppercase tracking-widest block">
             {step === 'pricing' ? 'NIMORA MEMBERSHIP' : 'SECURE CHECKOUT'}
           </span>
           <span className="text-xs font-semibold text-[#f8fafc] font-['Space_Grotesk']">
@@ -574,7 +574,7 @@ export function Screen19SubscriptionPlans({
           <>
             {/* Value Proposition Header */}
             <div className="text-center space-y-1 pt-1">
-              <span className="text-[9px] font-mono font-semibold bg-[#161a17] text-[#e9c349] px-2.5 py-0.5 rounded-full border border-white/[0.08] tracking-wider uppercase">
+              <span className="text-[9px] font-mono font-semibold bg-[#161a17] text-[#bef264] px-2.5 py-0.5 rounded-full border border-white/[0.08] tracking-wider uppercase">
                 EXECUTIVE INTELLIGENCE
               </span>
               <h2 className="font-['Space_Grotesk'] text-xl font-bold text-[#f8fafc] pt-1">
@@ -592,7 +592,7 @@ export function Screen19SubscriptionPlans({
                   onClick={() => setBillingCycle('monthly')}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium font-mono transition-all cursor-pointer ${
                     billingCycle === 'monthly'
-                      ? 'bg-[#1e2420] text-[#e9c349] border border-white/[0.12]'
+                      ? 'bg-[#1e2420] text-[#bef264] border border-white/[0.12]'
                       : 'text-[#8a938e] hover:text-[#f8fafc]'
                   }`}
                 >
@@ -602,12 +602,12 @@ export function Screen19SubscriptionPlans({
                   onClick={() => setBillingCycle('annual')}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium font-mono flex items-center gap-1.5 transition-all cursor-pointer ${
                     billingCycle === 'annual'
-                      ? 'bg-[#1e2420] text-[#e9c349] border border-white/[0.12]'
+                      ? 'bg-[#1e2420] text-[#bef264] border border-white/[0.12]'
                       : 'text-[#8a938e] hover:text-[#f8fafc]'
                   }`}
                 >
                   <span>Annual</span>
-                  <span className="text-[8px] px-1.5 py-0.2 bg-[#e9c349] text-gray-950 rounded-full font-bold uppercase font-mono">
+                  <span className="text-[8px] px-1.5 py-0.2 bg-[#bef264] text-gray-950 rounded-full font-bold uppercase font-mono">
                     Save 20%
                   </span>
                 </button>
@@ -629,14 +629,14 @@ export function Screen19SubscriptionPlans({
                       planKey === 'pro'
                         ? 'liquid-glass liquid-sheen border border-white/20 shadow-xl'
                         : 'minimal-card border border-white/[0.08]'
-                    } ${isSelected ? 'ring-1 ring-[#e9c349]/70' : 'hover:border-white/[0.14]'}`}
+                    } ${isSelected ? 'ring-1 ring-[#bef264]/70' : 'hover:border-white/[0.14]'}`}
                   >
                     {/* Badge */}
                     <div className="flex justify-between items-center mb-1">
                       <span
                         className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
                           planKey === 'pro'
-                            ? 'liquid-glass-pill text-[#e9c349] border border-white/30'
+                            ? 'liquid-glass-pill text-[#bef264] border border-white/30'
                             : 'bg-[#171b18] text-[#a1d1bd] border border-white/[0.06]'
                         }`}
                       >
@@ -646,7 +646,7 @@ export function Screen19SubscriptionPlans({
                         <div
                           className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                             isSelected
-                              ? 'border-[#e9c349] bg-[#e9c349] text-gray-950'
+                              ? 'border-[#bef264] bg-[#bef264] text-gray-950'
                               : 'border-white/20'
                           }`}
                         >
@@ -665,7 +665,7 @@ export function Screen19SubscriptionPlans({
                       </div>
                       <div className="text-right">
                         <div className="flex items-baseline justify-end gap-0.5">
-                          <span className="font-['Space_Grotesk'] text-xl font-bold text-[#e9c349]">
+                          <span className="font-['Space_Grotesk'] text-xl font-bold text-[#bef264]">
                             {price}
                           </span>
                           <span className="text-[10px] font-mono text-[#8a938e]">{plan.period}</span>
@@ -678,7 +678,7 @@ export function Screen19SubscriptionPlans({
                     <div className="mt-3 pt-2.5 border-t border-white/[0.08] space-y-1">
                       {plan.features.slice(0, 4).map((f, i) => (
                         <div key={i} className="flex items-center gap-2 text-xs text-[#f8fafc]">
-                          <span className="text-[#4edea3] text-[13px]">✓</span>
+                          <span className="text-[#bef264] text-[13px]">✓</span>
                           <span>{f}</span>
                         </div>
                       ))}
@@ -691,7 +691,7 @@ export function Screen19SubscriptionPlans({
             {/* Trust and Assurance Box (Minimalist Editorial) */}
             <div className="p-3 rounded-xl minimal-card border border-white/[0.06] flex items-center justify-between text-center">
               <div className="flex-1">
-                <span className="text-xs text-[#e9c349] tracking-widest font-mono">★★★★★</span>
+                <span className="text-xs text-[#bef264] tracking-widest font-mono">★★★★★</span>
                 <p className="text-[9px] text-[#8a938e] font-mono">Top Rated SaaS</p>
               </div>
               <div className="h-6 w-px bg-white/[0.06]" />
@@ -701,7 +701,7 @@ export function Screen19SubscriptionPlans({
               </div>
               <div className="h-6 w-px bg-white/[0.06]" />
               <div className="flex-1">
-                <span className="material-symbols-outlined text-[16px] text-[#e9c349]">bolt</span>
+                <span className="material-symbols-outlined text-[16px] text-[#bef264]">bolt</span>
                 <p className="text-[9px] text-[#8a938e] font-mono">Instant Unlock</p>
               </div>
             </div>
@@ -723,7 +723,7 @@ export function Screen19SubscriptionPlans({
                 <div className="p-3.5 bg-[#161a18] border border-white/[0.08] rounded-xl text-xs text-left space-y-1.5">
                   <div className="flex justify-between">
                     <span className="text-[#8a938e]">Plan</span>
-                    <span className="text-[#e9c349] font-bold">{currentPlan.name}</span>
+                    <span className="text-[#bef264] font-bold">{currentPlan.name}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#8a938e]">Amount Paid</span>
@@ -737,7 +737,7 @@ export function Screen19SubscriptionPlans({
                   )}
                   <div className="flex justify-between">
                     <span className="text-[#8a938e]">Status</span>
-                    <span className="text-[#4edea3] font-bold flex items-center gap-1">
+                    <span className="text-[#bef264] font-bold flex items-center gap-1">
                       <span>✓ Active</span>
                       <span className="text-[#8a938e] text-[10px] font-normal">· Renews {receiptInfo?.renewsAt || billingCycle}</span>
                     </span>
@@ -760,7 +760,7 @@ export function Screen19SubscriptionPlans({
                 <div className="minimal-card p-4 rounded-2xl space-y-2 border border-white/[0.12]">
                   <div className="flex justify-between items-center">
                     <div>
-                      <span className="text-[9px] font-mono text-[#e9c349] uppercase font-bold tracking-wider">
+                      <span className="text-[9px] font-mono text-[#bef264] uppercase font-bold tracking-wider">
                         Selected Plan
                       </span>
                       <h3 className="font-['Space_Grotesk'] text-base font-bold text-[#f8fafc]">
@@ -768,7 +768,7 @@ export function Screen19SubscriptionPlans({
                       </h3>
                     </div>
                     <div className="text-right">
-                      <span className="font-['Space_Grotesk'] text-lg font-bold text-[#e9c349]">
+                      <span className="font-['Space_Grotesk'] text-lg font-bold text-[#bef264]">
                         {displayPrice}
                       </span>
                       <span className="text-[10px] font-mono text-[#8a938e] block">{currentPlan.period}</span>
@@ -789,33 +789,33 @@ export function Screen19SubscriptionPlans({
                   <button
                     disabled={isProcessing}
                     onClick={() => handleCheckout('Google Pay')}
-                    className="w-full p-3.5 bg-[#121d33] hover:bg-[#1a1f1b] border border-white/[0.12] rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.99] transition-all cursor-pointer"
+                    className="w-full p-3.5 bg-[#171330] hover:bg-[#1a1f1b] border border-white/[0.12] rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.99] transition-all cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-base font-bold text-white tracking-tight font-['Space_Grotesk']">G Pay</span>
                       <span className="text-xs text-[#9b9f9c]">One-tap instant checkout</span>
                     </div>
-                    <span className="text-xs text-[#e9c349] font-semibold font-mono">Pay {displayPrice} ›</span>
+                    <span className="text-xs text-[#bef264] font-semibold font-mono">Pay {displayPrice} ›</span>
                   </button>
 
                   {/* Apple Pay */}
                   <button
                     disabled={isProcessing}
                     onClick={() => handleCheckout('Apple Pay')}
-                    className="w-full p-3.5 bg-[#121d33] hover:bg-[#1a1f1b] border border-white/[0.12] rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.99] transition-all cursor-pointer"
+                    className="w-full p-3.5 bg-[#171330] hover:bg-[#1a1f1b] border border-white/[0.12] rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.99] transition-all cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-base font-bold text-white tracking-tight font-['Space_Grotesk']"> Pay</span>
                       <span className="text-xs text-[#9b9f9c]">Touch ID / Face ID</span>
                     </div>
-                    <span className="text-xs text-[#e9c349] font-semibold font-mono">Pay {displayPrice} ›</span>
+                    <span className="text-xs text-[#bef264] font-semibold font-mono">Pay {displayPrice} ›</span>
                   </button>
 
                   {/* Credit Card / UPI */}
                   <button
                     disabled={isProcessing}
                     onClick={() => handleCheckout('Card & UPI')}
-                    className="w-full p-3.5 bg-[#121d33] hover:bg-[#1a1f1b] border border-white/[0.12] rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.99] transition-all cursor-pointer"
+                    className="w-full p-3.5 bg-[#171330] hover:bg-[#1a1f1b] border border-white/[0.12] rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.99] transition-all cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <span className="material-symbols-outlined text-[#a1d1bd] text-[20px]">credit_card</span>
@@ -826,7 +826,7 @@ export function Screen19SubscriptionPlans({
                 </div>
 
                 {isProcessing && (
-                  <div className="p-3 bg-[#0e3e30] border border-[#e9c349]/40 rounded-xl text-center text-xs text-[#e9c349] font-semibold animate-pulse flex items-center justify-center gap-2">
+                  <div className="p-3 bg-[#0e3e30] border border-[#bef264]/40 rounded-xl text-center text-xs text-[#bef264] font-semibold animate-pulse flex items-center justify-center gap-2">
                     <span className="material-symbols-outlined text-[16px] animate-spin">progress_activity</span>
                     Securing transaction & activating membership...
                   </div>
@@ -842,7 +842,7 @@ export function Screen19SubscriptionPlans({
         <div className="pt-2 border-t border-[#334155]/30">
           <button
             onClick={() => setStep('checkout')}
-            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/60 text-[#e9c349] font-bold text-xs shadow-xl hover:brightness-110 active:scale-95 transition-all font-['Space_Grotesk'] flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#bef264]/60 text-[#bef264] font-bold text-xs shadow-xl hover:brightness-110 active:scale-95 transition-all font-['Space_Grotesk'] flex items-center justify-center gap-2 cursor-pointer"
           >
             <span>Continue to Checkout</span>
             <span>·</span>

@@ -119,8 +119,8 @@ function ThumbSliderNav({ activeTab, onSelectTab }: ThumbSliderNavProps) {
     <div className="fixed bottom-0 left-0 w-full z-50 px-3 pb-3 max-w-md left-1/2 -translate-x-1/2 select-none">
       {/* Slider Interactive Guide Badge */}
       <div className="flex justify-center mb-1.5 pointer-events-none">
-        <div className="px-3 py-0.5 rounded-full liquid-glass text-[9px] font-mono tracking-widest text-[#38bdf8] uppercase flex items-center gap-1.5 shadow-md border border-white/15">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#f6c445] animate-pulse"></span>
+        <div className="px-3 py-0.5 rounded-full liquid-glass text-[9px] font-mono tracking-widest text-[#bef264] uppercase flex items-center gap-1.5 shadow-md border border-purple-500/20">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#bef264] animate-pulse"></span>
           <span>THUMB SLIDER · {currentHoveredTab.label.toUpperCase()}</span>
         </div>
       </div>
@@ -146,10 +146,10 @@ function ThumbSliderNav({ activeTab, onSelectTab }: ThumbSliderNavProps) {
             transition: isDragging ? 'none' : 'transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)',
           }}
         >
-          {/* Top highlight indicator */}
-          <div className="w-1.5 h-1.5 rounded-full bg-[#f6c445] shadow-[0_0_8px_#f6c445]"></div>
+          {/* Top highlight indicator (Gen Z Acid Lime) */}
+          <div className="w-1.5 h-1.5 rounded-full bg-[#bef264] shadow-[0_0_10px_#bef264]"></div>
           {/* Tactile thumb drag grip */}
-          <div className="w-4 h-0.5 rounded-full bg-white/60"></div>
+          <div className="w-4 h-0.5 rounded-full bg-white/70"></div>
         </div>
 
         {/* 5 Destination Slots */}
@@ -169,7 +169,7 @@ function ThumbSliderNav({ activeTab, onSelectTab }: ThumbSliderNavProps) {
             >
               <span
                 className={`material-symbols-outlined text-[22px] transition-colors duration-150 ${
-                  isSlotActive ? 'text-[#f8fafc]' : 'text-slate-400/80 hover:text-slate-200'
+                  isSlotActive ? 'text-[#f8fafc]' : 'text-purple-300/60 hover:text-purple-200'
                 }`}
                 style={{
                   fontVariationSettings: isSlotActive ? "'FILL' 1" : "'FILL' 0",
@@ -179,7 +179,7 @@ function ThumbSliderNav({ activeTab, onSelectTab }: ThumbSliderNavProps) {
               </span>
               <span
                 className={`text-[8px] font-mono tracking-tight uppercase mt-0.5 transition-colors ${
-                  isSlotActive ? 'text-[#38bdf8] font-bold' : 'text-slate-400/70'
+                  isSlotActive ? 'text-[#bef264] font-bold' : 'text-purple-300/50'
                 }`}
               >
                 {tab.label}
@@ -363,7 +363,7 @@ export default function NimoraApp() {
     || tasks[0];
 
   return (
-    <div className="bg-[#0a1120] text-[#f8fafc] min-h-screen antialiased selection:bg-[#38bdf8]/20 selection:text-[#38bdf8] relative pb-32 max-w-md mx-auto shadow-2xl">
+    <div className="bg-[#0e0b1f] text-[#f8fafc] min-h-screen antialiased selection:bg-[#bef264]/30 selection:text-[#bef264] relative pb-32 max-w-md mx-auto shadow-2xl">
       {/* Native iOS Status Bar Simulation */}
       <header className="fixed top-0 left-0 w-full z-[60] flex justify-between items-center px-4 pt-2.5 pb-1 liquid-glass-header text-[#f8fafc] select-none max-w-md left-1/2 -translate-x-1/2">
         <span className="font-['Space_Grotesk'] text-xs font-semibold tracking-tight text-[#f8fafc]">
@@ -377,11 +377,11 @@ export default function NimoraApp() {
       </header>
 
       {/* Top Navigation Shell (Liquid Glass Material) */}
-      <nav className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-4 h-14 mt-7 liquid-glass-header shadow-sm max-w-md left-1/2 -translate-x-1/2 border-b border-white/[0.08]">
+      <nav className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-4 h-14 mt-7 liquid-glass-header shadow-sm max-w-md left-1/2 -translate-x-1/2 border-b border-purple-500/20">
         <div className="flex items-center space-x-2">
           {/* NIMORA Brand Logo with Asset Placeholder */}
-          <div className="w-8 h-8 rounded-lg liquid-glass-pill border border-white/25 flex items-center justify-center shadow-sm">
-            <span className="text-[#e9c349] font-bold text-sm font-['Space_Grotesk']">N</span>
+          <div className="w-8 h-8 rounded-lg liquid-glass-pill border border-purple-400/30 flex items-center justify-center shadow-sm">
+            <span className="text-[#bef264] font-bold text-sm font-['Space_Grotesk']">N</span>
           </div>
           <div className="flex items-center space-x-2">
             <span className="font-['Space_Grotesk'] text-base tracking-wider text-[#f8fafc] font-bold">
@@ -391,8 +391,8 @@ export default function NimoraApp() {
               onClick={() => setActiveTab('pricing')}
               className={`px-2 py-0.5 rounded-full text-[9px] font-mono tracking-wider hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center gap-1 ${
                 isProUser
-                  ? 'liquid-glass-pill text-[#e9c349] border-white/30 font-bold shadow-[0_0_12px_rgba(233,195,73,0.3)]'
-                  : 'bg-[#121d33] text-[#e9c349] border border-[#e9c349]/30'
+                  ? 'liquid-glass-pill text-[#bef264] border-purple-300/40 font-bold shadow-[0_0_12px_rgba(190,242,100,0.35)]'
+                  : 'bg-[#1f1940] text-[#bef264] border border-[#bef264]/30'
               }`}
               title={isProUser ? 'PRO Member Active' : 'View Membership Plans'}
             >
@@ -406,16 +406,16 @@ export default function NimoraApp() {
           <button
             onClick={() => setActiveTab('notifications')}
             aria-label="Notifications"
-            className="w-9 h-9 rounded-full flex items-center justify-center text-slate-300 hover:text-white transition-colors duration-150 active:scale-95 border border-white/[0.08] bg-[#121d33] relative"
+            className="w-9 h-9 rounded-full flex items-center justify-center text-purple-200/80 hover:text-white transition-colors duration-150 active:scale-95 border border-purple-500/20 bg-[#171330] relative"
           >
             <span className="material-symbols-outlined text-[19px]">notifications</span>
-            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#e9c349]"></span>
+            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#bef264] shadow-[0_0_6px_#bef264]"></span>
           </button>
           <div
             onClick={() => setActiveTab('settings')}
-            className="w-9 h-9 rounded-full p-0.5 border border-white/20 overflow-hidden bg-[#121d33] cursor-pointer hover:border-[#e9c349]/50 transition-colors"
+            className="w-9 h-9 rounded-full p-0.5 border border-purple-400/30 overflow-hidden bg-[#171330] cursor-pointer hover:border-[#bef264]/50 transition-colors"
           >
-            <div className="w-full h-full rounded-full bg-[#162540] flex items-center justify-center text-[#e9c349] font-['Space_Grotesk'] text-xs font-bold">
+            <div className="w-full h-full rounded-full bg-[#251e4d] flex items-center justify-center text-[#bef264] font-['Space_Grotesk'] text-xs font-bold">
               SM
             </div>
           </div>
@@ -429,25 +429,25 @@ export default function NimoraApp() {
           <section className="space-y-1">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-[9px] font-mono text-[#a1d1bd] tracking-widest uppercase flex items-center gap-1.5 font-medium">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#e9c349]"></span> Principal Architect
+                <span className="text-[9px] font-mono text-[#c084fc] tracking-widest uppercase flex items-center gap-1.5 font-semibold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#bef264] shadow-[0_0_6px_#bef264]"></span> Principal Architect
                 </span>
-                <h1 className="font-['Space_Grotesk'] text-2xl font-bold tracking-tight text-[#ededec] mt-0.5">
+                <h1 className="font-['Space_Grotesk'] text-2xl font-bold tracking-tight text-[#f8fafc] mt-0.5">
                   Good Morning, Sudarshan
                 </h1>
               </div>
               <div className="text-right">
-                <span className="text-[9px] font-mono text-[#8a938e] block uppercase tracking-wider">WED, OCT 24</span>
-                <span className="text-xs text-[#a1d1bd] font-medium">Bespoke Studio</span>
+                <span className="text-[9px] font-mono text-purple-300/60 block uppercase tracking-wider">WED, OCT 24</span>
+                <span className="text-xs text-[#bef264] font-medium">Bespoke Studio</span>
               </div>
             </div>
 
             {/* Daily Quote Badge (Minimalist Card) */}
             <div className="minimal-card rounded-xl px-3.5 py-2.5 mt-2 flex items-center gap-2.5">
-              <span className="material-symbols-outlined text-[#e9c349] text-[18px] shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>
+              <span className="material-symbols-outlined text-[#bef264] text-[18px] shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>
                 lightbulb
               </span>
-              <p className="text-xs text-[#c0c8c3] italic">
+              <p className="text-xs text-purple-200/90 italic">
                 &ldquo;A focused day creates bigger opportunities.&rdquo;
               </p>
             </div>
@@ -462,15 +462,15 @@ export default function NimoraApp() {
                   <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
                     {/* Background Ring */}
                     <path
-                      className="text-[#1e3050]"
+                      className="text-[#251e4d]"
                       d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="3"
                     />
-                    {/* Progress Arc */}
+                    {/* Progress Arc (Gen Z Acid Lime) */}
                     <path
-                      className="text-[#e9c349] stroke-current transition-all duration-700"
+                      className="text-[#bef264] stroke-current transition-all duration-700"
                       d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                       fill="none"
                       strokeDasharray={`${progressPercent}, 100`}
@@ -482,7 +482,7 @@ export default function NimoraApp() {
                     <span className="font-['Space_Grotesk'] text-base font-bold text-[#f8fafc] leading-none">
                       {progressPercent}%
                     </span>
-                    <span className="text-[8px] font-mono text-[#94a3b8] uppercase tracking-wider mt-0.5">
+                    <span className="text-[8px] font-mono text-purple-300/60 uppercase tracking-wider mt-0.5">
                       Done
                     </span>
                   </div>
@@ -491,12 +491,12 @@ export default function NimoraApp() {
                   <h2 className="font-['Space_Grotesk'] text-sm text-[#f8fafc] font-semibold">
                     Today&apos;s Agenda
                   </h2>
-                  <p className="text-xs text-[#94a3b8] mt-0.5">
+                  <p className="text-xs text-purple-200/70 mt-0.5">
                     {completedCount} of {tasks.length} milestones finalized
                   </p>
                   <div className="flex items-center gap-1.5 mt-1.5">
-                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#34d399]"></span>
-                    <span className="text-xs text-[#34d399] tracking-wide font-medium">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#bef264]"></span>
+                    <span className="text-xs text-[#bef264] tracking-wide font-medium">
                       {remainingCount} Tasks Remaining
                     </span>
                   </div>
@@ -506,7 +506,7 @@ export default function NimoraApp() {
               <button
                 onClick={() => downloadICS(tasks, 'nimora-daily-schedule.ics')}
                 aria-label="Export iCalendar"
-                className="p-2 rounded-lg minimal-btn-secondary text-slate-300 hover:text-[#e9c349] active:scale-95 transition-all cursor-pointer"
+                className="p-2 rounded-lg minimal-btn-secondary text-purple-200 hover:text-[#bef264] active:scale-95 transition-all cursor-pointer"
                 title="Download Calendar (.ics)"
               >
                 <span className="material-symbols-outlined text-[19px]">calendar_today</span>
@@ -514,18 +514,18 @@ export default function NimoraApp() {
             </div>
 
             {/* Quick Metrics Bento Counters */}
-            <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-slate-700/30">
-              <div className="bg-[#16243d] rounded-xl p-2.5 text-center border border-slate-700/40">
-                <span className="font-['Space_Grotesk'] text-base font-bold text-[#38bdf8] block">3</span>
-                <span className="text-[9px] font-mono text-[#94a3b8] uppercase tracking-wider">Calls</span>
+            <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-purple-500/15">
+              <div className="bg-[#1f1940] rounded-xl p-2.5 text-center border border-purple-500/20">
+                <span className="font-['Space_Grotesk'] text-base font-bold text-[#bef264] block">3</span>
+                <span className="text-[9px] font-mono text-purple-300/60 uppercase tracking-wider">Calls</span>
               </div>
-              <div className="bg-[#16243d] rounded-xl p-2.5 text-center border border-slate-700/40">
-                <span className="font-['Space_Grotesk'] text-base font-bold text-[#e9c349] block">2</span>
-                <span className="text-[9px] font-mono text-[#94a3b8] uppercase tracking-wider">Site Visits</span>
+              <div className="bg-[#1f1940] rounded-xl p-2.5 text-center border border-purple-500/20">
+                <span className="font-['Space_Grotesk'] text-base font-bold text-[#c084fc] block">2</span>
+                <span className="text-[9px] font-mono text-purple-300/60 uppercase tracking-wider">Site Visits</span>
               </div>
-              <div className="bg-[#16243d] rounded-xl p-2.5 text-center border border-slate-700/40">
-                <span className="font-['Space_Grotesk'] text-base font-bold text-[#34d399] block">1</span>
-                <span className="text-[9px] font-mono text-[#94a3b8] uppercase tracking-wider">Review</span>
+              <div className="bg-[#1f1940] rounded-xl p-2.5 text-center border border-purple-500/20">
+                <span className="font-['Space_Grotesk'] text-base font-bold text-[#38bdf8] block">1</span>
+                <span className="text-[9px] font-mono text-purple-300/60 uppercase tracking-wider">Review</span>
               </div>
             </div>
           </section>
@@ -534,11 +534,11 @@ export default function NimoraApp() {
           {activeFocusTask && (
             <section className="space-y-2">
               <div className="flex items-center justify-between">
-                <h2 className="text-[10px] font-mono uppercase tracking-widest text-[#9b9f9c] font-semibold flex items-center gap-2">
-                  <span className="inline-block w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                <h2 className="text-[10px] font-mono uppercase tracking-widest text-[#c084fc] font-semibold flex items-center gap-2">
+                  <span className="inline-block w-2 h-2 rounded-full bg-[#bef264] animate-ping"></span>
                   Active Focus
                 </h2>
-                <span className="text-[10px] font-mono text-[#a1d1bd] font-medium">Live Priority</span>
+                <span className="text-[10px] font-mono text-[#bef264] font-medium">Live Priority</span>
               </div>
 
               {/* High Priority Liquid Glass Card */}
@@ -547,32 +547,32 @@ export default function NimoraApp() {
                   setSelectedTask(activeFocusTask);
                   setActiveTab('task_details');
                 }}
-                className="liquid-glass liquid-sheen rounded-2xl p-4.5 border-l-4 border-l-rose-500 shadow-2xl cursor-pointer hover:border-white/30 transition-all"
+                className="liquid-glass liquid-sheen rounded-2xl p-4.5 border-l-4 border-l-[#bef264] shadow-2xl cursor-pointer hover:border-purple-300/40 transition-all"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-rose-950/70 text-rose-300 border border-rose-500/30 uppercase tracking-wider">
+                      <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40 uppercase tracking-wider">
                         High Priority
                       </span>
-                      <span className="text-[11px] font-mono text-[#e9c349] font-medium">
+                      <span className="text-[11px] font-mono text-[#bef264] font-semibold">
                         NOW · {activeFocusTask.startTime} – {activeFocusTask.endTime}
                       </span>
                     </div>
-                    <h3 className="font-['Space_Grotesk'] text-base font-bold text-[#ededec] leading-tight mt-1">
+                    <h3 className="font-['Space_Grotesk'] text-base font-bold text-[#f8fafc] leading-tight mt-1">
                       {activeFocusTask.title}
                     </h3>
-                    <p className="text-xs text-[#c0c8c3] flex items-center gap-1.5">
-                      <span className="material-symbols-outlined text-[15px] text-[#8a938e]">location_city</span>
+                    <p className="text-xs text-purple-200/80 flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-[15px] text-[#c084fc]">location_city</span>
                       {activeFocusTask.subtitle || 'Arun Mehta (Apex Builders) · Skyline Tower B'}
                     </p>
                   </div>
-                  <span className="material-symbols-outlined text-[#e9c349] text-[22px]">engineering</span>
+                  <span className="material-symbols-outlined text-[#bef264] text-[22px]">engineering</span>
                 </div>
 
                 {/* Quick Interaction Actions */}
                 <div
-                  className="flex items-center gap-2 mt-4 pt-3 border-t border-white/[0.12]"
+                  className="flex items-center gap-2 mt-4 pt-3 border-t border-purple-500/20"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <a
@@ -583,7 +583,7 @@ export default function NimoraApp() {
                     Call Contact
                   </a>
                   <a
-                    className="flex-1 py-2 px-3 rounded-xl liquid-glass-pill flex items-center justify-center gap-1.5 text-[#4edea3] text-xs font-semibold cursor-pointer hover:brightness-110"
+                    className="flex-1 py-2 px-3 rounded-xl liquid-glass-pill flex items-center justify-center gap-1.5 text-[#bef264] text-xs font-semibold cursor-pointer hover:brightness-110"
                     href="https://wa.me/919876543210"
                     target="_blank"
                     rel="noreferrer"
@@ -596,8 +596,8 @@ export default function NimoraApp() {
                     aria-label="Mark completed"
                     className={`p-2 rounded-xl border border-white/20 active:scale-95 transition-all cursor-pointer ${
                       activeFocusTask.status === 'completed'
-                        ? 'bg-[#34d399] text-[#0a1120]'
-                        : 'bg-[#16243d] text-slate-300 hover:text-[#34d399]'
+                        ? 'bg-[#bef264] text-[#0e0b1f]'
+                        : 'bg-[#171330] text-purple-200 hover:text-[#bef264]'
                     }`}
                   >
                     <span className="material-symbols-outlined text-[18px]">check</span>
@@ -610,24 +610,24 @@ export default function NimoraApp() {
           {/* Upcoming Tasks Section (80% Utilitarian Minimalism) */}
           <section className="space-y-2">
             <div className="flex items-center justify-between">
-              <h2 className="text-[10px] font-mono uppercase tracking-widest text-[#9b9f9c] font-semibold">
+              <h2 className="text-[10px] font-mono uppercase tracking-widest text-[#c084fc] font-semibold">
                 Upcoming Schedule
               </h2>
               <button
                 onClick={() => setActiveTab('add_task')}
-                className="text-xs font-semibold text-[#e9c349] hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-xs font-semibold text-[#bef264] hover:underline flex items-center gap-1 cursor-pointer"
               >
                 + Add Task
               </button>
             </div>
 
             {/* Swipe instruction hint */}
-            <div className="p-2 minimal-card-subtle rounded-xl flex items-center justify-between text-[10px] text-[#8a938e] font-mono">
+            <div className="p-2 minimal-card-subtle rounded-xl flex items-center justify-between text-[10px] text-purple-300/70 font-mono">
               <span className="flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-[13px] text-[#e9c349]">swipe</span>
+                <span className="material-symbols-outlined text-[13px] text-[#bef264]">swipe</span>
                 <span>Slide card horizontally to reveal actions</span>
               </span>
-              <span className="text-[#e9c349] font-bold">‹ ›</span>
+              <span className="text-[#bef264] font-bold">‹ ›</span>
             </div>
 
             {tasks.map((task) => (
@@ -830,22 +830,22 @@ export default function NimoraApp() {
       <div className="fixed bottom-20 left-0 w-full px-4 z-40 flex justify-center pointer-events-none max-w-md left-1/2 -translate-x-1/2">
         <div
           onClick={() => setActiveTab('voice')}
-          className="pointer-events-auto voice-pulse liquid-glass-pill rounded-full py-2.5 px-5 flex items-center space-x-3 cursor-pointer hover:scale-[1.03] active:scale-95 transition-all"
+          className="pointer-events-auto voice-pulse liquid-glass-pill rounded-full py-2.5 px-5 flex items-center space-x-3 cursor-pointer hover:scale-[1.03] active:scale-95 transition-all shadow-xl"
         >
-          <div className="w-8 h-8 rounded-full bg-white/10 border border-white/30 flex items-center justify-center text-[#e9c349] shadow-inner">
+          <div className="w-8 h-8 rounded-full bg-white/10 border border-purple-400/30 flex items-center justify-center text-[#bef264] shadow-inner">
             <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>
               mic
             </span>
           </div>
           <div className="flex items-center space-x-2">
-            <span className="text-xs text-[#ededec] font-semibold tracking-tight">Ask {assistantName}...</span>
+            <span className="text-xs text-[#f8fafc] font-semibold tracking-tight">Ask {assistantName}...</span>
             <div className="flex space-x-0.5 items-center">
-              <span className="w-1 h-3 bg-[#4edea3] rounded-full animate-bounce"></span>
-              <span className="w-1 h-5 bg-[#e9c349] rounded-full animate-bounce" style={{ animationDelay: '0.15s' }}></span>
-              <span className="w-1 h-2 bg-[#a1d1bd] rounded-full animate-bounce" style={{ animationDelay: '0.3s' }}></span>
+              <span className="w-1 h-3 bg-[#bef264] rounded-full animate-bounce"></span>
+              <span className="w-1 h-5 bg-[#c084fc] rounded-full animate-bounce" style={{ animationDelay: '0.15s' }}></span>
+              <span className="w-1 h-2 bg-[#38bdf8] rounded-full animate-bounce" style={{ animationDelay: '0.3s' }}></span>
             </div>
           </div>
-          <span className="text-[9px] font-mono text-[#e9c349] font-bold uppercase tracking-wider bg-white/10 px-1.5 py-0.5 rounded border border-white/20">
+          <span className="text-[9px] font-mono text-[#bef264] font-bold uppercase tracking-wider bg-white/10 px-1.5 py-0.5 rounded border border-purple-400/25">
             AI
           </span>
         </div>

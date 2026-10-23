@@ -2,7 +2,7 @@
 
 @layer base {
   body {
-    background-color: #0a1120;
+    background-color: #0e0b1f;
     color: #f8fafc;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Plus Jakarta Sans', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -28,29 +28,29 @@
 }
 
 /* ==========================================================================
-   SOVEREIGN SLATE & ARCTIC ICE MINIMALISM FOUNDATIONS (80%)
+   GEN Z ELECTRIC IRIS & ACID LIME MINIMALISM (80%)
    ========================================================================== */
 
-/* Clean Minimalist Surfaces (Deep Titanium Slate) */
+/* Clean Minimalist Surfaces (Deep Cosmic Iris) */
 .minimal-card {
-  background-color: #121d33;
-  border: 1px solid rgba(148, 163, 184, 0.14);
+  background-color: #171330;
+  border: 1px solid rgba(192, 132, 252, 0.16);
   transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .minimal-card:hover {
-  border-color: rgba(96, 165, 250, 0.30);
-  box-shadow: 0 4px 20px -2px rgba(10, 20, 40, 0.4);
+  border-color: rgba(190, 242, 100, 0.35);
+  box-shadow: 0 4px 24px -2px rgba(190, 242, 100, 0.12);
 }
 
 .minimal-card-subtle {
-  background-color: rgba(18, 29, 51, 0.75);
-  border: 1px solid rgba(148, 163, 184, 0.10);
+  background-color: rgba(23, 19, 48, 0.75);
+  border: 1px solid rgba(192, 132, 252, 0.12);
 }
 
 /* Crisp Minimalist Divider */
 .minimal-divider {
-  border-color: rgba(148, 163, 184, 0.12);
+  border-color: rgba(192, 132, 252, 0.14);
 }
 
 /* Clean Editorial Tag & Status Badges */
@@ -60,29 +60,34 @@
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-/* Minimalist Tactile Action Buttons */
+/* Minimalist Tactile Action Buttons (High Energy Gen Z Contrast) */
 .minimal-btn-primary {
-  background-color: #f8fafc;
-  color: #0a1120;
-  font-weight: 600;
-  transition: transform 0.1s ease, background-color 0.15s ease;
+  background-color: #bef264;
+  color: #0e0b1f;
+  font-weight: 700;
+  transition: transform 0.1s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.minimal-btn-primary:hover {
+  background-color: #d9f99d;
+  box-shadow: 0 0 16px rgba(190, 242, 100, 0.35);
 }
 
 .minimal-btn-primary:active {
   transform: scale(0.97);
-  background-color: #e2e8f0;
+  background-color: #a3e635;
 }
 
 .minimal-btn-secondary {
-  background-color: #16243d;
+  background-color: #221b44;
   color: #f8fafc;
-  border: 1px solid rgba(148, 163, 184, 0.18);
+  border: 1px solid rgba(192, 132, 252, 0.20);
   transition: transform 0.1s ease, border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .minimal-btn-secondary:hover {
-  background-color: #1e3050;
-  border-color: rgba(96, 165, 250, 0.35);
+  background-color: #2b2257;
+  border-color: rgba(190, 242, 100, 0.40);
 }
 
 .minimal-btn-secondary:active {
@@ -90,25 +95,26 @@
 }
 
 /* ==========================================================================
-   20% DYNAMIC LIQUID GLASS & FROSTED SAPPHIRE MATERIAL SYSTEM
+   20% DYNAMIC LIQUID GLASS & HOLOGRAPHIC LILAC SYSTEM
    ========================================================================== */
 
 /* Primary Translucent Liquid Glass Material */
 .liquid-glass {
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.14) 0%,
-    rgba(28, 52, 92, 0.38) 45%,
+    rgba(255, 255, 255, 0.16) 0%,
+    rgba(168, 85, 247, 0.28) 45%,
+    rgba(56, 189, 248, 0.12) 80%,
     rgba(255, 255, 255, 0.04) 100%
   );
-  backdrop-filter: blur(28px) saturate(185%);
-  -webkit-backdrop-filter: blur(28px) saturate(185%);
-  border: 1px solid rgba(148, 163, 184, 0.20);
-  border-top-color: rgba(255, 255, 255, 0.40);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid rgba(192, 132, 252, 0.22);
+  border-top-color: rgba(255, 255, 255, 0.45);
   box-shadow: 
-    0 16px 36px -6px rgba(5, 12, 28, 0.65),
-    0 0 20px -4px rgba(56, 189, 248, 0.18),
-    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.38),
+    0 16px 36px -6px rgba(14, 11, 31, 0.70),
+    0 0 24px -2px rgba(192, 132, 252, 0.20),
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.45),
     inset 0 -1px 1px 0 rgba(0, 0, 0, 0.40);
   position: relative;
 }
@@ -117,43 +123,44 @@
 .liquid-glass-pill {
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.18) 0%,
-    rgba(30, 58, 102, 0.45) 45%,
+    rgba(255, 255, 255, 0.20) 0%,
+    rgba(168, 85, 247, 0.38) 45%,
+    rgba(190, 242, 100, 0.12) 80%,
     rgba(255, 255, 255, 0.05) 100%
   );
-  backdrop-filter: blur(28px) saturate(200%);
-  -webkit-backdrop-filter: blur(28px) saturate(200%);
-  border: 1px solid rgba(148, 163, 184, 0.25);
-  border-top-color: rgba(255, 255, 255, 0.50);
+  backdrop-filter: blur(28px) saturate(210%);
+  -webkit-backdrop-filter: blur(28px) saturate(210%);
+  border: 1px solid rgba(192, 132, 252, 0.30);
+  border-top-color: rgba(255, 255, 255, 0.55);
   box-shadow: 
-    0 14px 40px -4px rgba(5, 12, 28, 0.65),
-    0 0 24px -2px rgba(56, 189, 248, 0.25),
-    inset 0 1px 2px 0 rgba(255, 255, 255, 0.50),
+    0 14px 40px -4px rgba(14, 11, 31, 0.75),
+    0 0 26px -2px rgba(190, 242, 100, 0.28),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.55),
     inset 0 -1px 1px 0 rgba(0, 0, 0, 0.45);
 }
 
 /* Liquid Glass Top Header & Navigation Shell */
 .liquid-glass-header {
-  background: rgba(10, 17, 32, 0.82);
-  backdrop-filter: blur(24px) saturate(165%);
-  -webkit-backdrop-filter: blur(24px) saturate(165%);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(14, 11, 31, 0.85);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid rgba(192, 132, 252, 0.16);
   box-shadow: 
-    0 8px 30px rgba(5, 12, 28, 0.45),
+    0 8px 30px rgba(14, 11, 31, 0.55),
     inset 0 -1px 0 0 rgba(255, 255, 255, 0.08);
 }
 
 /* Liquid Glass Floating Bottom Navigation Bar */
 .liquid-glass-nav {
-  background: rgba(12, 21, 39, 0.85);
-  backdrop-filter: blur(30px) saturate(180%);
-  -webkit-backdrop-filter: blur(30px) saturate(180%);
-  border: 1px solid rgba(148, 163, 184, 0.20);
-  border-top-color: rgba(255, 255, 255, 0.35);
+  background: rgba(17, 13, 36, 0.88);
+  backdrop-filter: blur(30px) saturate(190%);
+  -webkit-backdrop-filter: blur(30px) saturate(190%);
+  border: 1px solid rgba(192, 132, 252, 0.22);
+  border-top-color: rgba(255, 255, 255, 0.40);
   box-shadow: 
-    0 16px 45px rgba(4, 9, 22, 0.70),
-    0 0 25px rgba(56, 189, 248, 0.12),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.30);
+    0 16px 45px rgba(10, 8, 24, 0.75),
+    0 0 25px rgba(192, 132, 252, 0.18),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.35);
 }
 
 /* ==========================================================================
@@ -162,34 +169,35 @@
 
 /* Slider Track Base */
 .thumb-slider-track {
-  background: rgba(10, 18, 34, 0.75);
+  background: rgba(17, 13, 36, 0.82);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(148, 163, 184, 0.18);
+  border: 1px solid rgba(192, 132, 252, 0.22);
   box-shadow: 
     inset 0 2px 4px 0 rgba(0, 0, 0, 0.5),
-    0 1px 0 0 rgba(255, 255, 255, 0.08);
+    0 1px 0 0 rgba(255, 255, 255, 0.10);
   touch-action: pan-y;
   user-select: none;
   -webkit-user-select: none;
 }
 
-/* Floating Magnetic Thumb Capsule */
+/* Floating Magnetic Thumb Capsule (Holographic Lilac + Acid Lime) */
 .thumb-slider-capsule {
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.22) 0%,
-    rgba(40, 78, 138, 0.55) 45%,
-    rgba(255, 255, 255, 0.08) 100%
+    rgba(255, 255, 255, 0.24) 0%,
+    rgba(168, 85, 247, 0.55) 45%,
+    rgba(190, 242, 100, 0.20) 80%,
+    rgba(255, 255, 255, 0.10) 100%
   );
-  backdrop-filter: blur(24px) saturate(220%);
-  -webkit-backdrop-filter: blur(24px) saturate(220%);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  border-top-color: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(24px) saturate(230%);
+  -webkit-backdrop-filter: blur(24px) saturate(230%);
+  border: 1px solid rgba(255, 255, 255, 0.40);
+  border-top-color: rgba(255, 255, 255, 0.70);
   box-shadow: 
-    0 8px 24px -2px rgba(4, 9, 22, 0.65),
-    0 0 18px 2px rgba(56, 189, 248, 0.35),
-    inset 0 1px 2px 0 rgba(255, 255, 255, 0.60),
+    0 8px 24px -2px rgba(10, 8, 24, 0.70),
+    0 0 20px 2px rgba(190, 242, 100, 0.35),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.65),
     inset 0 -1px 1px 0 rgba(0, 0, 0, 0.40);
   pointer-events: none;
 }
@@ -209,8 +217,8 @@
   height: 40%;
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.16) 0%,
-    rgba(255, 255, 255, 0.03) 70%,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.04) 70%,
     rgba(255, 255, 255, 0) 100%
   );
   pointer-events: none;
@@ -222,42 +230,43 @@
 .glass-card {
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.10) 0%,
-    rgba(28, 52, 92, 0.32) 50%,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(168, 85, 247, 0.30) 50%,
     rgba(255, 255, 255, 0.03) 100%
   );
-  backdrop-filter: blur(24px) saturate(165%);
-  -webkit-backdrop-filter: blur(24px) saturate(165%);
-  border: 1px solid rgba(148, 163, 184, 0.18);
-  border-top-color: rgba(255, 255, 255, 0.32);
-  box-shadow: 0 10px 30px -4px rgba(5, 12, 28, 0.55);
+  backdrop-filter: blur(24px) saturate(175%);
+  -webkit-backdrop-filter: blur(24px) saturate(175%);
+  border: 1px solid rgba(192, 132, 252, 0.20);
+  border-top-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 10px 30px -4px rgba(14, 11, 31, 0.60);
 }
 
 .glass-pill {
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.15) 0%,
-    rgba(30, 58, 102, 0.40) 50%,
-    rgba(255, 255, 255, 0.04) 100%
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(168, 85, 247, 0.35) 50%,
+    rgba(190, 242, 100, 0.15) 85%,
+    rgba(255, 255, 255, 0.05) 100%
   );
-  backdrop-filter: blur(26px) saturate(180%);
-  -webkit-backdrop-filter: blur(26px) saturate(180%);
-  border: 1px solid rgba(148, 163, 184, 0.22);
-  border-top-color: rgba(255, 255, 255, 0.40);
+  backdrop-filter: blur(26px) saturate(190%);
+  -webkit-backdrop-filter: blur(26px) saturate(190%);
+  border: 1px solid rgba(192, 132, 252, 0.25);
+  border-top-color: rgba(255, 255, 255, 0.45);
   box-shadow: 
-    0 12px 36px -4px rgba(5, 12, 28, 0.60),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.40);
+    0 12px 36px -4px rgba(14, 11, 31, 0.65),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.45);
 }
 
 .specular-border {
-  border: 1px solid rgba(148, 163, 184, 0.16);
-  border-top-color: rgba(255, 255, 255, 0.30);
+  border: 1px solid rgba(192, 132, 252, 0.18);
+  border-top-color: rgba(255, 255, 255, 0.35);
   position: relative;
 }
 
 @keyframes subtle-pulse {
   0%, 100% { opacity: 0.92; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.015); }
+  50% { opacity: 1; transform: scale(1.02); }
 }
 
 .voice-pulse {
