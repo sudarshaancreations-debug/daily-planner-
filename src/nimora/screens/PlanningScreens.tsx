@@ -66,9 +66,9 @@ export function MorgenWeekStrip({ selectedDate, onSelectDate, tasks = [] }: Morg
   return (
     <div className="w-full select-none">
       <div className="flex items-center justify-between mb-1.5 px-1">
-        <span className="text-[9px] font-mono tracking-wider text-purple-300/70 uppercase flex items-center gap-1 font-semibold">
-          <span className="material-symbols-outlined text-[13px] text-[#bef264]">date_range</span>
-          <span>Week Density Strip</span>
+        <span className="text-xs font-mono text-purple-200/90 flex items-center gap-1.5 font-medium">
+          <span className="material-symbols-outlined text-sm text-[#bef264]">date_range</span>
+          <span>Week density</span>
         </span>
         {selectedDate !== todayIso && (
           <button
@@ -77,10 +77,10 @@ export function MorgenWeekStrip({ selectedDate, onSelectDate, tasks = [] }: Morg
               haptics.tick();
               onSelectDate(todayIso);
             }}
-            className="text-[9px] font-mono text-[#bef264] hover:underline flex items-center gap-0.5 cursor-pointer"
+            className="text-xs font-mono text-[#bef264] hover:underline flex items-center gap-0.5 cursor-pointer"
           >
             <span>Back to Today</span>
-            <span className="material-symbols-outlined text-[11px]">restart_alt</span>
+            <span className="material-symbols-outlined text-xs">restart_alt</span>
           </button>
         )}
       </div>
@@ -427,12 +427,12 @@ export interface MorgenFocusBufferProps {
 
 export function MorgenFocusBuffer({ durationText, onQuickAdd }: MorgenFocusBufferProps) {
   return (
-    <div className="my-2 p-2.5 rounded-xl border border-dashed border-[#bef264]/30 bg-[#171330]/70 flex items-center justify-between text-xs select-none hover:border-[#bef264]/60 transition-colors">
-      <div className="flex items-center gap-2 text-[#bef264]">
-        <span className="material-symbols-outlined text-[16px]">hourglass_top</span>
+    <div className="my-2 p-3 rounded-xl border border-dashed border-[#bef264]/40 bg-[#171330]/80 flex items-center justify-between select-none hover:border-[#bef264]/70 transition-colors">
+      <div className="flex items-center gap-2.5 text-[#bef264]">
+        <span className="material-symbols-outlined text-base">hourglass_top</span>
         <div>
-          <span className="font-mono text-[10px] font-bold block">{durationText} Free Focus Slot</span>
-          <span className="text-[8px] font-mono text-purple-300/60">No meetings · Ideal for deep work</span>
+          <span className="font-mono text-xs font-bold block text-white">{durationText} Free Focus Slot</span>
+          <span className="text-xs font-mono text-purple-200/80">No meetings · Ideal for deep work</span>
         </div>
       </div>
       <button
@@ -441,7 +441,7 @@ export function MorgenFocusBuffer({ durationText, onQuickAdd }: MorgenFocusBuffe
           haptics.tick();
           onQuickAdd?.();
         }}
-        className="px-2.5 py-1 rounded-md bg-[#bef264]/15 hover:bg-[#bef264] text-[#bef264] hover:text-[#0e0b1f] text-[9px] font-mono font-bold tracking-wider transition-all cursor-pointer"
+        className="px-3 py-1.5 rounded-lg bg-[#bef264]/20 hover:bg-[#bef264] text-[#bef264] hover:text-[#0e0b1f] text-xs font-mono font-bold tracking-tight transition-all cursor-pointer border border-[#bef264]/40"
       >
         + Slot
       </button>
@@ -762,34 +762,44 @@ export function SwipeableScheduleCard({
           </div>
         </div>
 
-        <div className="text-right flex items-center gap-2 shrink-0">
-          <div className={`flex flex-col items-end gap-1 ${isCompleted ? 'opacity-50' : ''}`}>
+        <div className="text-right flex items-center gap-2.5 shrink-0">
+          <div className={`flex flex-col items-end gap-0.5 ${isCompleted ? 'opacity-50' : ''}`}>
             {task.priority === 'high' && (
-              <span className="text-[8px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/30">
+              <span className="text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/30">
                 High
               </span>
             )}
-            <span className="text-xs font-mono text-purple-300/60">{task.durationMinutes}m</span>
+            <span className="text-xs font-mono text-purple-200/80 font-medium">{task.durationMinutes}m</span>
           </div>
 
           {showWhatsApp && (
             <a
               aria-label="WhatsApp quick trigger"
               onClick={(e) => e.stopPropagation()}
-              className="p-1.5 rounded-lg bg-[#221b44] text-emerald-400 border border-purple-500/20 hover:border-emerald-400/40 active:scale-95 transition-all"
+              className="w-8 h-8 rounded-lg bg-[#221b44] text-emerald-400 border border-purple-500/20 hover:border-emerald-400/40 active:scale-95 transition-all flex items-center justify-center cursor-pointer"
               href="https://wa.me/919876543210"
               target="_blank"
               rel="noreferrer"
               title="WhatsApp contact"
             >
-              <span className="material-symbols-outlined text-[15px]">chat</span>
+              <span className="material-symbols-outlined text-base">chat</span>
             </a>
           )}
 
-          {/* Swipe indicator pill */}
-          <span className="text-xs text-purple-300/40 hover:text-purple-200 flex items-center font-mono" title="Slide right or left for actions">
-            ‹ ›
-          </span>
+          {/* Explicit accessible card action button (avoids relying solely on swipe discovery) */}
+          <button
+            type="button"
+            aria-label={`Actions for ${task.title}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              haptics.tick();
+              onSelectTask?.(task);
+            }}
+            className="w-8 h-8 rounded-lg bg-white/[0.05] border border-white/10 hover:border-[#bef264]/50 hover:bg-white/[0.10] text-purple-200 hover:text-[#bef264] flex items-center justify-center active:scale-95 transition-all cursor-pointer"
+            title="Task options (or swipe)"
+          >
+            <span className="material-symbols-outlined text-base">more_vert</span>
+          </button>
         </div>
       </div>
     </div>
@@ -907,10 +917,10 @@ export function Screen08DailyPlanner({
         </button>
 
         <div className="text-center">
-          <h2 className="text-xs font-semibold tracking-wider uppercase text-[#f8fafc] font-['Space_Grotesk']">
+          <h1 className="text-xl font-bold tracking-tight text-[#f8fafc] font-['Space_Grotesk']">
             Planner & Agenda
-          </h2>
-          <p className="text-[9px] font-mono tracking-widest text-[#bef264] uppercase">
+          </h1>
+          <p className="text-xs font-mono text-[#bef264] font-medium">
             {viewMode === 'timeline' ? 'Morgen Timeline' : 'Any.do Smart List'}
           </p>
         </div>
@@ -918,29 +928,29 @@ export function Screen08DailyPlanner({
         <div className="flex items-center gap-1.5">
           <button
             onClick={() => setIsAnyDoMomentOpen(true)}
-            className="liquid-glass-pill px-2.5 py-1 text-[#bef264] text-[10px] font-mono tracking-wider flex items-center gap-1 transition-all hover:scale-105 active:scale-95 cursor-pointer font-bold shadow-[0_0_10px_rgba(190,242,100,0.2)]"
+            className="minimal-btn-primary h-8 px-3 text-xs font-bold shadow-[0_0_12px_rgba(190,242,100,0.3)] cursor-pointer"
             title="Start Any.do Moment daily planning"
           >
             <span>⚡</span>
-            <span>PLAN</span>
+            <span>Plan Day</span>
           </button>
           <button
             onClick={handleShareAvailability}
-            className="w-7 h-7 rounded-full liquid-glass-pill text-[#38bdf8] hover:text-[#bef264] flex items-center justify-center text-xs transition-all hover:scale-105 active:scale-95 cursor-pointer"
+            className="w-8 h-8 rounded-lg minimal-btn-secondary text-[#38bdf8] hover:text-[#bef264] flex items-center justify-center text-xs transition-all active:scale-95 cursor-pointer"
             title="Share Morgen Availability Link"
           >
-            <span className="material-symbols-outlined text-[15px]">share</span>
+            <span className="material-symbols-outlined text-base">share</span>
           </button>
           <button
             onClick={() => downloadICS(tasks, 'nimora-daily-agenda.ics')}
-            className="w-7 h-7 rounded-full liquid-glass-pill text-purple-200 hover:text-[#bef264] flex items-center justify-center text-xs transition-all hover:scale-105 active:scale-95 cursor-pointer"
+            className="w-8 h-8 rounded-lg minimal-btn-secondary text-purple-200 hover:text-[#bef264] flex items-center justify-center text-xs transition-all active:scale-95 cursor-pointer"
             title="Download Calendar .ics"
           >
-            <span className="material-symbols-outlined text-[14px]">calendar_today</span>
+            <span className="material-symbols-outlined text-base">calendar_today</span>
           </button>
           <button
             onClick={() => onNavigate?.(7)}
-            className="w-7 h-7 rounded-full bg-[#bef264] text-[#0e0b1f] flex items-center justify-center text-base font-bold transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-md"
+            className="w-8 h-8 rounded-lg bg-[#bef264] text-[#0e0b1f] flex items-center justify-center text-base font-bold transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-md"
             title="Add new task"
           >
             +
@@ -992,19 +1002,19 @@ export function Screen08DailyPlanner({
         <AnyDoQuickAddBar onAddTask={onAddTask} selectedDate={selectedDate} />
       </div>
 
-      {/* Swipe instruction hint */}
+      {/* Swipe instruction hint with accessible text size & clear affordance */}
       <div className="px-4">
-        <div className="px-3 py-1.5 bg-[#171330]/60 border border-purple-500/15 rounded-xl flex items-center justify-between text-[9px] text-purple-300/60">
-          <span className="flex items-center gap-1.5 font-mono">
-            <span className="material-symbols-outlined text-[12px] text-[#bef264]">swipe</span>
-            <span>Swipe task card to <span className="text-white font-medium">Edit</span> or <span className="text-rose-400 font-medium">Delete</span></span>
+        <div className="px-3.5 py-2 bg-[#171330]/80 border border-purple-500/20 rounded-xl flex items-center justify-between text-xs text-purple-200/80">
+          <span className="flex items-center gap-2 font-mono">
+            <span className="material-symbols-outlined text-sm text-[#bef264]">swipe</span>
+            <span>Swipe task card to <span className="text-white font-semibold">Edit</span> or <span className="text-rose-400 font-semibold">Delete</span></span>
           </span>
-          <span className="text-[#bef264] font-mono">‹ ›</span>
+          <span className="text-xs text-purple-300/70 font-mono">Tap ••• for menu</span>
         </div>
       </div>
 
-      {/* Main Schedule Content: Timeline OR List */}
-      <div className="flex-1 overflow-y-auto px-4 py-2 space-y-2">
+      {/* Main Schedule Content: Timeline OR List - with pb-36 ensuring no overlap with bottom nav */}
+      <div className="flex-1 overflow-y-auto px-4 py-2 pb-36 space-y-2">
         {viewMode === 'timeline' ? (
           /* MORGEN TIMELINE VIEW WITH SMART FOCUS BUFFERS */
           <div className="space-y-1 relative">

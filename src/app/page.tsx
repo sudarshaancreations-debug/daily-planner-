@@ -164,11 +164,14 @@ function ThumbSliderNav({ activeTab, onSelectTab }: ThumbSliderNavProps) {
                 haptics.sliderSnap();
               }}
               aria-label={tab.label}
-              className="flex-1 h-full relative z-10 flex flex-col items-center justify-center transition-transform active:scale-95 cursor-pointer"
+              aria-current={isSlotActive ? 'page' : undefined}
+              className={`flex-1 h-full relative z-10 flex flex-col items-center justify-center transition-all active:scale-95 cursor-pointer rounded-full ${
+                isSlotActive ? 'text-[#bef264]' : 'text-purple-300/60 hover:text-purple-200'
+              }`}
             >
               <span
-                className={`material-symbols-outlined text-[22px] transition-colors duration-150 ${
-                  isSlotActive ? 'text-[#f8fafc]' : 'text-purple-300/60 hover:text-purple-200'
+                className={`material-symbols-outlined text-[22px] transition-all duration-150 ${
+                  isSlotActive ? 'text-[#bef264] drop-shadow-[0_0_8px_rgba(190,242,100,0.5)] scale-105' : 'text-purple-300/60'
                 }`}
                 style={{
                   fontVariationSettings: isSlotActive ? "'FILL' 1" : "'FILL' 0",
@@ -177,8 +180,8 @@ function ThumbSliderNav({ activeTab, onSelectTab }: ThumbSliderNavProps) {
                 {tab.icon}
               </span>
               <span
-                className={`text-[8px] font-mono tracking-tight uppercase mt-0.5 transition-colors ${
-                  isSlotActive ? 'text-[#bef264] font-bold' : 'text-purple-300/50'
+                className={`text-[9px] font-mono tracking-tight uppercase mt-0.5 transition-colors ${
+                  isSlotActive ? 'text-[#bef264] font-extrabold underline decoration-2 underline-offset-2' : 'text-purple-300/60 font-medium'
                 }`}
               >
                 {tab.label}

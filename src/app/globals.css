@@ -167,15 +167,18 @@
    THUMB SLIDER NAVIGATION SYSTEM (TACTILE HORIZONTAL GESTURES)
    ========================================================================== */
 
-/* Slider Track Base */
+/* Slider Track Base with Deep Visual Elevation & Contrast */
 .thumb-slider-track {
-  background: rgba(17, 13, 36, 0.82);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(192, 132, 252, 0.22);
+  background: rgba(14, 11, 31, 0.94);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(192, 132, 252, 0.35);
+  border-top-color: rgba(255, 255, 255, 0.30);
   box-shadow: 
-    inset 0 2px 4px 0 rgba(0, 0, 0, 0.5),
-    0 1px 0 0 rgba(255, 255, 255, 0.10);
+    0 20px 48px -6px rgba(0, 0, 0, 0.95),
+    0 0 24px rgba(192, 132, 252, 0.20),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 2px 4px 0 rgba(0, 0, 0, 0.60);
   touch-action: pan-y;
   user-select: none;
   -webkit-user-select: none;
