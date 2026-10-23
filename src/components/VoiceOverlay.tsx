@@ -37,7 +37,7 @@ export function VoiceOverlay({ onTranscript, isOpen, onClose }: VoiceOverlayProp
       return;
     }
     const recognition = new SpeechRecognitionClass();
-    recognition.continuous = false;
+    recognition.continuous = true;
     recognition.interimResults = true;
     recognition.lang = 'en-US';
 

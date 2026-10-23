@@ -1438,9 +1438,11 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask, selectedDate 
 
     try {
       const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = false;
+      recognition.continuous = true;
+      recognition.interimResults = true;
       recognition.lang = 'en-US';
+
+      let dictationSilenceTimer: NodeJS.Timeout | null = null;
 
       recognition.onstart = () => {
         setIsDictating(true);
@@ -1448,7 +1450,11 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask, selectedDate 
       };
 
       recognition.onresult = (event: any) => {
-        const spoken = event.results[0][0].transcript;
+        let full = '';
+        for (let i = 0; i < event.results.length; i++) {
+          full += event.results[i][0].transcript;
+        }
+        const spoken = full.trim();
         if (spoken) {
           setTitle(spoken);
           const lower = spoken.toLowerCase();
@@ -1465,8 +1471,15 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask, selectedDate 
           if (matchedContact) {
             setSelectedContact(matchedContact.id);
           }
+
+          if (dictationSilenceTimer) clearTimeout(dictationSilenceTimer);
+          dictationSilenceTimer = setTimeout(() => {
+            try {
+              recognition.stop();
+            } catch {}
+            setIsDictating(false);
+          }, 4000);
         }
-        setIsDictating(false);
       };
 
       recognition.onerror = () => {

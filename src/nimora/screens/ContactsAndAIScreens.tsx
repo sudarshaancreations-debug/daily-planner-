@@ -263,9 +263,40 @@ export function Screen13VoiceAssistant({
   const [typedInput, setTypedInput] = useState('');
   const [statusMessage, setStatusMessage] = useState(`Tap microphone to speak to ${name}`);
   const [createdTask, setCreatedTask] = useState<NimoraTask | null>(null);
+  const [recordingSeconds, setRecordingSeconds] = useState(0);
 
   const transcriptRef = useRef('');
   const recognitionRef = useRef<any>(null);
+  const isRecordingRef = useRef(false);
+  const silenceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const maxDurationTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+      if (maxDurationTimerRef.current) clearTimeout(maxDurationTimerRef.current);
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch {}
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (isRecording) {
+      setRecordingSeconds(0);
+      interval = setInterval(() => {
+        setRecordingSeconds((prev) => prev + 1);
+      }, 1000);
+    } else {
+      setRecordingSeconds(0);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isRecording]);
 
   useEffect(() => {
     try {
@@ -499,6 +530,10 @@ export function Screen13VoiceAssistant({
   };
 
   const stopRecording = () => {
+    isRecordingRef.current = false;
+    if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+    if (maxDurationTimerRef.current) clearTimeout(maxDurationTimerRef.current);
+
     if (recognitionRef.current) {
       try {
         recognitionRef.current.stop();
@@ -508,6 +543,8 @@ export function Screen13VoiceAssistant({
     const spoken = transcriptRef.current.trim();
     if (spoken) {
       handleCommandExecution(spoken);
+    } else {
+      setStatusMessage(`No speech detected. Tap mic to speak to ${name}`);
     }
   };
 
@@ -525,31 +562,25 @@ export function Screen13VoiceAssistant({
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      // Browser fallback simulation if speech recognition is not supported
-      setIsRecording(true);
-      setStatusMessage(`${name} is listening...`);
-      setTimeout(() => {
-        const sample = 'Schedule site inspection with Arun Mehta at 2 PM';
-        setTranscript(sample);
-        transcriptRef.current = sample;
-        setIsRecording(false);
-        handleCommandExecution(sample);
-      }, 1600);
+      setStatusMessage('Voice recognition not supported in this browser. Please type your command below.');
       return;
     }
 
     try {
       transcriptRef.current = '';
       setTranscript('');
+      isRecordingRef.current = true;
 
       const recognition = new SpeechRecognition();
-      recognition.continuous = false;
+      // Continuous mode ensures browser does NOT cut off speech on short pauses!
+      recognition.continuous = true;
       recognition.interimResults = true;
       recognition.lang = 'en-US';
 
       recognition.onstart = () => {
         setIsRecording(true);
-        setStatusMessage(`${name} is listening to your voice...`);
+        isRecordingRef.current = true;
+        setStatusMessage(`${name} is listening... Speak your full command.`);
       };
 
       recognition.onresult = (event: any) => {
@@ -560,33 +591,60 @@ export function Screen13VoiceAssistant({
         const current = full.trim();
         transcriptRef.current = current;
         setTranscript(current);
+        setStatusMessage(`Listening: "${current}"`);
+
+        // Smart silence buffer: wait 4.5 seconds of sustained silence AFTER words are spoken before auto-executing
+        if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+        silenceTimerRef.current = setTimeout(() => {
+          if (isRecordingRef.current && transcriptRef.current.trim()) {
+            stopRecording();
+          }
+        }, 4500);
       };
 
       recognition.onerror = (e: any) => {
         console.warn('SpeechRecognition error:', e);
-        setIsRecording(false);
         if (e.error === 'not-allowed') {
-          setStatusMessage('Microphone access blocked. Allow mic or type your command below.');
+          setIsRecording(false);
+          isRecordingRef.current = false;
+          setStatusMessage('Microphone access blocked. Allow mic in browser or type below.');
         } else if (e.error === 'no-speech') {
-          setStatusMessage('No speech detected. Tap mic to try again or type below.');
-        } else {
-          setStatusMessage(`Speech error (${e.error}). Tap mic or type command below.`);
+          console.log('No speech detected in current audio slice, continuing...');
         }
       };
 
       recognition.onend = () => {
-        setIsRecording(false);
-        const captured = transcriptRef.current.trim();
-        if (captured) {
-          handleCommandExecution(captured);
+        // If the browser prematurely terminates on silence while user is still recording, restart recognition
+        if (isRecordingRef.current) {
+          try {
+            recognition.start();
+          } catch {
+            setIsRecording(false);
+            isRecordingRef.current = false;
+            const captured = transcriptRef.current.trim();
+            if (captured) {
+              handleCommandExecution(captured);
+            }
+          }
+        } else {
+          setIsRecording(false);
         }
       };
+
+      // Set max safety limit of 35 seconds per command
+      if (maxDurationTimerRef.current) clearTimeout(maxDurationTimerRef.current);
+      maxDurationTimerRef.current = setTimeout(() => {
+        if (isRecordingRef.current) {
+          stopRecording();
+        }
+      }, 35000);
 
       recognitionRef.current = recognition;
       recognition.start();
     } catch (err) {
       console.warn('SpeechRecognition start failed:', err);
       setIsRecording(false);
+      isRecordingRef.current = false;
       setStatusMessage('Tap mic to retry or type command below');
     }
   };
@@ -786,9 +844,25 @@ export function Screen13VoiceAssistant({
           </button>
         </div>
 
-        <p className="text-[10px] text-[#8a938e] font-mono">
-          {isRecording ? `Tap mic to finish speaking to ${name}` : `Tap mic to speak or select a command below`}
-        </p>
+        {isRecording ? (
+          <div className="flex flex-col items-center gap-2 animate-in fade-in duration-150">
+            <button
+              type="button"
+              onClick={stopRecording}
+              className="px-4 py-2 rounded-2xl bg-[#bef264] text-[#0e0b1f] text-xs font-bold font-mono shadow-[0_0_20px_rgba(190,242,100,0.5)] flex items-center gap-2 active:scale-95 transition-all cursor-pointer animate-pulse"
+            >
+              <span className="material-symbols-outlined text-sm font-bold">check_circle</span>
+              <span>Done Speaking • Submit Command</span>
+            </button>
+            <span className="text-[10px] font-mono text-[#bef264]/80">
+              Listening: 0:{recordingSeconds.toString().padStart(2, '0')}s · Take your time (4.5s pause to auto-submit)
+            </span>
+          </div>
+        ) : (
+          <p className="text-[10px] text-[#8a938e] font-mono">
+            Tap mic and speak your full command naturally
+          </p>
+        )}
 
         {/* Quick Voice Shortcuts (Minimalist Bento Card) */}
         <div className="minimal-card rounded-xl p-3 max-w-[300px] text-left space-y-1.5 border border-white/[0.08]">
