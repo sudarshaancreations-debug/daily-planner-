@@ -19,34 +19,34 @@ export function Screen15Widget({ tasks, onNavigate }: WidgetAndSettingsProps) {
 
   return (
     <div
-      className="w-full h-full min-h-[680px] text-[#e3e2e0] flex flex-col justify-between p-6 select-none rounded-[38px] relative overflow-hidden bg-[#121412]"
+      className="w-full h-full min-h-[680px] text-[#ededec] flex flex-col justify-between p-6 select-none rounded-[32px] relative overflow-hidden bg-[#0c0f0d] border border-white/[0.08]"
     >
       {/* iOS Status Bar */}
-      <div className="flex justify-between items-center text-xs text-[#c0c8c3] pt-2 z-10 font-semibold font-['Space_Grotesk']">
+      <div className="flex justify-between items-center text-xs text-[#8a938e] pt-2 z-10 font-mono">
         <span>9:01</span>
-        <div className="flex items-center gap-1.5 text-[#e3e2e0]">
-          <span className="w-2 h-2 rounded-full bg-[#10B981]" />
+        <div className="flex items-center gap-1.5 text-[#ededec]">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
           <span>5G</span>
           <span>100%</span>
         </div>
       </div>
 
-      {/* Main Home Screen Widget Container */}
+      {/* Main Home Screen Widget Container (20% Liquid Glass Material) */}
       <div className="my-auto z-10 space-y-4">
-        {/* iOS Glassmorphic Dark Widget */}
+        {/* iOS Liquid Glass Dark Widget */}
         <div
           onClick={() => onNavigate?.(5)}
-          className="cursor-pointer glass-card specular-border rounded-3xl p-5 shadow-2xl hover:scale-[1.02] transition-all border border-[#e9c349]/30"
+          className="cursor-pointer liquid-glass liquid-sheen rounded-3xl p-5 shadow-2xl hover:scale-[1.02] transition-all border border-white/25"
         >
           {/* Widget Header */}
           <div className="flex justify-between items-center mb-3">
             <div className="flex items-center gap-1.5">
-              <span className="text-[#e9c349] text-xs">🔥</span>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#a1d1bd] font-['Space_Grotesk']">
+              <span className="material-symbols-outlined text-[15px] text-[#e9c349]">bolt</span>
+              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[#a1d1bd]">
                 NIMORA
               </span>
             </div>
-            <span className="text-[10px] font-bold text-[#e9c349] uppercase tracking-wider bg-[#0e3e30] px-2 py-0.5 rounded-full border border-[#e9c349]/40 font-['Space_Grotesk']">
+            <span className="text-[9px] font-mono font-bold text-[#e9c349] uppercase tracking-wider bg-white/10 px-2 py-0.5 rounded-full border border-white/20">
               NOW
             </span>
           </div>
@@ -54,11 +54,11 @@ export function Screen15Widget({ tasks, onNavigate }: WidgetAndSettingsProps) {
           {/* Current Focus Task */}
           <div className="flex items-center justify-between mb-4">
             <div>
-              <p className="text-[10px] uppercase font-bold text-[#a1d1bd] tracking-wider font-['Space_Grotesk']">
+              <p className="text-[9px] font-mono uppercase font-semibold text-[#8a938e] tracking-wider">
                 Current Focus
               </p>
-              <h3 className="text-sm font-extrabold text-[#e3e2e0] mt-0.5 font-['Space_Grotesk']">{nextTask?.title}</h3>
-              <p className="text-[11px] text-[#c0c8c3] font-medium">
+              <h3 className="text-sm font-bold text-[#ededec] mt-0.5 font-['Space_Grotesk']">{nextTask?.title}</h3>
+              <p className="text-[11px] font-mono text-[#a1d1bd]">
                 {nextTask?.startTime} – {nextTask?.endTime}
               </p>
             </div>
@@ -67,49 +67,49 @@ export function Screen15Widget({ tasks, onNavigate }: WidgetAndSettingsProps) {
                 e.stopPropagation();
                 onNavigate?.(6);
               }}
-              className="w-8 h-8 rounded-full bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/50 text-[#e9c349] flex items-center justify-center text-xs font-bold transition-all shadow-md"
+              className="w-8 h-8 rounded-full minimal-btn-primary flex items-center justify-center text-xs font-bold transition-all shadow-md cursor-pointer"
             >
-              ▶
+              <span className="material-symbols-outlined text-[16px]">play_arrow</span>
             </button>
           </div>
 
           {/* Next Task Section */}
-          <div className="border-t border-[#414945]/30 pt-2.5 flex items-center justify-between text-xs">
+          <div className="border-t border-white/[0.08] pt-2.5 flex items-center justify-between text-xs">
             <div>
-              <p className="text-[9px] uppercase font-bold text-[#8a938e] tracking-wider font-['Space_Grotesk']">
+              <p className="text-[9px] font-mono uppercase font-semibold text-[#8a938e] tracking-wider">
                 Next
               </p>
-              <p className="text-[#e3e2e0] font-semibold">{upcomingTask?.title}</p>
+              <p className="text-[#ededec] font-semibold">{upcomingTask?.title}</p>
             </div>
-            <span className="text-[11px] text-[#a1d1bd] font-semibold">
+            <span className="text-[11px] font-mono text-[#a1d1bd] font-medium">
               {upcomingTask?.startTime} – {upcomingTask?.endTime}
             </span>
           </div>
         </div>
 
-        {/* Quick Mic Bar */}
+        {/* Quick Mic Bar (Liquid Glass Floating Pill) */}
         <div className="flex justify-center">
           <button
             onClick={() => onNavigate?.(11)}
-            className="w-12 h-12 rounded-full bg-[#0e3e30] border border-[#e9c349]/60 flex items-center justify-center text-xl text-[#e9c349] shadow-lg hover:scale-110 active:scale-95 transition-all"
+            className="w-12 h-12 rounded-full liquid-glass-pill border border-white/35 flex items-center justify-center text-xl text-[#e9c349] shadow-lg hover:scale-110 active:scale-95 transition-all cursor-pointer"
           >
             <span className="material-symbols-outlined text-[24px]">mic</span>
           </button>
         </div>
       </div>
 
-      {/* iOS App Dock */}
-      <div className="bg-[#1f201e]/80 backdrop-blur-md rounded-3xl p-3 flex justify-around items-center z-10 border border-[#414945]/30">
-        <button onClick={() => onNavigate?.(5)} className="w-11 h-11 rounded-2xl bg-[#0e3e30] text-[#e9c349] flex items-center justify-center text-xl shadow-md border border-[#e9c349]/30">
+      {/* iOS App Dock (Liquid Glass Material) */}
+      <div className="liquid-glass-pill rounded-3xl p-2.5 flex justify-around items-center z-10 border border-white/20">
+        <button onClick={() => onNavigate?.(5)} className="w-11 h-11 rounded-2xl minimal-btn-primary flex items-center justify-center text-xl shadow-md cursor-pointer">
           <span className="material-symbols-outlined text-[20px]">home</span>
         </button>
-        <button onClick={() => onNavigate?.(6)} className="w-11 h-11 rounded-2xl bg-[#1f201e] text-[#a1d1bd] flex items-center justify-center text-xl shadow-md border border-[#414945]/40">
+        <button onClick={() => onNavigate?.(6)} className="w-11 h-11 rounded-2xl bg-white/10 text-[#a1d1bd] flex items-center justify-center text-xl shadow-md border border-white/10 hover:border-white/20 cursor-pointer">
           <span className="material-symbols-outlined text-[20px]">calendar_today</span>
         </button>
-        <button onClick={() => onNavigate?.(9)} className="w-11 h-11 rounded-2xl bg-[#1f201e] text-[#a1d1bd] flex items-center justify-center text-xl shadow-md border border-[#414945]/40">
+        <button onClick={() => onNavigate?.(9)} className="w-11 h-11 rounded-2xl bg-white/10 text-[#a1d1bd] flex items-center justify-center text-xl shadow-md border border-white/10 hover:border-white/20 cursor-pointer">
           <span className="material-symbols-outlined text-[20px]">group</span>
         </button>
-        <button onClick={() => onNavigate?.(16)} className="w-11 h-11 rounded-2xl bg-[#1f201e] text-[#a1d1bd] flex items-center justify-center text-xl shadow-md border border-[#414945]/40">
+        <button onClick={() => onNavigate?.(16)} className="w-11 h-11 rounded-2xl bg-white/10 text-[#a1d1bd] flex items-center justify-center text-xl shadow-md border border-white/10 hover:border-white/20 cursor-pointer">
           <span className="material-symbols-outlined text-[20px]">settings</span>
         </button>
       </div>
@@ -311,111 +311,111 @@ export function Screen18ProfileSettings({ onNavigate, onResetData }: WidgetAndSe
           <span className="w-5" />
         </div>
 
-        {/* User Card */}
-        <div className="p-4 glass-card specular-border m-4 rounded-2xl flex items-center justify-between shadow-sm">
+        {/* User Card (80% Minimalist Bento) */}
+        <div className="p-4 minimal-card m-4 rounded-2xl flex items-center justify-between border border-white/[0.08]">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-[#0e3e30] text-[#e9c349] font-bold flex items-center justify-center text-base shadow-sm ring-2 ring-[#e9c349]/30 font-['Space_Grotesk']">
+            <div className="w-12 h-12 rounded-full liquid-glass-pill text-[#e9c349] font-bold flex items-center justify-center text-base shadow-sm border border-white/25 font-['Space_Grotesk']">
               S
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <h3 className="text-sm font-bold text-[#e3e2e0] font-['Space_Grotesk']">Sudarshan</h3>
-                <span className="text-[9px] font-extrabold bg-[#af8d11]/30 text-[#e9c349] px-1.5 py-0.5 rounded-full border border-[#e9c349]/40">
+                <h3 className="text-sm font-bold text-[#ededec] font-['Space_Grotesk']">Sudarshan</h3>
+                <span className="text-[9px] font-mono font-bold bg-[#1b201d] text-[#e9c349] px-2 py-0.5 rounded-full border border-white/[0.08]">
                   PRO
                 </span>
               </div>
-              <p className="text-xs text-[#8a938e]">sudarshan@bespokestudio.com</p>
+              <p className="text-xs text-[#8a938e] font-mono">sudarshan@bespokestudio.com</p>
             </div>
           </div>
-          <span className="text-xs text-[#8a938e]">›</span>
+          <span className="text-xs text-[#8a938e] font-mono">›</span>
         </div>
 
         {/* Options List */}
         <div className="px-4 space-y-2">
-          {/* Subscription & Pricing Plans */}
+          {/* Subscription & Pricing Plans (20% Liquid Glass Focal Banner) */}
           <button
             onClick={() => onNavigate?.(99)}
-            className="w-full p-3.5 bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/60 rounded-2xl flex items-center justify-between cursor-pointer hover:brightness-110 transition-all shadow-md active:scale-[0.99] text-left"
+            className="w-full p-3.5 liquid-glass liquid-sheen rounded-2xl flex items-center justify-between cursor-pointer hover:border-white/30 transition-all shadow-md active:scale-[0.99] text-left border border-white/20"
           >
             <div className="flex items-center gap-3">
-              <span className="text-base">💎</span>
+              <span className="material-symbols-outlined text-[20px] text-[#e9c349]">diamond</span>
               <div>
-                <span className="text-xs font-bold text-[#e9c349] block font-['Space_Grotesk']">Membership & Subscription Plans</span>
-                <span className="text-[10px] text-[#a1d1bd]">Explore Pro & Executive Tiers from $9.99/mo</span>
+                <span className="text-xs font-bold text-[#ededec] block font-['Space_Grotesk']">Executive Membership</span>
+                <span className="text-[10px] text-[#a1d1bd]">Pro AI & MCP Agent Integration active</span>
               </div>
             </div>
-            <span className="text-[11px] font-semibold text-[#e9c349] flex items-center gap-1">
-              View Plans <span className="text-[#8a938e]">›</span>
+            <span className="text-[11px] font-mono font-semibold text-[#e9c349] flex items-center gap-1">
+              Plans <span className="text-[#8a938e]">›</span>
             </span>
           </button>
 
           {/* Reset Demo Data Button */}
           <button
             onClick={handleReset}
-            className="w-full p-3 bg-[#1f201e] border border-rose-500/30 rounded-2xl flex items-center justify-between cursor-pointer hover:border-rose-400 transition-colors shadow-sm text-left"
+            className="w-full p-3 minimal-card border border-rose-500/25 rounded-2xl flex items-center justify-between cursor-pointer hover:border-rose-400/40 transition-colors text-left"
           >
             <div className="flex items-center gap-3">
-              <span className="text-sm">🔄</span>
+              <span className="material-symbols-outlined text-[18px] text-rose-300">refresh</span>
               <div>
-                <span className="text-xs font-semibold text-rose-300 block">Reset Demo Data</span>
+                <span className="text-xs font-semibold text-rose-300 block">Reset Local Agenda</span>
                 <span className="text-[10px] text-[#8a938e]">Restore fresh initial agenda & contacts</span>
               </div>
             </div>
-            <span className="text-[11px] text-rose-400 font-bold">Reset ›</span>
+            <span className="text-[11px] font-mono text-rose-400 font-medium">Reset ›</span>
           </button>
 
           {resetMessage && (
-            <div className="p-2.5 bg-emerald-950/70 border border-emerald-500/40 rounded-xl text-xs text-[#4edea3] text-center">
+            <div className="p-2.5 bg-emerald-950/70 border border-emerald-500/40 rounded-xl text-xs text-[#4edea3] text-center font-mono">
               {resetMessage}
             </div>
           )}
 
           <div
             onClick={() => onNavigate?.(3)}
-            className="p-3 bg-[#1f201e] border border-[#414945]/30 rounded-2xl flex items-center justify-between cursor-pointer hover:border-[#e9c349]/40 transition-colors shadow-sm"
+            className="p-3 minimal-card rounded-2xl flex items-center justify-between cursor-pointer hover:border-white/[0.14] transition-colors"
           >
             <div className="flex items-center gap-3">
-              <span className="text-sm">✳️</span>
-              <span className="text-xs font-semibold text-[#e3e2e0]">AI Assistant Integration</span>
+              <span className="material-symbols-outlined text-[18px] text-[#a1d1bd]">smart_toy</span>
+              <span className="text-xs font-medium text-[#ededec]">AI Voice Engine (Vertex/Gemini)</span>
             </div>
-            <span className="text-[11px] font-bold text-[#4edea3] flex items-center gap-1">
+            <span className="text-[10px] font-mono font-bold text-[#4edea3] flex items-center gap-1">
               Active <span className="text-[#8a938e]">›</span>
             </span>
           </div>
 
           <div
             onClick={() => onNavigate?.(4)}
-            className="p-3 bg-[#1f201e] border border-[#414945]/30 rounded-2xl flex items-center justify-between cursor-pointer hover:border-[#e9c349]/40 transition-colors shadow-sm"
+            className="p-3 minimal-card rounded-2xl flex items-center justify-between cursor-pointer hover:border-white/[0.14] transition-colors"
           >
             <div className="flex items-center gap-3">
-              <span className="text-sm">🔌</span>
-              <span className="text-xs font-semibold text-[#e3e2e0]">Connected Calendars & Tools</span>
+              <span className="material-symbols-outlined text-[18px] text-[#8a938e]">sync_alt</span>
+              <span className="text-xs font-medium text-[#ededec]">Connected Calendars & Sync</span>
             </div>
-            <span className="text-[11px] text-[#8a938e] flex items-center gap-1">
+            <span className="text-[10px] font-mono text-[#8a938e] flex items-center gap-1">
               Google · Apple <span className="text-[#8a938e]">›</span>
             </span>
           </div>
         </div>
 
-        {/* Privacy Callout Cards matching right column of Screen 16 */}
+        {/* Privacy Callout Cards (Minimalist Editorial) */}
         <div className="p-4 pt-4 space-y-2">
-          <h4 className="text-[10px] font-bold uppercase tracking-wider text-[#8a938e] mb-2 font-['Space_Grotesk']">
+          <h4 className="text-[9px] font-mono font-bold uppercase tracking-wider text-[#8a938e] mb-2">
             Your Data. Your Control.
           </h4>
 
-          <div className="p-3 glass-card specular-border rounded-2xl flex items-start gap-2.5">
-            <span className="text-base">🛡️</span>
+          <div className="p-3 minimal-card rounded-xl flex items-start gap-2.5 border border-white/[0.06]">
+            <span className="material-symbols-outlined text-[18px] text-[#4edea3] shrink-0">security</span>
             <div>
-              <h5 className="text-xs font-bold text-[#e3e2e0] font-['Space_Grotesk']">Secure & Private</h5>
-              <p className="text-[10px] text-[#c0c8c3]">Your client conversations & follow-ups are client-side encrypted.</p>
+              <h5 className="text-xs font-semibold text-[#ededec]">Secure & Private</h5>
+              <p className="text-[10px] text-[#9b9f9c]">Client conversations & follow-ups are client-side encrypted.</p>
             </div>
           </div>
 
-          <div className="p-3 glass-card specular-border rounded-2xl flex items-start gap-2.5">
-            <span className="text-base">🎯</span>
+          <div className="p-3 minimal-card rounded-xl flex items-start gap-2.5 border border-white/[0.06]">
+            <span className="material-symbols-outlined text-[18px] text-[#e9c349] shrink-0">tune</span>
             <div>
-              <h5 className="text-xs font-bold text-[#e3e2e0] font-['Space_Grotesk']">Connect Only What You Need</h5>
-              <p className="text-[10px] text-[#c0c8c3]">Data minimization principle built-in.</p>
+              <h5 className="text-xs font-semibold text-[#ededec]">Data Minimization</h5>
+              <p className="text-[10px] text-[#9b9f9c]">Only essential scheduling payloads are processed.</p>
             </div>
           </div>
         </div>
@@ -542,28 +542,28 @@ export function Screen19SubscriptionPlans({
   };
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#121412] text-[#e3e2e0] flex flex-col justify-between p-4 select-none rounded-[38px] shadow-2xl relative overflow-hidden">
+    <div className="w-full h-full min-h-[680px] bg-[#0c0f0d] text-[#ededec] flex flex-col justify-between p-4 select-none rounded-[32px] shadow-2xl relative overflow-hidden border border-white/[0.08]">
       {/* Top Header */}
-      <div className="flex justify-between items-center pb-3 border-b border-[#414945]/30">
+      <div className="flex justify-between items-center pb-3 border-b border-white/[0.08]">
         <button
           onClick={() => {
             if (step === 'checkout') setStep('pricing');
             else onNavigate?.(5);
           }}
-          className="text-[#c0c8c3] hover:text-white text-xs font-semibold flex items-center gap-1 cursor-pointer"
+          className="text-[#9b9f9c] hover:text-[#ededec] text-xs font-mono font-medium flex items-center gap-1 cursor-pointer transition-colors"
         >
           ‹ {step === 'checkout' ? 'Back to Pricing' : 'Back'}
         </button>
         <div className="text-center">
-          <span className="text-[10px] text-[#e9c349] font-bold uppercase tracking-widest block font-['Space_Grotesk']">
+          <span className="text-[9px] text-[#e9c349] font-mono font-bold uppercase tracking-widest block">
             {step === 'pricing' ? 'NIMORA MEMBERSHIP' : 'SECURE CHECKOUT'}
           </span>
-          <span className="text-xs font-bold text-[#e3e2e0] font-['Space_Grotesk']">
+          <span className="text-xs font-semibold text-[#ededec] font-['Space_Grotesk']">
             {step === 'pricing' ? 'Choose Your Plan' : 'Finalize Upgrade'}
           </span>
         </div>
-        <div className="flex items-center gap-1 text-[10px] text-[#a1d1bd]">
-          <span className="material-symbols-outlined text-[14px]">lock</span>
+        <div className="flex items-center gap-1 text-[10px] text-[#a1d1bd] font-mono">
+          <span className="material-symbols-outlined text-[13px]">lock</span>
           <span>SSL</span>
         </div>
       </div>
@@ -574,40 +574,40 @@ export function Screen19SubscriptionPlans({
           <>
             {/* Value Proposition Header */}
             <div className="text-center space-y-1 pt-1">
-              <span className="text-[10px] font-bold bg-[#af8d11]/30 text-[#e9c349] px-2.5 py-0.5 rounded-full border border-[#e9c349]/40 tracking-wider">
+              <span className="text-[9px] font-mono font-semibold bg-[#161a17] text-[#e9c349] px-2.5 py-0.5 rounded-full border border-white/[0.08] tracking-wider uppercase">
                 EXECUTIVE INTELLIGENCE
               </span>
-              <h2 className="font-['Space_Grotesk'] text-xl font-bold text-[#e3e2e0] pt-1">
+              <h2 className="font-['Space_Grotesk'] text-xl font-bold text-[#ededec] pt-1">
                 Elevate Your Daily Focus
               </h2>
-              <p className="text-xs text-[#c0c8c3] max-w-[320px] mx-auto">
+              <p className="text-xs text-[#9b9f9c] max-w-[320px] mx-auto">
                 Transparent pricing. Unlock voice scheduling, stakeholder CRM, and multi-device cloud sync.
               </p>
             </div>
 
             {/* Monthly / Annual Billing Toggle */}
             <div className="flex justify-center">
-              <div className="p-1 bg-[#1f201e] rounded-xl border border-[#414945]/40 flex items-center shadow-inner">
+              <div className="p-1 bg-[#141815] rounded-xl border border-white/[0.08] flex items-center">
                 <button
                   onClick={() => setBillingCycle('monthly')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium font-mono transition-all cursor-pointer ${
                     billingCycle === 'monthly'
-                      ? 'bg-[#0e3e30] text-[#e9c349] shadow-sm border border-[#e9c349]/30'
-                      : 'text-[#c0c8c3] hover:text-white'
+                      ? 'bg-[#1e2420] text-[#e9c349] border border-white/[0.12]'
+                      : 'text-[#8a938e] hover:text-[#ededec]'
                   }`}
                 >
                   Monthly
                 </button>
                 <button
                   onClick={() => setBillingCycle('annual')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium font-mono flex items-center gap-1.5 transition-all cursor-pointer ${
                     billingCycle === 'annual'
-                      ? 'bg-[#0e3e30] text-[#e9c349] shadow-sm border border-[#e9c349]/30'
-                      : 'text-[#c0c8c3] hover:text-white'
+                      ? 'bg-[#1e2420] text-[#e9c349] border border-white/[0.12]'
+                      : 'text-[#8a938e] hover:text-[#ededec]'
                   }`}
                 >
                   <span>Annual</span>
-                  <span className="text-[9px] px-1.5 py-0.2 bg-[#e9c349] text-gray-950 rounded-full font-extrabold uppercase">
+                  <span className="text-[8px] px-1.5 py-0.2 bg-[#e9c349] text-gray-950 rounded-full font-bold uppercase font-mono">
                     Save 20%
                   </span>
                 </button>
@@ -625,19 +625,19 @@ export function Screen19SubscriptionPlans({
                   <div
                     key={plan.id}
                     onClick={() => setSelectedPlan(planKey)}
-                    className={`glass-card rounded-2xl p-4 cursor-pointer transition-all relative ${
-                      isSelected
-                        ? 'border-2 border-[#e9c349] shadow-[0_8px_24px_rgba(233,195,73,0.15)] bg-[#0e3e30]/30'
-                        : 'border border-[#414945]/30 hover:border-[#a1d1bd]/40'
-                    }`}
+                    className={`rounded-2xl p-4.5 cursor-pointer transition-all relative ${
+                      planKey === 'pro'
+                        ? 'liquid-glass liquid-sheen border border-white/20 shadow-xl'
+                        : 'minimal-card border border-white/[0.08]'
+                    } ${isSelected ? 'ring-1 ring-[#e9c349]/70' : 'hover:border-white/[0.14]'}`}
                   >
                     {/* Badge */}
                     <div className="flex justify-between items-center mb-1">
                       <span
-                        className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                        className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
                           planKey === 'pro'
-                            ? 'bg-[#e9c349] text-gray-950 font-extrabold'
-                            : 'bg-[#1f201e] text-[#a1d1bd] border border-[#414945]/40'
+                            ? 'liquid-glass-pill text-[#e9c349] border border-white/30'
+                            : 'bg-[#171b18] text-[#a1d1bd] border border-white/[0.06]'
                         }`}
                       >
                         {plan.badge}
@@ -647,7 +647,7 @@ export function Screen19SubscriptionPlans({
                           className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                             isSelected
                               ? 'border-[#e9c349] bg-[#e9c349] text-gray-950'
-                              : 'border-[#414945]'
+                              : 'border-white/20'
                           }`}
                         >
                           {isSelected && <span className="text-[10px] font-bold">✓</span>}
@@ -658,26 +658,26 @@ export function Screen19SubscriptionPlans({
                     {/* Plan Title & Price */}
                     <div className="flex justify-between items-baseline mt-2">
                       <div>
-                        <h3 className="font-['Space_Grotesk'] text-base font-bold text-[#e3e2e0]">
+                        <h3 className="font-['Space_Grotesk'] text-base font-bold text-[#ededec]">
                           {plan.name}
                         </h3>
-                        <p className="text-[11px] text-[#c0c8c3]">{plan.description}</p>
+                        <p className="text-[11px] text-[#9b9f9c]">{plan.description}</p>
                       </div>
                       <div className="text-right">
                         <div className="flex items-baseline justify-end gap-0.5">
                           <span className="font-['Space_Grotesk'] text-xl font-bold text-[#e9c349]">
                             {price}
                           </span>
-                          <span className="text-[10px] text-[#8a938e]">{plan.period}</span>
+                          <span className="text-[10px] font-mono text-[#8a938e]">{plan.period}</span>
                         </div>
-                        <span className="text-[9px] text-[#a1d1bd] block">{plan.billedNote}</span>
+                        <span className="text-[9px] font-mono text-[#a1d1bd] block">{plan.billedNote}</span>
                       </div>
                     </div>
 
                     {/* Feature Highlights */}
-                    <div className="mt-3 pt-2.5 border-t border-[#414945]/20 space-y-1">
+                    <div className="mt-3 pt-2.5 border-t border-white/[0.08] space-y-1">
                       {plan.features.slice(0, 4).map((f, i) => (
-                        <div key={i} className="flex items-center gap-2 text-xs text-[#e3e2e0]">
+                        <div key={i} className="flex items-center gap-2 text-xs text-[#ededec]">
                           <span className="text-[#4edea3] text-[13px]">✓</span>
                           <span>{f}</span>
                         </div>
@@ -688,21 +688,21 @@ export function Screen19SubscriptionPlans({
               })}
             </div>
 
-            {/* Trust and Assurance Box */}
-            <div className="p-3 rounded-xl bg-[#1f201e]/60 border border-[#414945]/20 flex items-center justify-between text-center">
+            {/* Trust and Assurance Box (Minimalist Editorial) */}
+            <div className="p-3 rounded-xl minimal-card border border-white/[0.06] flex items-center justify-between text-center">
               <div className="flex-1">
-                <span className="text-xs text-[#e9c349]">★★★★★</span>
-                <p className="text-[9px] text-[#c0c8c3]">4.9/5 from 12k+ Leaders</p>
+                <span className="text-xs text-[#e9c349] tracking-widest font-mono">★★★★★</span>
+                <p className="text-[9px] text-[#8a938e] font-mono">Top Rated SaaS</p>
               </div>
-              <div className="h-6 w-px bg-[#414945]/30" />
+              <div className="h-6 w-px bg-white/[0.06]" />
               <div className="flex-1">
-                <span className="text-xs">🛡️</span>
-                <p className="text-[9px] text-[#c0c8c3]">Cancel Anytime</p>
+                <span className="material-symbols-outlined text-[16px] text-[#a1d1bd]">shield</span>
+                <p className="text-[9px] text-[#8a938e] font-mono">Cancel Anytime</p>
               </div>
-              <div className="h-6 w-px bg-[#414945]/30" />
+              <div className="h-6 w-px bg-white/[0.06]" />
               <div className="flex-1">
-                <span className="text-xs">⚡</span>
-                <p className="text-[9px] text-[#c0c8c3]">Instant Activation</p>
+                <span className="material-symbols-outlined text-[16px] text-[#e9c349]">bolt</span>
+                <p className="text-[9px] text-[#8a938e] font-mono">Instant Unlock</p>
               </div>
             </div>
           </>
@@ -710,24 +710,24 @@ export function Screen19SubscriptionPlans({
           /* STEP 2: CHECKOUT & PURCHASE */
           <div className="space-y-4 pt-1">
             {paymentSuccess ? (
-              <div className="glass-card specular-border p-6 rounded-2xl text-center space-y-3">
-                <div className="w-14 h-14 rounded-full bg-[#0e3e30] border-2 border-[#e9c349] mx-auto flex items-center justify-center text-2xl shadow-lg shadow-[#0e3e30]/50">
+              <div className="minimal-card p-6 rounded-2xl text-center space-y-3 border border-white/20 shadow-2xl relative overflow-hidden">
+                <div className="w-14 h-14 rounded-full liquid-glass-pill mx-auto flex items-center justify-center text-2xl shadow-lg">
                   💎
                 </div>
-                <h3 className="font-['Space_Grotesk'] text-lg font-bold text-[#e3e2e0]">
+                <h3 className="font-['Space_Grotesk'] text-lg font-bold text-[#ededec]">
                   Welcome to {currentPlan.name}!
                 </h3>
                 <p className="text-xs text-[#a1d1bd]">
                   Your subscription is active. All premium features, Ask Nova voice AI, and multi-device sync are unlocked.
                 </p>
-                <div className="p-3.5 bg-[#1f201e] border border-[#414945]/30 rounded-xl text-xs text-left space-y-1.5">
+                <div className="p-3.5 bg-[#161a18] border border-white/[0.08] rounded-xl text-xs text-left space-y-1.5">
                   <div className="flex justify-between">
                     <span className="text-[#8a938e]">Plan</span>
                     <span className="text-[#e9c349] font-bold">{currentPlan.name}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#8a938e]">Amount Paid</span>
-                    <span className="text-[#e3e2e0] font-bold">{receiptInfo?.amountPaid || displayPrice}</span>
+                    <span className="text-[#ededec] font-bold">{receiptInfo?.amountPaid || displayPrice}</span>
                   </div>
                   {receiptInfo?.receiptId && (
                     <div className="flex justify-between">
@@ -749,7 +749,7 @@ export function Screen19SubscriptionPlans({
                     setPaymentSuccess(false);
                     onNavigate?.(5);
                   }}
-                  className="w-full py-3 rounded-xl bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/50 text-[#e9c349] font-bold text-xs shadow-md mt-2 cursor-pointer hover:brightness-110 active:scale-95 transition-all"
+                  className="w-full py-3 rounded-xl minimal-btn-primary text-xs font-semibold shadow-md mt-2 cursor-pointer hover:brightness-110 active:scale-95 transition-all"
                 >
                   Return to Daily Planner
                 </button>
@@ -757,13 +757,13 @@ export function Screen19SubscriptionPlans({
             ) : (
               <>
                 {/* Plan Summary Card */}
-                <div className="glass-card specular-border p-4 rounded-2xl space-y-2">
+                <div className="minimal-card p-4 rounded-2xl space-y-2 border border-white/[0.12]">
                   <div className="flex justify-between items-center">
                     <div>
-                      <span className="text-[10px] text-[#e9c349] uppercase font-bold tracking-wider">
+                      <span className="text-[9px] font-mono text-[#e9c349] uppercase font-bold tracking-wider">
                         Selected Plan
                       </span>
-                      <h3 className="font-['Space_Grotesk'] text-base font-bold text-[#e3e2e0]">
+                      <h3 className="font-['Space_Grotesk'] text-base font-bold text-[#ededec]">
                         {currentPlan.name}
                       </h3>
                     </div>
@@ -771,17 +771,17 @@ export function Screen19SubscriptionPlans({
                       <span className="font-['Space_Grotesk'] text-lg font-bold text-[#e9c349]">
                         {displayPrice}
                       </span>
-                      <span className="text-[10px] text-[#8a938e] block">{currentPlan.period}</span>
+                      <span className="text-[10px] font-mono text-[#8a938e] block">{currentPlan.period}</span>
                     </div>
                   </div>
-                  <p className="text-[11px] text-[#a1d1bd] border-t border-[#414945]/20 pt-2">
+                  <p className="text-[11px] text-[#a1d1bd] border-t border-white/[0.08] pt-2">
                     {currentPlan.billedNote} · Cancel anytime in account settings.
                   </p>
                 </div>
 
                 {/* Choose Payment Method */}
                 <div className="space-y-2.5">
-                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#c0c8c3] font-['Space_Grotesk']">
+                  <h4 className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#9b9f9c]">
                     Select Payment Method
                   </h4>
 
@@ -789,39 +789,39 @@ export function Screen19SubscriptionPlans({
                   <button
                     disabled={isProcessing}
                     onClick={() => handleCheckout('Google Pay')}
-                    className="w-full p-3.5 bg-black hover:bg-neutral-900 border border-neutral-700 rounded-2xl flex items-center justify-between shadow-md active:scale-[0.99] transition-transform cursor-pointer"
+                    className="w-full p-3.5 bg-[#131614] hover:bg-[#1a1f1b] border border-white/[0.12] rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.99] transition-all cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="text-base font-bold text-white tracking-tight">G Pay</span>
-                      <span className="text-xs text-[#c0c8c3]">One-tap instant checkout</span>
+                      <span className="text-base font-bold text-white tracking-tight font-['Space_Grotesk']">G Pay</span>
+                      <span className="text-xs text-[#9b9f9c]">One-tap instant checkout</span>
                     </div>
-                    <span className="text-xs text-[#e9c349] font-semibold">Pay {displayPrice} ›</span>
+                    <span className="text-xs text-[#e9c349] font-semibold font-mono">Pay {displayPrice} ›</span>
                   </button>
 
                   {/* Apple Pay */}
                   <button
                     disabled={isProcessing}
                     onClick={() => handleCheckout('Apple Pay')}
-                    className="w-full p-3.5 bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 rounded-2xl flex items-center justify-between shadow-md active:scale-[0.99] transition-transform cursor-pointer"
+                    className="w-full p-3.5 bg-[#131614] hover:bg-[#1a1f1b] border border-white/[0.12] rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.99] transition-all cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="text-base font-bold text-white tracking-tight"> Pay</span>
-                      <span className="text-xs text-[#c0c8c3]">Touch ID / Face ID</span>
+                      <span className="text-base font-bold text-white tracking-tight font-['Space_Grotesk']"> Pay</span>
+                      <span className="text-xs text-[#9b9f9c]">Touch ID / Face ID</span>
                     </div>
-                    <span className="text-xs text-[#e9c349] font-semibold">Pay {displayPrice} ›</span>
+                    <span className="text-xs text-[#e9c349] font-semibold font-mono">Pay {displayPrice} ›</span>
                   </button>
 
                   {/* Credit Card / UPI */}
                   <button
                     disabled={isProcessing}
                     onClick={() => handleCheckout('Card & UPI')}
-                    className="w-full p-3.5 bg-[#1f201e] hover:bg-[#292a29] border border-[#414945]/40 rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.99] transition-transform cursor-pointer"
+                    className="w-full p-3.5 bg-[#131614] hover:bg-[#1a1f1b] border border-white/[0.12] rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.99] transition-all cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
                       <span className="material-symbols-outlined text-[#a1d1bd] text-[20px]">credit_card</span>
-                      <span className="text-xs text-[#e3e2e0]">Card, NetBanking & UPI</span>
+                      <span className="text-xs text-[#ededec]">Card, NetBanking & UPI</span>
                     </div>
-                    <span className="text-xs text-[#c0c8c3]">Continue ›</span>
+                    <span className="text-xs text-[#8a938e] font-mono">Continue ›</span>
                   </button>
                 </div>
 

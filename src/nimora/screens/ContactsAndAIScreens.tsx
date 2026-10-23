@@ -17,7 +17,7 @@ export interface ContactsAndAIProps {
   tasks?: NimoraTask[];
 }
 
-// 9. Contacts & Follow-ups
+// 9. Contacts & Follow-ups (80% Utilitarian Minimalism)
 export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: ContactsAndAIProps) {
   const [filter, setFilter] = useState<'all' | 'client' | 'lead' | 'team'>('all');
   const [search, setSearch] = useState('');
@@ -31,15 +31,15 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
   });
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#121412] text-[#e3e2e0] flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
+    <div className="w-full h-full min-h-[680px] bg-[#0c0f0d] text-[#ededec] flex flex-col justify-between select-none rounded-[32px] overflow-hidden border border-white/[0.08]">
       {/* Top Header */}
-      <div className="p-4 bg-[#121412]/90 border-b border-[#414945]/30">
+      <div className="p-4 bg-[#0e120f] border-b border-white/[0.08]">
         <div className="flex justify-between items-center mb-3">
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-[#e9c349] text-[20px]">group</span>
-            <h2 className="text-base font-bold text-[#e3e2e0] font-['Space_Grotesk']">CRM & Contacts</h2>
+            <h2 className="text-base font-bold text-[#ededec] font-['Space_Grotesk']">CRM & Network</h2>
           </div>
-          <span className="text-xs text-[#a1d1bd] font-semibold">{filtered.length} Contacts</span>
+          <span className="text-[10px] font-mono text-[#a1d1bd] font-medium">{filtered.length} Contacts</span>
         </div>
 
         {/* Search */}
@@ -49,7 +49,7 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search clients, architects, vendors..."
-            className="w-full bg-[#1f201e] border border-[#414945]/40 rounded-xl pl-9 pr-3 py-2 text-xs text-[#e3e2e0] outline-none focus:border-[#e9c349] placeholder-[#8a938e]"
+            className="w-full bg-[#151916] border border-white/[0.08] rounded-xl pl-9 pr-3 py-2 text-xs text-[#ededec] outline-none focus:border-[#e9c349] placeholder-[#8a938e]"
           />
           <span className="material-symbols-outlined absolute left-2.5 top-2.5 text-[18px] text-[#8a938e]">search</span>
         </div>
@@ -60,20 +60,20 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
             <button
               key={cat}
               onClick={() => setFilter(cat)}
-              className={`px-3 py-1 rounded-full text-[11px] font-semibold capitalize whitespace-nowrap transition-all ${
+              className={`px-3 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer ${
                 filter === cat
-                  ? 'bg-[#0e3e30] text-[#e9c349] border border-[#e9c349]/40 shadow-sm'
-                  : 'bg-[#1f201e] text-[#c0c8c3] border border-[#414945]/20 hover:text-white'
+                  ? 'bg-[#1e2420] text-[#e9c349] border border-white/[0.15]'
+                  : 'minimal-btn-secondary text-[#8a938e] hover:text-[#ededec]'
               }`}
             >
-              {cat === 'all' ? 'All Contacts' : `${cat}s`}
+              {cat === 'all' ? 'All' : `${cat}s`}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Contact Cards List */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-2.5">
+      {/* Contact Cards List (Minimalist Editorial Stream) */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-2">
         {filtered.map((contact) => (
           <div
             key={contact.id}
@@ -81,24 +81,24 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
               onSelectContact?.(contact);
               onNavigate?.(10);
             }}
-            className="glass-card specular-border p-3.5 rounded-2xl flex items-center justify-between hover:border-[#e9c349]/50 transition-all shadow-sm cursor-pointer active:scale-[0.99]"
+            className="minimal-card p-3 rounded-xl flex items-center justify-between hover:border-white/[0.18] transition-all cursor-pointer active:scale-[0.99]"
           >
             <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-full ${contact.avatarColor} text-white font-bold flex items-center justify-center text-xs shadow-md ring-2 ring-white/10 font-['Space_Grotesk']`}>
+              <div className={`w-9 h-9 rounded-full ${contact.avatarColor} text-white font-bold flex items-center justify-center text-xs shadow-sm ring-1 ring-white/10 font-['Space_Grotesk']`}>
                 {contact.name.split(' ').map((n) => n[0]).join('')}
               </div>
               <div>
-                <h4 className="text-xs font-bold text-[#e3e2e0] font-['Space_Grotesk']">{contact.name}</h4>
-                <p className="text-[10px] text-[#c0c8c3]">{contact.company} · {contact.title}</p>
+                <h4 className="text-xs font-semibold text-[#ededec] font-['Space_Grotesk']">{contact.name}</h4>
+                <p className="text-[10px] text-[#9b9f9c]">{contact.company} · {contact.title}</p>
                 <div className="flex items-center gap-2 mt-1">
                   {contact.followUpCount > 0 ? (
-                    <span className="text-[9px] font-bold text-[#e9c349] bg-[#0e3e30] border border-[#e9c349]/30 px-1.5 py-0.5 rounded">
+                    <span className="text-[8px] font-mono uppercase tracking-wider text-[#e9c349] bg-[#1a201c] border border-[#e9c349]/25 px-1.5 py-0.2 rounded">
                       {contact.followUpCount} {contact.followUpCount === 1 ? 'follow-up' : 'follow-ups'}
                     </span>
                   ) : (
-                    <span className="text-[9px] text-[#8a938e]">Up to date</span>
+                    <span className="text-[9px] font-mono text-[#8a938e]">Active</span>
                   )}
-                  <span className="text-[9px] text-[#8a938e]">• Last: {contact.lastCall}</span>
+                  <span className="text-[9px] font-mono text-[#8a938e]">• Last: {contact.lastCall}</span>
                 </div>
               </div>
             </div>
@@ -107,12 +107,12 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
               <a
                 onClick={(e) => e.stopPropagation()}
                 href={`tel:${contact.phone}`}
-                className="w-7 h-7 rounded-lg bg-[#1f201e] flex items-center justify-center text-[#a1d1bd] border border-[#414945]/30 hover:border-[#a1d1bd]/50"
+                className="w-7 h-7 rounded-lg minimal-btn-secondary flex items-center justify-center text-[#a1d1bd] cursor-pointer"
                 title="Call"
               >
-                <span className="material-symbols-outlined text-[16px]">call</span>
+                <span className="material-symbols-outlined text-[15px]">call</span>
               </a>
-              <span className="text-[#8a938e] text-sm">›</span>
+              <span className="text-[#8a938e] text-xs font-mono">›</span>
             </div>
           </div>
         ))}
@@ -127,49 +127,49 @@ export function Screen12ContactDetails({ contacts, onNavigate, selectedContact }
   const [activeTab, setActiveTab] = useState<'overview' | 'history' | 'followups' | 'notes'>('history');
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#121412] text-[#e3e2e0] flex flex-col justify-between select-none rounded-[38px] overflow-hidden">
+    <div className="w-full h-full min-h-[680px] bg-[#0c0f0d] text-[#ededec] flex flex-col justify-between select-none rounded-[32px] overflow-hidden border border-white/[0.08]">
       {/* Header Profile Card */}
-      <div className="p-4 bg-[#121412]/90 border-b border-[#414945]/30">
+      <div className="p-4 bg-[#0e120f] border-b border-white/[0.08]">
         <div className="flex justify-between items-center mb-3">
-          <button onClick={() => onNavigate?.(9)} className="text-[#c0c8c3] hover:text-white text-xs font-semibold flex items-center gap-1">
+          <button onClick={() => onNavigate?.(9)} className="text-[#9b9f9c] hover:text-[#ededec] text-xs font-mono font-medium flex items-center gap-1 cursor-pointer">
             ‹ Contacts
           </button>
-          <span className="text-[10px] uppercase font-bold text-[#e9c349] bg-[#0e3e30] px-2 py-0.5 rounded-full border border-[#e9c349]/30">
+          <span className="text-[9px] font-mono uppercase tracking-wider text-[#e9c349] bg-[#181c19] px-2 py-0.5 rounded-full border border-white/[0.08]">
             {contact.category}
           </span>
         </div>
 
         <div className="flex items-center gap-3.5 mb-4">
-          <div className={`w-12 h-12 rounded-full ${contact.avatarColor} text-white font-bold flex items-center justify-center text-sm shadow-md ring-2 ring-white/10 font-['Space_Grotesk']`}>
+          <div className={`w-12 h-12 rounded-full ${contact.avatarColor} text-white font-bold flex items-center justify-center text-sm shadow-md ring-1 ring-white/10 font-['Space_Grotesk']`}>
             {contact.name.split(' ').map((n) => n[0]).join('')}
           </div>
           <div>
-            <h3 className="text-base font-bold text-[#e3e2e0] font-['Space_Grotesk']">{contact.name}</h3>
-            <p className="text-xs text-[#c0c8c3]">{contact.title} · {contact.company}</p>
+            <h3 className="text-base font-bold text-[#ededec] font-['Space_Grotesk']">{contact.name}</h3>
+            <p className="text-xs text-[#9b9f9c]">{contact.title} · {contact.company}</p>
           </div>
         </div>
 
-        {/* Quick contact actions */}
+        {/* Quick contact actions (Minimalist + Liquid Glass Action Pills) */}
         <div className="flex gap-2">
           <a
             href={`tel:${contact.phone}`}
-            className="flex-1 py-2 bg-[#1f201e] border border-[#414945]/40 rounded-xl text-xs font-semibold text-[#a1d1bd] flex items-center justify-center gap-1.5 hover:bg-[#292a29] active:scale-95 transition-all"
+            className="flex-1 py-2 minimal-btn-secondary rounded-xl text-xs font-medium text-[#a1d1bd] flex items-center justify-center gap-1.5 cursor-pointer"
           >
-            <span className="material-symbols-outlined text-[16px]">call</span> Call
+            <span className="material-symbols-outlined text-[15px]">call</span> Call
           </a>
           <a
             href={`https://wa.me/${contact.phone.replace(/[^0-9]/g, '')}`}
             target="_blank"
             rel="noreferrer"
-            className="flex-1 py-2 bg-[#0e3e30] border border-[#4edea3]/40 rounded-xl text-xs font-semibold text-[#4edea3] flex items-center justify-center gap-1.5 hover:brightness-110 active:scale-95 transition-all"
+            className="flex-1 py-2 liquid-glass-pill rounded-xl text-xs font-semibold text-[#4edea3] flex items-center justify-center gap-1.5 hover:brightness-110 cursor-pointer"
           >
-            <span className="material-symbols-outlined text-[16px]">chat</span> WhatsApp
+            <span className="material-symbols-outlined text-[15px]">chat</span> WhatsApp
           </a>
           <a
             href={`mailto:${contact.email}`}
-            className="flex-1 py-2 bg-[#1f201e] border border-[#414945]/40 rounded-xl text-xs font-semibold text-[#e9c349] flex items-center justify-center gap-1.5 hover:bg-[#292a29] active:scale-95 transition-all"
+            className="flex-1 py-2 minimal-btn-secondary rounded-xl text-xs font-medium text-[#e9c349] flex items-center justify-center gap-1.5 cursor-pointer"
           >
-            <span className="material-symbols-outlined text-[16px]">mail</span> Email
+            <span className="material-symbols-outlined text-[15px]">mail</span> Email
           </a>
         </div>
       </div>
@@ -601,16 +601,16 @@ export function Screen13VoiceAssistant({
   };
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-gradient-to-b from-[#022C22] via-[#07241A] to-[#121412] text-white flex flex-col justify-between p-5 select-none rounded-[38px] relative overflow-hidden shadow-2xl">
-      {/* Top Bar with Name Customizer */}
-      <div className="flex justify-between items-center text-xs text-[#a1d1bd] z-10 pb-2 border-b border-[#414945]/30">
+    <div className="w-full h-full min-h-[680px] bg-[#0c0f0d] text-[#ededec] flex flex-col justify-between p-5 select-none rounded-[32px] relative overflow-hidden shadow-2xl border border-white/[0.08]">
+      {/* Top Bar with Name Customizer (Minimalist Editorial) */}
+      <div className="flex justify-between items-center text-xs text-[#a1d1bd] z-10 pb-2 border-b border-white/[0.08]">
         <div className="flex items-center gap-2">
-          <span className="font-semibold font-['Space_Grotesk'] text-[#e3e2e0]">
-            {name} AI Voice
+          <span className="font-semibold font-['Space_Grotesk'] text-[#ededec]">
+            {name} AI Assistant
           </span>
           <button
             onClick={() => setIsEditingName(!isEditingName)}
-            className="px-2 py-0.5 rounded-full bg-[#1f201e] border border-[#e9c349]/40 text-[#e9c349] text-[10px] font-bold flex items-center gap-1 hover:brightness-110 active:scale-95 transition-all cursor-pointer"
+            className="px-2 py-0.5 rounded-full minimal-btn-secondary text-[#e9c349] text-[9px] font-mono flex items-center gap-1 hover:brightness-110 active:scale-95 transition-all cursor-pointer"
             title="Change voice assistant name"
           >
             <span className="material-symbols-outlined text-[12px]">edit</span>
@@ -619,7 +619,7 @@ export function Screen13VoiceAssistant({
         </div>
         <button
           onClick={() => onNavigate?.(6)}
-          className="text-[#e9c349] hover:underline flex items-center gap-1 font-semibold text-xs cursor-pointer"
+          className="text-[#e9c349] hover:underline flex items-center gap-1 font-semibold text-xs cursor-pointer font-mono"
         >
           Daily Schedule ›
         </button>
@@ -627,14 +627,14 @@ export function Screen13VoiceAssistant({
 
       {/* Name Customization Drawer / Modal */}
       {isEditingName && (
-        <div className="p-3 bg-[#121412]/95 border border-[#e9c349]/50 rounded-2xl shadow-2xl z-20 space-y-2.5 my-2">
+        <div className="p-3 minimal-card rounded-2xl shadow-2xl z-20 space-y-2.5 my-2 border border-white/[0.12]">
           <div className="flex justify-between items-center">
-            <span className="text-[10px] uppercase font-bold text-[#e9c349] tracking-wider">
+            <span className="text-[9px] uppercase font-mono font-bold text-[#e9c349] tracking-wider">
               Change Assistant Name
             </span>
             <button
               onClick={() => setIsEditingName(false)}
-              className="text-[#8a938e] hover:text-white text-xs"
+              className="text-[#8a938e] hover:text-white text-xs cursor-pointer"
             >
               ✕
             </button>
@@ -645,26 +645,26 @@ export function Screen13VoiceAssistant({
               value={customNameInput}
               onChange={(e) => setCustomNameInput(e.target.value)}
               placeholder="e.g. Jarvis, Friday, Aria..."
-              className="flex-1 bg-[#1f201e] border border-[#414945]/50 rounded-xl px-3 py-1.5 text-xs text-white outline-none focus:border-[#e9c349]"
+              className="flex-1 bg-[#161a17] border border-white/[0.12] rounded-xl px-3 py-1.5 text-xs text-white outline-none focus:border-[#e9c349]"
             />
             <button
               onClick={() => handleSaveAssistantName(customNameInput)}
-              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#e9c349]/60 text-[#e9c349] font-bold text-xs cursor-pointer active:scale-95 transition-all"
+              className="px-3 py-1.5 rounded-xl minimal-btn-primary text-xs cursor-pointer active:scale-95 transition-all"
             >
               Save
             </button>
           </div>
           {/* Quick Preset Names */}
           <div className="flex items-center gap-1.5 flex-wrap pt-1">
-            <span className="text-[10px] text-[#8a938e]">Presets:</span>
+            <span className="text-[10px] text-[#8a938e] font-mono">Presets:</span>
             {['Nova', 'Jarvis', 'Aria', 'Friday', 'Atlas', 'Gemini'].map((preset) => (
               <button
                 key={preset}
                 onClick={() => handleSaveAssistantName(preset)}
-                className={`text-[10px] px-2 py-0.5 rounded-full border transition-all cursor-pointer ${
+                className={`text-[10px] px-2 py-0.5 rounded-full border transition-all cursor-pointer font-mono ${
                   name === preset
                     ? 'bg-[#e9c349] text-gray-950 font-bold border-[#e9c349]'
-                    : 'bg-[#1f201e] text-[#c0c8c3] border-[#414945]/30 hover:border-[#a1d1bd]'
+                    : 'bg-[#161a17] text-[#c0c8c3] border-white/[0.08] hover:border-[#a1d1bd]'
                 }`}
               >
                 {preset}
@@ -674,47 +674,47 @@ export function Screen13VoiceAssistant({
         </div>
       )}
 
-      {/* Central Visualizer */}
+      {/* Central Visualizer (20% Liquid Glass Hero Orb) */}
       <div className="my-auto flex flex-col items-center text-center z-10 space-y-3">
-        <span className="text-[10px] uppercase tracking-widest text-[#e9c349] font-bold bg-[#0e3e30] px-3 py-1 rounded-full border border-[#e9c349]/30">
-          NIMORA VOICE INTELLIGENCE
+        <span className="text-[9px] uppercase font-mono tracking-widest text-[#e9c349] font-medium bg-[#161a17] px-3 py-1 rounded-full border border-white/[0.08]">
+          VOICE INTELLIGENCE
         </span>
 
-        <h3 className="text-base font-bold text-[#e3e2e0] font-['Space_Grotesk'] max-w-[280px]">
+        <h3 className="text-base font-semibold text-[#ededec] font-['Space_Grotesk'] max-w-[280px]">
           {statusMessage}
         </h3>
 
         {transcript && (
-          <div className="glass-card specular-border p-3 rounded-2xl max-w-[280px] text-xs text-[#a1d1bd] italic shadow-sm">
+          <div className="minimal-card p-3 rounded-xl max-w-[280px] text-xs text-[#a1d1bd] italic border border-white/[0.10]">
             &ldquo;{transcript}&rdquo;
           </div>
         )}
 
         {/* Created Task Confirmation Card */}
         {createdTask && (
-          <div className="glass-card specular-border p-3.5 rounded-2xl max-w-[300px] w-full border-2 border-[#e9c349]/70 bg-[#0e3e30]/90 text-left shadow-2xl">
-            <div className="flex items-center justify-between text-[10px] text-[#e9c349] font-bold">
+          <div className="minimal-card p-3.5 rounded-2xl max-w-[310px] w-full border border-white/20 text-left shadow-2xl relative overflow-hidden">
+            <div className="flex items-center justify-between text-[9px] font-mono text-[#e9c349] font-semibold">
               <span className="flex items-center gap-1">
                 <span className="material-symbols-outlined text-[14px]">check_circle</span>
-                TASK ADDED TO SCHEDULE
+                TASK ADDED
               </span>
-              <span className="bg-[#e9c349]/20 px-1.5 py-0.5 rounded text-[#e9c349] uppercase">
+              <span className="bg-[#1b201d] px-1.5 py-0.5 rounded text-[#e9c349] uppercase border border-white/[0.06]">
                 {createdTask.startTime}
               </span>
             </div>
-            <h4 className="font-bold text-sm text-[#e3e2e0] mt-1.5">
+            <h4 className="font-semibold text-sm text-[#ededec] mt-1.5">
               {createdTask.title}
             </h4>
-            <p className="text-[11px] text-[#a1d1bd] mt-0.5">
+            <p className="text-[11px] text-[#9b9f9c] mt-0.5">
               {createdTask.subtitle}
             </p>
-            <div className="flex items-center gap-2 mt-3 pt-2.5 border-t border-[#414945]/40">
+            <div className="flex items-center gap-2 mt-3 pt-2.5 border-t border-white/[0.08]">
               <button
                 type="button"
                 onClick={() => onNavigate?.(6)}
-                className="flex-1 py-1.5 px-3 rounded-xl bg-gradient-to-r from-[#e9c349] to-[#af8d11] text-gray-950 text-xs font-bold text-center flex items-center justify-center gap-1 shadow-md hover:brightness-105 active:scale-95 transition-all cursor-pointer"
+                className="flex-1 py-1.5 px-3 rounded-lg minimal-btn-primary text-xs font-semibold text-center flex items-center justify-center gap-1 active:scale-95 transition-all cursor-pointer"
               >
-                <span>View in Schedule</span>
+                <span>View Schedule</span>
                 <span>›</span>
               </button>
               {onDeleteTask && (
@@ -728,7 +728,7 @@ export function Screen13VoiceAssistant({
                       speakFeedback('Task deleted.');
                     }
                   }}
-                  className="py-1.5 px-2.5 rounded-xl bg-rose-950/40 border border-rose-500/40 text-rose-400 hover:bg-rose-900/40 text-xs font-semibold cursor-pointer active:scale-95 transition-all flex items-center gap-1"
+                  className="py-1.5 px-2.5 rounded-lg bg-rose-950/40 border border-rose-500/30 text-rose-300 text-xs font-medium cursor-pointer active:scale-95 transition-all flex items-center gap-1"
                   title="Delete this task"
                 >
                   <span className="material-symbols-outlined text-[14px]">delete</span>
@@ -741,24 +741,20 @@ export function Screen13VoiceAssistant({
                   setCreatedTask(null);
                   setStatusMessage(`Tap microphone to speak to ${name}`);
                 }}
-                className="py-1.5 px-2.5 rounded-xl bg-[#1f201e] border border-[#414945]/40 text-[#c0c8c3] hover:text-white text-xs font-semibold cursor-pointer active:scale-95 transition-all"
+                className="py-1.5 px-2.5 rounded-lg minimal-btn-secondary text-xs font-medium cursor-pointer active:scale-95 transition-all"
               >
-                + Next
+                Next
               </button>
             </div>
           </div>
         )}
 
-        {/* Audio Wave Visuals & Mic Button */}
+        {/* Audio Wave Visuals & Liquid Glass Mic Button */}
         <div className="relative w-40 h-40 flex items-center justify-center my-2">
           <div
-            className={`absolute inset-0 rounded-full bg-[#10B981]/15 blur-2xl ${
+            className={`absolute inset-0 rounded-full bg-[#4edea3]/10 blur-2xl ${
               isRecording ? 'animate-ping' : 'animate-pulse'
             }`}
-          />
-          <div
-            className="absolute inset-4 rounded-full border border-[#e9c349]/30 opacity-40 animate-spin"
-            style={{ animationDuration: '8s' }}
           />
 
           {/* Sound Wave Bars */}
@@ -766,7 +762,7 @@ export function Screen13VoiceAssistant({
             {[35, 65, 95, 55, 85, 45, 75, 50, 30].map((h, i) => (
               <div
                 key={i}
-                className="w-1.5 rounded-full bg-gradient-to-t from-[#10B981] to-[#e9c349] transition-all"
+                className="w-1.5 rounded-full bg-gradient-to-t from-[#4edea3] to-[#e9c349] transition-all"
                 style={{
                   height: isRecording ? `${h}%` : '20%',
                   transitionDuration: '300ms',
@@ -775,29 +771,29 @@ export function Screen13VoiceAssistant({
             ))}
           </div>
 
-          {/* Center Mic Button */}
+          {/* Center Mic Button (Liquid Glass Hero Orb) */}
           <button
             onClick={toggleRecording}
-            className={`absolute w-20 h-20 rounded-full flex items-center justify-center text-3xl shadow-2xl transition-all cursor-pointer ${
+            className={`absolute w-20 h-20 rounded-full flex items-center justify-center text-3xl transition-all cursor-pointer ${
               isRecording
-                ? 'bg-rose-500 text-white scale-110 shadow-rose-900/80 animate-pulse'
-                : 'bg-gradient-to-tr from-[#0e3e30] to-[#0A2E24] border-2 border-[#e9c349] text-[#e9c349] hover:scale-105 active:scale-95 shadow-[#022C22]'
+                ? 'bg-rose-500 text-white scale-110 shadow-[0_0_30px_rgba(244,63,94,0.6)] animate-pulse'
+                : 'liquid-glass-pill border-2 border-white/40 text-[#e9c349] hover:scale-105 active:scale-95 shadow-[0_0_36px_rgba(78,222,163,0.25)]'
             }`}
           >
-            <span className="material-symbols-outlined text-[32px]">
+            <span className="material-symbols-outlined text-[30px]">
               {isRecording ? 'mic' : 'mic_none'}
             </span>
           </button>
         </div>
 
-        <p className="text-[10px] text-[#c0c8c3]">
-          {isRecording ? `Tap mic to finish speaking to ${name}` : `Tap mic to speak or use shortcuts`}
+        <p className="text-[10px] text-[#8a938e] font-mono">
+          {isRecording ? `Tap mic to finish speaking to ${name}` : `Tap mic to speak or select a command below`}
         </p>
 
-        {/* Quick Voice Shortcuts */}
-        <div className="glass-card specular-border rounded-2xl p-3 max-w-[300px] text-left backdrop-blur space-y-1.5 border border-[#414945]/30">
-          <p className="text-[10px] text-[#e9c349] uppercase font-bold tracking-wider font-['Space_Grotesk']">
-            Quick commands for {name}:
+        {/* Quick Voice Shortcuts (Minimalist Bento Card) */}
+        <div className="minimal-card rounded-xl p-3 max-w-[300px] text-left space-y-1.5 border border-white/[0.08]">
+          <p className="text-[9px] font-mono text-[#e9c349] uppercase font-bold tracking-wider">
+            Quick commands:
           </p>
           <button
             onClick={() => processVoiceCommand('Schedule site inspection with Arun at 10 AM')}
@@ -820,26 +816,26 @@ export function Screen13VoiceAssistant({
         </div>
       </div>
 
-      {/* Typed Command Fallback Input */}
+      {/* Typed Command Fallback Input (Liquid Glass Dock) */}
       <form onSubmit={handleSendTypedCommand} className="pt-2 z-10 space-y-1">
-        <div className="flex items-center gap-2 p-1.5 bg-[#1f201e]/80 border border-[#414945]/40 rounded-xl">
+        <div className="flex items-center gap-2 p-1.5 liquid-glass-pill rounded-xl border border-white/20">
           <input
             type="text"
             value={typedInput}
             onChange={(e) => setTypedInput(e.target.value)}
             placeholder={`Or type a command for ${name}...`}
-            className="flex-1 bg-transparent px-2 py-1 text-xs text-[#e3e2e0] outline-none placeholder-[#8a938e]"
+            className="flex-1 bg-transparent px-2 py-1 text-xs text-[#ededec] outline-none placeholder-[#8a938e]"
           />
           <button
             type="submit"
             disabled={!typedInput.trim()}
-            className="p-1.5 rounded-lg bg-[#0e3e30] text-[#e9c349] hover:brightness-110 disabled:opacity-40 cursor-pointer flex items-center justify-center transition-all"
+            className="p-1.5 rounded-lg minimal-btn-primary text-xs disabled:opacity-30 cursor-pointer flex items-center justify-center transition-all"
           >
             <span className="material-symbols-outlined text-[16px]">send</span>
           </button>
         </div>
-        <p className="text-[10px] text-[#8a938e] text-center">
-          Voice Speech-to-Text & spoken voice feedback powered by {name}
+        <p className="text-[9px] font-mono text-[#8a938e] text-center">
+          Spoken voice intelligence powered by {name} & Vertex AI
         </p>
       </form>
     </div>
