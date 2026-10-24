@@ -2,11 +2,11 @@
 
 A modern, production-grade Daily Planner and MCP (Model Context Protocol) Hub built with **Next.js (App Router)**, **TypeScript**, and **Tailwind CSS**.
 
-- **Production URL**: [https://daily-planner-ten-beta.vercel.app](https://daily-planner-ten-beta.vercel.app)
+- **Production URL**: [https://nimora-ai.vercel.app](https://nimora-ai.vercel.app)
 - **GitHub Repository**: [https://github.com/sudarshaancreations-debug/daily-planner-](https://github.com/sudarshaancreations-debug/daily-planner-)
-- **Health Check**: `GET https://daily-planner-ten-beta.vercel.app/api/health`
-- **MCP Hub (16 Tools)**: `POST https://daily-planner-ten-beta.vercel.app/api/mcp`
-- **Payments Gateway**: `https://daily-planner-ten-beta.vercel.app/payments` (Google Pay & Apple Pay via Web Payment Request API)
+- **Health Check**: `GET https://nimora-ai.vercel.app/api/health`
+- **MCP Hub (16 Tools)**: `POST https://nimora-ai.vercel.app/api/mcp`
+- **Payments Gateway**: `https://nimora-ai.vercel.app/payments` (Google Pay & Apple Pay via Web Payment Request API)
 
 ---
 
