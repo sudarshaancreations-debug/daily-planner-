@@ -1026,7 +1026,6 @@ export function Screen08DailyPlanner({
 }: PlanningProps) {
   const [selectedDate, setSelectedDate] = useState('2026-10-24');
   const [todayIso, setTodayIso] = useState('2026-10-24');
-  const [viewMode, setViewMode] = useState<'timeline' | 'list'>('timeline');
   const [isAnyDoMomentOpen, setIsAnyDoMomentOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [showCompletedList, setShowCompletedList] = useState(true);
@@ -1214,127 +1213,19 @@ export function Screen08DailyPlanner({
               <span>+ Plan Task for this Day</span>
             </button>
           </div>
-        ) : viewMode === 'timeline' ? (
-          /* MORGEN TIMELINE VIEW WITH SMART FOCUS BUFFERS */
-          <div className="space-y-1 relative">
-            {orderedTasks.map((task, idx) => (
-              <React.Fragment key={task.id}>
-                {/* Morgen Timeline Hour Node & Task Card */}
-                <div className="relative flex items-start gap-2.5">
-                  <div className="w-12 pt-4 text-right shrink-0">
-                    <span className="font-mono text-[9px] font-semibold text-purple-300/70 block">
-                      {task.startTime.split(' ')[0]}
-                    </span>
-                    <span className="font-mono text-[8px] text-purple-400/50 block">
-                      {task.startTime.split(' ')[1]}
-                    </span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <SwipeableScheduleCard
-                      task={task}
-                      borderColors={borderColors}
-                      onToggleTask={onToggleTask}
-                      onSelectTask={onSelectTask}
-                      onDeleteTask={onDeleteTask}
-                      onNavigate={onNavigate}
-                    />
-                  </div>
-                </div>
-
-                {/* Morgen Smart Free Focus Buffer detected between scheduled blocks */}
-                {idx === 0 && (
-                  <div className="pl-14 pr-1">
-                    <MorgenFocusBuffer
-                      durationText="30m"
-                      onQuickAdd={() => handleQuickAddSlot('09:30 AM')}
-                    />
-                  </div>
-                )}
-                {idx === 2 && (
-                  <div className="pl-14 pr-1">
-                    <MorgenFocusBuffer
-                      durationText="1h 00m"
-                      onQuickAdd={() => handleQuickAddSlot('01:00 PM')}
-                    />
-                  </div>
-                )}
-              </React.Fragment>
-            ))}
-          </div>
         ) : (
-          /* ANY.DO SMART LIST VIEW */
-          <div className="space-y-3">
-            {/* Priority Focus Section */}
-            {priorityTasks.length > 0 && (
-              <div>
-                <h3 className="text-[10px] font-mono uppercase tracking-wider text-[#bef264] font-semibold mb-1 flex items-center gap-1.5">
-                  <span>⚡</span>
-                  <span>Priority Focus ({priorityTasks.length})</span>
-                </h3>
-                {priorityTasks.map((task) => (
-                  <SwipeableScheduleCard
-                    key={task.id}
-                    task={task}
-                    borderColors={borderColors}
-                    onToggleTask={onToggleTask}
-                    onSelectTask={onSelectTask}
-                    onDeleteTask={onDeleteTask}
-                    onNavigate={onNavigate}
-                  />
-                ))}
-              </div>
-            )}
-
-            {/* Scheduled Agenda Section */}
-            <div>
-              <h3 className="text-[10px] font-mono uppercase tracking-wider text-[#c084fc] font-semibold mb-1 flex items-center gap-1.5">
-                <span>🗓</span>
-                <span>Scheduled Agenda ({agendaTasks.length})</span>
-              </h3>
-              {agendaTasks.map((task) => (
-                <SwipeableScheduleCard
-                  key={task.id}
-                  task={task}
-                  borderColors={borderColors}
-                  onToggleTask={onToggleTask}
-                  onSelectTask={onSelectTask}
-                  onDeleteTask={onDeleteTask}
-                  onNavigate={onNavigate}
-                />
-              ))}
-            </div>
-
-            {/* Completed Accordion */}
-            {completedTasks.length > 0 && (
-              <div className="pt-2 border-t border-purple-500/15">
-                <button
-                  type="button"
-                  onClick={() => setShowCompletedList(!showCompletedList)}
-                  className="w-full flex items-center justify-between text-[10px] font-mono uppercase text-purple-300/60 hover:text-white py-1 cursor-pointer"
-                >
-                  <span className="flex items-center gap-1">
-                    <span>✓</span>
-                    <span>Completed Today ({completedTasks.length})</span>
-                  </span>
-                  <span>{showCompletedList ? '▲' : '▼'}</span>
-                </button>
-                {showCompletedList && (
-                  <div className="space-y-1 mt-1 opacity-75">
-                    {completedTasks.map((task) => (
-                      <SwipeableScheduleCard
-                        key={task.id}
-                        task={task}
-                        borderColors={borderColors}
-                        onToggleTask={onToggleTask}
-                        onSelectTask={onSelectTask}
-                        onDeleteTask={onDeleteTask}
-                        onNavigate={onNavigate}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+          <div className="space-y-2 relative">
+            {orderedTasks.map((task) => (
+              <SwipeableScheduleCard
+                key={task.id}
+                task={task}
+                borderColors={borderColors}
+                onToggleTask={onToggleTask}
+                onSelectTask={onSelectTask}
+                onDeleteTask={onDeleteTask}
+                onNavigate={onNavigate}
+              />
+            ))}
           </div>
         )}
       </div>
