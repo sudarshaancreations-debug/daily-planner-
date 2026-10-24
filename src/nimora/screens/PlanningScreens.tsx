@@ -375,7 +375,7 @@ export function AnyDoQuickAddBar({ onAddTask, selectedDate }: AnyDoQuickAddBarPr
       priority,
       status: 'upcoming',
       color: priority === 'high' ? 'coral' : 'blue',
-      notes: 'Quick added via Any.do express bar',
+      notes: 'Quick added via express capture',
     };
 
     onAddTask?.(newTask);
@@ -516,7 +516,7 @@ export function AnyDoMomentModal({
                 You&apos;re All Planned!
               </h3>
               <p className="text-xs text-purple-200/80 mt-1 max-w-xs mx-auto">
-                Any.do Moment complete. Your day is streamlined and prioritized for high productivity.
+                Focus Ritual complete. Your day is streamlined and prioritized for high productivity.
               </p>
             </div>
             <button
@@ -532,7 +532,7 @@ export function AnyDoMomentModal({
             {/* Header with Step Counter */}
             <div className="flex items-center justify-between">
               <span className="px-2.5 py-0.5 rounded-full text-[9px] font-mono uppercase tracking-wider bg-purple-500/20 text-[#bef264] border border-[#bef264]/30 font-semibold flex items-center gap-1">
-                <span>⚡</span> ANY.DO MOMENT
+                <span>⚡</span> NIMORA FOCUS RITUAL
               </span>
               <span className="text-[10px] font-mono text-purple-300/70">
                 {currentIndex + 1} of {activeTasks.length}
@@ -1060,7 +1060,7 @@ export function Screen08DailyPlanner({
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
       navigator.clipboard.writeText(bookingUrl).catch(() => {});
     }
-    showToast('✓ Morgen Booking Link copied! Share with clients.');
+    showToast('✓ Availability Link copied! Share with clients.');
   };
 
   const handleQuickAddSlot = (slotTime: string) => {
@@ -1127,7 +1127,7 @@ export function Screen08DailyPlanner({
             Planner & Agenda
           </h1>
           <p className="text-xs font-mono text-[#bef264] font-medium">
-            {viewMode === 'timeline' ? 'Morgen Timeline' : 'Any.do Smart List'}
+            Daily Focus Timeline
           </p>
         </div>
 
@@ -1135,7 +1135,7 @@ export function Screen08DailyPlanner({
           <button
             onClick={() => setIsAnyDoMomentOpen(true)}
             className="minimal-btn-primary h-8 px-3 text-xs font-bold shadow-[0_0_12px_rgba(190,242,100,0.3)] cursor-pointer"
-            title="Start Any.do Moment daily planning"
+            title="Start daily focus ritual"
           >
             <span>⚡</span>
             <span>Plan Day</span>
@@ -1143,7 +1143,7 @@ export function Screen08DailyPlanner({
           <button
             onClick={handleShareAvailability}
             className="w-8 h-8 rounded-lg minimal-btn-secondary text-[#38bdf8] hover:text-[#bef264] flex items-center justify-center text-xs transition-all active:scale-95 cursor-pointer"
-            title="Share Morgen Availability Link"
+            title="Share booking & availability link"
           >
             <span className="material-symbols-outlined text-base">share</span>
           </button>
@@ -1164,7 +1164,7 @@ export function Screen08DailyPlanner({
         </div>
       </div>
 
-      {/* Morgen 7-Day Interactive Week Strip */}
+      {/* 90-Day Interactive Ribbon Strip */}
       <div className="px-4 pt-2.5">
         <MorgenWeekStrip
           selectedDate={selectedDate}
@@ -1175,36 +1175,8 @@ export function Screen08DailyPlanner({
         />
       </div>
 
-      {/* Dual View Mode Toggle: Morgen Timeline vs Any.do Smart List */}
+      {/* Express Inline Add Bar */}
       <div className="px-4 pt-2">
-        <div className="flex items-center gap-1 p-1 bg-[#171330] rounded-xl border border-purple-500/20 text-xs">
-          <button
-            onClick={() => { setViewMode('timeline'); haptics.tick(); }}
-            className={`flex-1 py-1 px-2 rounded-lg font-mono text-[9px] tracking-wider uppercase transition-all flex items-center justify-center gap-1 cursor-pointer ${
-              viewMode === 'timeline'
-                ? 'bg-[#251e4d] text-[#bef264] border border-[#bef264]/40 font-bold shadow-sm'
-                : 'text-purple-300/60 hover:text-white'
-            }`}
-          >
-            <span className="material-symbols-outlined text-[14px]">view_timeline</span>
-            <span>Morgen Timeline</span>
-          </button>
-          <button
-            onClick={() => { setViewMode('list'); haptics.tick(); }}
-            className={`flex-1 py-1 px-2 rounded-lg font-mono text-[9px] tracking-wider uppercase transition-all flex items-center justify-center gap-1 cursor-pointer ${
-              viewMode === 'list'
-                ? 'bg-[#251e4d] text-[#bef264] border border-[#bef264]/40 font-bold shadow-sm'
-                : 'text-purple-300/60 hover:text-white'
-            }`}
-          >
-            <span className="material-symbols-outlined text-[14px]">checklist</span>
-            <span>Any.do List</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Any.do Express Inline Add Bar */}
-      <div className="px-4 pt-1">
         <AnyDoQuickAddBar onAddTask={onAddTask} selectedDate={selectedDate} />
       </div>
 

@@ -252,7 +252,7 @@ export default function NimoraApp() {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
       navigator.clipboard.writeText(bookingUrl).catch(() => {});
     }
-    showGlobalToast('✓ Morgen Booking Link copied! Share with clients.');
+    showGlobalToast('✓ Availability Link copied! Share with clients.');
   };
 
   // True persistent storage across reloads and mobile sessions
@@ -559,12 +559,12 @@ export default function NimoraApp() {
                 </div>
               </div>
 
-              {/* Any.do + Morgen Quick Actions - Aligned with Header Baseline */}
+              {/* Nimora Quick Actions - Aligned with Header Baseline */}
               <div className="flex items-center gap-1.5 pt-1 shrink-0">
                 <button
                   onClick={() => setIsAnyDoMomentOpen(true)}
                   className="px-2.5 py-1.5 rounded-xl bg-[#bef264] text-[#0e0b1f] font-mono text-[10px] font-bold tracking-wider hover:brightness-110 active:scale-95 transition-all flex items-center gap-1 cursor-pointer shadow-[0_0_12px_rgba(190,242,100,0.3)]"
-                  title="Start Any.do Moment"
+                  title="Start Daily Focus Ritual"
                 >
                   <span>⚡</span>
                   <span>Plan Day</span>
@@ -573,7 +573,7 @@ export default function NimoraApp() {
                   onClick={handleShareAvailability}
                   aria-label="Share Booking Slots"
                   className="p-2 rounded-lg minimal-btn-secondary text-purple-200 hover:text-[#bef264] active:scale-95 transition-all cursor-pointer"
-                  title="Share Morgen Booking Link"
+                  title="Share Booking & Availability Link"
                 >
                   <span className="material-symbols-outlined text-[17px]">share</span>
                 </button>
@@ -686,12 +686,12 @@ export default function NimoraApp() {
             </section>
           )}
 
-          {/* Any.do Express Quick Add Inline Bar */}
+          {/* Express Quick Add Inline Bar */}
           <section>
             <div className="flex items-center justify-between mb-1">
               <span className="text-xs font-mono text-purple-200/80 font-semibold flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#bef264]"></span>
-                Any.do Fast Capture
+                Quick Capture
               </span>
               <span className="text-[10px] font-mono text-[#bef264]">Instant Save</span>
             </div>
@@ -751,7 +751,7 @@ export default function NimoraApp() {
                     No tasks scheduled for {formattedSelectedDate}
                   </p>
                   <p className="text-xs text-purple-300/60 mt-0.5 font-mono">
-                    Type above in Any.do Fast Capture or click below to schedule
+                    Type above in Quick Capture or click below to schedule
                   </p>
                 </div>
                 <button
