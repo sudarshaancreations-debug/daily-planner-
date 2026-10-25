@@ -33,9 +33,9 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
   });
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#0e0b1f] text-[#f8fafc] flex flex-col justify-between select-none rounded-[32px] overflow-hidden border border-white/[0.08]">
+    <div className="w-full h-full min-h-[680px] minimal-card text-[#f8fafc] flex flex-col justify-between select-none rounded-[32px] overflow-hidden border border-white/[0.08]">
       {/* Top Header */}
-      <div className="p-4 bg-[#0e120f] border-b border-white/[0.08]">
+      <div className="p-4 minimal-card-subtle border-b border-purple-500/20">
         <div className="flex justify-between items-center mb-3">
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-[#bef264] text-[20px]">group</span>
@@ -51,7 +51,7 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search clients, architects, vendors..."
-            className="w-full bg-[#151916] border border-white/[0.08] rounded-xl pl-9 pr-3 py-2 text-xs text-[#f8fafc] outline-none focus:border-[#bef264] placeholder-[#8a938e]"
+            className="w-full bg-[#171330] border border-purple-500/20 rounded-xl pl-9 pr-3 py-2 text-xs text-[#f8fafc] outline-none focus:border-[#bef264] placeholder-[#8a938e]"
           />
           <span className="material-symbols-outlined absolute left-2.5 top-2.5 text-[18px] text-[#8a938e]">search</span>
         </div>
@@ -64,8 +64,8 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
               onClick={() => setFilter(cat)}
               className={`px-3 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer ${
                 filter === cat
-                  ? 'bg-[#1e2420] text-[#bef264] border border-white/[0.15]'
-                  : 'minimal-btn-secondary text-[#8a938e] hover:text-[#f8fafc]'
+                  ? 'filter-pill-active'
+                  : 'filter-pill-inactive'
               }`}
             >
               {cat === 'all' ? 'All' : `${cat}s`}
@@ -129,9 +129,9 @@ export function Screen12ContactDetails({ contacts, onNavigate, selectedContact }
   const [activeTab, setActiveTab] = useState<'overview' | 'history' | 'followups' | 'notes'>('history');
 
   return (
-    <div className="w-full h-full min-h-[680px] bg-[#0e0b1f] text-[#f8fafc] flex flex-col justify-between select-none rounded-[32px] overflow-hidden border border-white/[0.08]">
+    <div className="w-full h-full min-h-[680px] minimal-card text-[#f8fafc] flex flex-col justify-between select-none rounded-[32px] overflow-hidden border border-white/[0.08]">
       {/* Header Profile Card */}
-      <div className="p-4 bg-[#0e120f] border-b border-white/[0.08]">
+      <div className="p-4 minimal-card-subtle border-b border-purple-500/20">
         <div className="flex justify-between items-center mb-3">
           <button onClick={() => onNavigate?.(9)} className="text-[#9b9f9c] hover:text-[#f8fafc] text-xs font-mono font-medium flex items-center gap-1 cursor-pointer">
             ‹ Contacts
@@ -177,7 +177,7 @@ export function Screen12ContactDetails({ contacts, onNavigate, selectedContact }
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-[#334155]/30 bg-[#0e0b1f] px-4 text-xs font-semibold">
+      <div className="flex border-b border-[#334155]/30 minimal-card-subtle px-4 text-xs font-semibold">
         {(['overview', 'history', 'followups', 'notes'] as const).map((tab) => (
           <button
             key={tab}
