@@ -175,12 +175,12 @@ function ThumbSliderNav({ activeTab, onSelectTab }: ThumbSliderNavProps) {
                   aria-label={tab.label}
                   aria-current={isSlotActive ? 'page' : undefined}
                   className={`w-full h-full flex flex-col items-center justify-center transition-all active:scale-95 cursor-pointer rounded-full ${
-                    isSlotActive ? 'text-[#bef264]' : 'text-purple-300/60 hover:text-purple-200'
+                    isSlotActive ? 'nav-slot-active text-[#bef264]' : 'nav-slot-inactive text-purple-300/60 hover:text-purple-200'
                   }`}
                 >
                   <span
                     className={`material-symbols-outlined text-[22px] transition-all duration-150 ${
-                      isSlotActive ? 'text-[#bef264] drop-shadow-[0_0_8px_rgba(190,242,100,0.5)] scale-105' : 'text-purple-300/60'
+                      isSlotActive ? 'nav-icon-active text-[#bef264] drop-shadow-[0_0_8px_rgba(190,242,100,0.5)] scale-105' : 'nav-icon-inactive text-purple-300/60'
                     }`}
                     style={{
                       fontVariationSettings: isSlotActive ? "'FILL' 1" : "'FILL' 0",
@@ -190,7 +190,7 @@ function ThumbSliderNav({ activeTab, onSelectTab }: ThumbSliderNavProps) {
                   </span>
                   <span
                     className={`text-[9px] font-mono tracking-tight uppercase mt-0.5 transition-colors ${
-                      isSlotActive ? 'text-[#bef264] font-extrabold underline decoration-2 underline-offset-2' : 'text-purple-300/60 font-medium'
+                      isSlotActive ? 'nav-label-active text-[#bef264] font-extrabold underline decoration-2 underline-offset-2' : 'nav-label-inactive text-purple-300/60 font-medium'
                     }`}
                   >
                     {tab.label}

@@ -494,15 +494,46 @@
 }
 
 [data-theme="day"] .thumb-slider-track {
-  background: rgba(241, 245, 249, 0.96) !important;
-  border: 1px solid rgba(226, 232, 240, 0.9) !important;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05) !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 1px solid rgba(203, 213, 225, 0.9) !important;
+  box-shadow: 0 12px 36px -4px rgba(15, 23, 42, 0.12) !important;
 }
 
 [data-theme="day"] .thumb-slider-capsule {
-  background: #ffffff !important;
-  border: 1px solid rgba(203, 213, 225, 0.9) !important;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08) !important;
+  background: #0f172a !important; /* Premium Obsidian Charcoal Pill */
+  border: 1px solid rgba(15, 23, 42, 0.25) !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.22) !important;
+}
+
+/* Active tab inside dark capsule in Day Mode */
+[data-theme="day"] .nav-icon-active {
+  color: #ffffff !important; /* Crisp white icon */
+  filter: none !important;
+  transform: scale(1.08) !important;
+}
+
+[data-theme="day"] .nav-label-active {
+  color: #bef264 !important; /* Solar lime - sharp and vibrant on dark obsidian */
+  text-decoration: none !important;
+  font-weight: 800 !important;
+}
+
+/* Inactive tabs on light track in Day Mode */
+[data-theme="day"] .nav-icon-inactive {
+  color: #475569 !important; /* Slate 600 - clearly visible */
+}
+
+[data-theme="day"] .nav-slot-inactive:hover .nav-icon-inactive {
+  color: #0f172a !important;
+}
+
+[data-theme="day"] .nav-label-inactive {
+  color: #475569 !important; /* Slate 600 - clearly readable */
+  font-weight: 600 !important;
+}
+
+[data-theme="day"] .nav-slot-inactive:hover .nav-label-inactive {
+  color: #0f172a !important;
 }
 
 /* 8. Day Mode Typography: Warm, legible, high-contrast, zero eye fatigue */
