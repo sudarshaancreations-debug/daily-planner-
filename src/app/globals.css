@@ -519,20 +519,21 @@
 }
 
 /* Inactive tabs on light track in Day Mode */
+[data-theme="day"] .thumb-slider-track .nav-icon-inactive,
+[data-theme="day"] .nav-slot-inactive .nav-icon-inactive,
 [data-theme="day"] .nav-icon-inactive {
-  color: #475569 !important; /* Slate 600 - clearly visible */
+  color: #475569 !important; /* Slate 600 - dark, rich, clearly visible */
 }
 
-[data-theme="day"] .nav-slot-inactive:hover .nav-icon-inactive {
-  color: #0f172a !important;
-}
-
+[data-theme="day"] .thumb-slider-track .nav-label-inactive,
+[data-theme="day"] .nav-slot-inactive .nav-label-inactive,
 [data-theme="day"] .nav-label-inactive {
   color: #475569 !important; /* Slate 600 - clearly readable */
   font-weight: 600 !important;
 }
 
-[data-theme="day"] .nav-slot-inactive:hover .nav-label-inactive {
+[data-theme="day"] .thumb-slider-track .nav-slot-inactive:hover .nav-icon-inactive,
+[data-theme="day"] .thumb-slider-track .nav-slot-inactive:hover .nav-label-inactive {
   color: #0f172a !important;
 }
 
@@ -547,11 +548,9 @@
   color: #0f172a !important;
 }
 
-/* Preserve crisp white on colored circles, avatars, and dark tags */
-[data-theme="day"] .rounded-full.text-white,
-[data-theme="day"] .rounded-full span,
-[data-theme="day"] [class*="rounded-full"][class*="text-white"],
-[data-theme="day"] .filter-pill-active {
+/* Preserve crisp white on specific elements that intentionally stay dark */
+[data-theme="day"] .filter-pill-active,
+[data-theme="day"] .avatar-initials {
   color: #ffffff !important;
 }
 

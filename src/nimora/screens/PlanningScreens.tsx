@@ -1815,8 +1815,8 @@ export function Screen10TaskDetails({
             </span>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className={`w-8 h-8 rounded-full ${contact.avatarColor} text-white font-mono text-xs font-bold flex items-center justify-center`}>
-                  {contact.name[0]}
+                <div className={`w-8 h-8 rounded-full ${contact.avatarColor} font-mono text-xs font-bold flex items-center justify-center`}>
+                  <span style={{ color: '#ffffff' }} className="avatar-initials">{contact.name[0]}</span>
                 </div>
                 <div>
                   <h4 className="text-xs font-medium text-[#f8fafc]">{contact.name}</h4>

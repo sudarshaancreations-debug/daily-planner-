@@ -87,7 +87,7 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
           >
             <div className="flex items-center gap-3">
               <div className={`w-9 h-9 rounded-full ${contact.avatarColor} font-bold flex items-center justify-center text-xs shadow-sm ring-1 ring-white/10 font-['Space_Grotesk'] text-white`}>
-                <span style={{ color: '#ffffff' }} className="font-bold">{contact.name.split(' ').map((n) => n[0]).join('')}</span>
+                <span style={{ color: '#ffffff' }} className="avatar-initials font-bold">{contact.name.split(' ').map((n) => n[0]).join('')}</span>
               </div>
               <div>
                 <h4 className="text-xs font-semibold text-[#f8fafc] font-['Space_Grotesk']">{contact.name}</h4>
@@ -143,7 +143,7 @@ export function Screen12ContactDetails({ contacts, onNavigate, selectedContact }
 
         <div className="flex items-center gap-3.5 mb-4">
           <div className={`w-12 h-12 rounded-full ${contact.avatarColor} font-bold flex items-center justify-center text-sm shadow-md ring-1 ring-white/10 font-['Space_Grotesk'] text-white`}>
-            <span style={{ color: '#ffffff' }} className="font-bold">{contact.name.split(' ').map((n) => n[0]).join('')}</span>
+            <span style={{ color: '#ffffff' }} className="avatar-initials font-bold">{contact.name.split(' ').map((n) => n[0]).join('')}</span>
           </div>
           <div>
             <h3 className="text-base font-bold text-[#f8fafc] font-['Space_Grotesk']">{contact.name}</h3>
