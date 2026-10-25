@@ -796,18 +796,18 @@ export function Screen18ProfileSettings({
               haptics.warning();
               setIsDeleteModalOpen(true);
             }}
-            className="w-full p-3.5 bg-rose-950/40 border border-rose-500/30 hover:border-rose-500/60 hover:bg-rose-950/60 rounded-2xl flex items-center justify-between cursor-pointer transition-all text-left group"
+            className="w-full p-3.5 bg-rose-950/40 border border-rose-500/30 hover:border-rose-500/60 hover:bg-rose-950/60 rounded-2xl flex items-center justify-between cursor-pointer transition-all text-left group card-delete-danger"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400 group-hover:scale-105 transition-transform">
+              <div className="w-8 h-8 rounded-lg bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400 group-hover:scale-105 transition-transform danger-icon-box">
                 <span className="material-symbols-outlined text-[18px]">delete_forever</span>
               </div>
               <div>
-                <span className="text-xs font-bold text-rose-300 block">Delete All Data</span>
-                <span className="text-[10px] text-rose-200/60 font-mono">Permanently erase all tasks & local storage</span>
+                <span className="text-xs font-bold text-rose-300 block danger-title">Delete All Data</span>
+                <span className="text-[10px] text-rose-200/60 font-mono danger-sub">Permanently erase all tasks & local storage</span>
               </div>
             </div>
-            <span className="text-xs font-mono font-bold text-rose-400 group-hover:translate-x-0.5 transition-transform">Erase ›</span>
+            <span className="text-xs font-mono font-bold text-rose-400 group-hover:translate-x-0.5 transition-transform danger-action">Erase ›</span>
           </button>
 
           {/* Reset Demo Data Button */}

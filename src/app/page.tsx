@@ -562,7 +562,7 @@ export default function NimoraApp() {
               <span className="material-symbols-outlined text-[#bef264] text-[18px] shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>
                 lightbulb
               </span>
-              <p className="text-xs text-purple-200/90 italic">
+              <p className="text-xs text-purple-200/90 italic font-medium quote-text">
                 &ldquo;A focused day creates bigger opportunities.&rdquo;
               </p>
             </div>

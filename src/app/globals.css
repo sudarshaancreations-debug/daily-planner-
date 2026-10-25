@@ -300,63 +300,64 @@
 
 /* ==========================================================================
    DAY MODE THEME SYSTEM ([data-theme="day"])
-   Soft Daylight Clarity, Restful Contrast, Zero Eye Strain (Apple/Linear Style)
+   Warm Daylight Clarity, Eye-Friendly Contrast, Zero Glare (Apple/Linear Style)
    ========================================================================== */
 
 [data-theme="day"],
 [data-theme="day"] body {
-  background-color: #f8fafc !important; /* Soft daylight slate, easy on the eyes */
-  color: #0f172a !important;            /* Slate 900 for crisp, clear readability */
+  background-color: #f8fafc !important; /* Soft daylight slate, zero eye fatigue */
+  color: #0f172a !important;            /* Rich slate 900 for high-contrast clarity */
 }
 
 /* 1. Base Canvas & Container Surfaces */
-[data-theme="day"] .bg-\[\#0e0b1f\],
-[data-theme="day"] .bg-\[\#0e120f\],
-[data-theme="day"] .bg-\[\#0a0818\],
-[data-theme="day"] .bg-\[\#130f29\],
-[data-theme="day"] .bg-\[\#120e29\],
-[data-theme="day"] .bg-\[\#130e26\],
-[data-theme="day"] .bg-\[\#180c14\],
-[data-theme="day"] .bg-\[\#0C151D\] {
+[data-theme="day"] [class*="bg-\[\#0e0b1f\]"],
+[data-theme="day"] [class*="bg-\[\#0e120f\]"],
+[data-theme="day"] [class*="bg-\[\#0a0818\]"],
+[data-theme="day"] [class*="bg-\[\#130f29\]"],
+[data-theme="day"] [class*="bg-\[\#120e29\]"],
+[data-theme="day"] [class*="bg-\[\#130e26\]"],
+[data-theme="day"] [class*="bg-\[\#180c14\]"],
+[data-theme="day"] [class*="bg-\[\#0C151D\]"] {
   background-color: #f8fafc !important;
 }
 
-/* 2. Elevated Card & Panel Surfaces (Clean Soft White) */
-[data-theme="day"] .bg-\[\#171330\],
-[data-theme="day"] .bg-\[\#161a17\],
-[data-theme="day"] .bg-\[\#1a1f1b\],
-[data-theme="day"] .bg-\[\#1b201d\],
-[data-theme="day"] .bg-\[\#171b18\],
-[data-theme="day"] .bg-\[\#161a18\],
-[data-theme="day"] .bg-\[\#141815\],
-[data-theme="day"] .bg-\[\#151916\],
-[data-theme="day"] .bg-\[\#161233\],
-[data-theme="day"] .bg-\[\#0F382C\],
-[data-theme="day"] .bg-\[\#0e3e30\] {
+/* 2. Elevated Card & Panel Surfaces (Clean Crisp White with Soft Shadow) */
+[data-theme="day"] [class*="bg-\[\#171330\]"],
+[data-theme="day"] [class*="bg-\[\#161a17\]"],
+[data-theme="day"] [class*="bg-\[\#1a1f1b\]"],
+[data-theme="day"] [class*="bg-\[\#1b201d\]"],
+[data-theme="day"] [class*="bg-\[\#171b18\]"],
+[data-theme="day"] [class*="bg-\[\#161a18\]"],
+[data-theme="day"] [class*="bg-\[\#141815\]"],
+[data-theme="day"] [class*="bg-\[\#151916\]"],
+[data-theme="day"] [class*="bg-\[\#161233\]"],
+[data-theme="day"] [class*="bg-\[\#0F382C\]"],
+[data-theme="day"] [class*="bg-\[\#0e3e30\]"] {
   background-color: #ffffff !important;
-  border-color: rgba(226, 232, 240, 0.85) !important;
+  border-color: rgba(226, 232, 240, 0.9) !important;
 }
 
-/* 3. Sub-panels, Chips, & Secondary Layers */
-[data-theme="day"] .bg-\[\#1e2420\],
-[data-theme="day"] .bg-\[\#1a201c\],
-[data-theme="day"] .bg-\[\#1f1940\],
-[data-theme="day"] .bg-\[\#221b44\],
-[data-theme="day"] .bg-\[\#251e4d\],
-[data-theme="day"] .bg-\[\#2b2257\],
-[data-theme="day"] .bg-\[\#2e265c\],
-[data-theme="day"] .bg-\[\#2c2358\],
-[data-theme="day"] .bg-\[\#162540\],
-[data-theme="day"] .bg-\[\#1F2C34\],
-[data-theme="day"] .bg-\[\#182229\] {
+/* 3. Sub-panels, Chips, & Secondary Inner Containers */
+[data-theme="day"] [class*="bg-\[\#1e2420\]"],
+[data-theme="day"] [class*="bg-\[\#1a201c\]"],
+[data-theme="day"] [class*="bg-\[\#1f1940\]"],
+[data-theme="day"] [class*="bg-\[\#221b44\]"],
+[data-theme="day"] [class*="bg-\[\#251e4d\]"],
+[data-theme="day"] [class*="bg-\[\#2b2257\]"],
+[data-theme="day"] [class*="bg-\[\#2e265c\]"],
+[data-theme="day"] [class*="bg-\[\#2c2358\]"],
+[data-theme="day"] [class*="bg-\[\#162540\]"],
+[data-theme="day"] [class*="bg-\[\#1F2C34\]"],
+[data-theme="day"] [class*="bg-\[\#182229\]"],
+[data-theme="day"] [class*="bg-white\/[0\."] {
   background-color: #f1f5f9 !important;
-  border-color: rgba(226, 232, 240, 0.85) !important;
+  border-color: rgba(226, 232, 240, 0.9) !important;
 }
 
-/* 4. Cards & Components */
+/* 4. Cards & Structural Elements */
 [data-theme="day"] .minimal-card {
   background-color: #ffffff !important;
-  border: 1px solid rgba(226, 232, 240, 0.85) !important;
+  border: 1px solid rgba(226, 232, 240, 0.9) !important;
   box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.05) !important;
   color: #0f172a !important;
 }
@@ -368,26 +369,82 @@
 
 [data-theme="day"] .minimal-card-subtle {
   background-color: #f8fafc !important;
-  border: 1px solid rgba(226, 232, 240, 0.85) !important;
+  border: 1px solid rgba(226, 232, 240, 0.9) !important;
   color: #0f172a !important;
 }
 
 [data-theme="day"] .minimal-divider {
-  border-color: rgba(226, 232, 240, 0.85) !important;
+  border-color: rgba(226, 232, 240, 0.9) !important;
 }
 
-/* 5. Buttons in Day Mode */
+/* 5. Destructive & Danger Elements (Clear Soft Rose, Never Muddy) */
+[data-theme="day"] [class*="bg-rose-950"],
+[data-theme="day"] .card-delete-danger {
+  background-color: #fff1f2 !important; /* Rose 50 */
+  border-color: #fecdd3 !important;     /* Rose 200 */
+}
+
+[data-theme="day"] .card-delete-danger:hover {
+  background-color: #ffe4e6 !important;
+  border-color: #fda4af !important;
+}
+
+[data-theme="day"] .danger-icon-box {
+  background-color: #ffe4e6 !important;
+  border-color: #fecdd3 !important;
+  color: #be123c !important;
+}
+
+[data-theme="day"] .danger-title {
+  color: #9f1239 !important; /* Rose 800 */
+}
+
+[data-theme="day"] .danger-sub {
+  color: #be123c !important; /* Rose 700 */
+}
+
+[data-theme="day"] .danger-action {
+  color: #e11d48 !important;
+}
+
+[data-theme="day"] [class*="text-rose-"] {
+  color: #be123c !important; /* Rose 700 - sharp, legible red */
+}
+
+[data-theme="day"] .action-btn-delete {
+  background-color: #ffe4e6 !important; /* Rose 100 */
+  border-color: #fca5a5 !important;     /* Rose 300 */
+  color: #b91c1c !important;            /* Red 700 */
+}
+
+[data-theme="day"] .action-btn-delete:hover {
+  background-color: #fecdd3 !important;
+  color: #991b1b !important;
+}
+
+[data-theme="day"] .action-btn-edit {
+  background-color: #f1f5f9 !important; /* Slate 100 */
+  border-color: #cbd5e1 !important;     /* Slate 300 */
+  color: #0f172a !important;            /* Slate 900 */
+}
+
+[data-theme="day"] .action-btn-edit:hover {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+/* 6. Buttons in Day Mode */
 [data-theme="day"] .minimal-btn-secondary {
   background-color: #ffffff !important;
   color: #334155 !important;
-  border: 1px solid rgba(203, 213, 225, 0.8) !important;
+  border: 1px solid rgba(203, 213, 225, 0.9) !important;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
 }
 
 [data-theme="day"] .minimal-btn-secondary:hover {
   background-color: #f1f5f9 !important;
   color: #0f172a !important;
-  border-color: rgba(148, 163, 184, 0.8) !important;
+  border-color: rgba(148, 163, 184, 0.9) !important;
 }
 
 [data-theme="day"] .minimal-btn-primary {
@@ -397,13 +454,13 @@
   box-shadow: 0 2px 8px rgba(132, 204, 22, 0.25) !important;
 }
 
-/* 6. Liquid Glass System in Day Mode */
+/* 7. Liquid Glass System in Day Mode */
 [data-theme="day"] .liquid-glass {
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(248, 250, 252, 0.90) 60%,
-    rgba(241, 245, 249, 0.85) 100%
+    rgba(255, 255, 255, 0.96) 0%,
+    rgba(248, 250, 252, 0.92) 60%,
+    rgba(241, 245, 249, 0.88) 100%
   ) !important;
   backdrop-filter: blur(24px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
@@ -414,30 +471,30 @@
 }
 
 [data-theme="day"] .liquid-glass-header {
-  background: rgba(255, 255, 255, 0.92) !important;
+  background: rgba(255, 255, 255, 0.94) !important;
   backdrop-filter: blur(20px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
-  border-bottom: 1px solid rgba(226, 232, 240, 0.85) !important;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.9) !important;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
 }
 
 [data-theme="day"] .liquid-glass-nav {
-  background: rgba(255, 255, 255, 0.94) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: blur(28px) saturate(170%) !important;
   -webkit-backdrop-filter: blur(28px) saturate(170%) !important;
-  border: 1px solid rgba(226, 232, 240, 0.85) !important;
+  border: 1px solid rgba(226, 232, 240, 0.9) !important;
   border-top-color: #ffffff !important;
   box-shadow: 0 12px 36px rgba(15, 23, 42, 0.08) !important;
 }
 
 [data-theme="day"] .liquid-glass-pill {
-  background: rgba(255, 255, 255, 0.92) !important;
-  border: 1px solid rgba(203, 213, 225, 0.8) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(203, 213, 225, 0.9) !important;
   box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05) !important;
 }
 
 [data-theme="day"] .thumb-slider-track {
-  background: rgba(241, 245, 249, 0.95) !important;
+  background: rgba(241, 245, 249, 0.96) !important;
   border: 1px solid rgba(226, 232, 240, 0.9) !important;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05) !important;
 }
@@ -448,56 +505,62 @@
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08) !important;
 }
 
-/* 7. Day Mode Typography: Warm, legible, zero glare */
-[data-theme="day"] .text-\[\#f8fafc\],
-[data-theme="day"] .text-white {
+/* 8. Day Mode Typography: Warm, legible, high-contrast, zero eye fatigue */
+[data-theme="day"] h1,
+[data-theme="day"] h2,
+[data-theme="day"] h3,
+[data-theme="day"] h4,
+[data-theme="day"] h5,
+[data-theme="day"] h6,
+[data-theme="day"] [class*="text-\[\#f8fafc\]"] {
   color: #0f172a !important;
 }
 
-[data-theme="day"] .text-purple-200,
-[data-theme="day"] .text-purple-300,
-[data-theme="day"] .text-\[\#c0c8c3\],
-[data-theme="day"] .text-\[\#9b9f9c\] {
-  color: #475569 !important;
+/* Preserve crisp white on colored circles, avatars, and dark tags */
+[data-theme="day"] .rounded-full.text-white,
+[data-theme="day"] .rounded-full span,
+[data-theme="day"] [class*="rounded-full"][class*="text-white"],
+[data-theme="day"] .filter-pill-active {
+  color: #ffffff !important;
 }
 
-[data-theme="day"] .text-purple-400,
-[data-theme="day"] .text-\[\#8a938e\],
-[data-theme="day"] .text-purple-200\/80,
-[data-theme="day"] .text-purple-300\/70,
-[data-theme="day"] .text-purple-300\/60,
-[data-theme="day"] .text-purple-300\/50 {
-  color: #64748b !important;
+/* Subtitles, hints, and muted descriptions across ALL screens */
+[data-theme="day"] [class*="text-purple-200"],
+[data-theme="day"] [class*="text-purple-300"],
+[data-theme="day"] [class*="text-purple-400"],
+[data-theme="day"] [class*="text-\[\#9b9f9c\]"],
+[data-theme="day"] [class*="text-\[\#8a938e\]"],
+[data-theme="day"] [class*="text-\[\#c0c8c3\]"],
+[data-theme="day"] [class*="text-\[\#c084fc\]"] {
+  color: #475569 !important; /* Slate 600 - rich, soft, completely legible */
+}
+
+/* Daily Quotes & Italic Motivation: Dark slate, clearly visible */
+[data-theme="day"] .quote-text,
+[data-theme="day"] p.italic {
+  color: #1e293b !important; /* Slate 800 */
+  font-weight: 500 !important;
 }
 
 /* Status text: natural forest green */
-[data-theme="day"] .text-\[\#a1d1bd\] {
+[data-theme="day"] [class*="text-\[\#a1d1bd\]"] {
   color: #15803d !important;
 }
 
-/* Day Mode Accent Text: Forest Emerald instead of fluorescent neon */
-[data-theme="day"] .text-\[\#bef264\] {
+/* Day Mode Accent Text: Forest Emerald instead of fluorescent glare */
+[data-theme="day"] [class*="text-\[\#bef264\]"] {
   color: #166534 !important;
   font-weight: 700 !important;
 }
 
-/* 8. Dividers & Borders in Day Mode */
-[data-theme="day"] .border-purple-500\/20,
-[data-theme="day"] .border-purple-400\/30,
-[data-theme="day"] .border-purple-300\/40,
-[data-theme="day"] .border-purple-500\/30,
-[data-theme="day"] .border-purple-300\/20,
-[data-theme="day"] .border-white\/\[0\.08\],
-[data-theme="day"] .border-white\/\[0\.12\],
-[data-theme="day"] .border-white\/\[0\.15\],
-[data-theme="day"] .border-white\/\[0\.18\],
-[data-theme="day"] .border-white\/10,
-[data-theme="day"] .border-white\/20,
-[data-theme="day"] .border-\[\#334155\]\/30 {
-  border-color: rgba(226, 232, 240, 0.85) !important;
+/* 9. Dividers & Borders in Day Mode */
+[data-theme="day"] [class*="border-purple-"],
+[data-theme="day"] [class*="border-white\/"],
+[data-theme="day"] [class*="border-\[\#334155\]"] {
+  border-color: rgba(226, 232, 240, 0.9) !important;
 }
 
-/* 9. Inputs, Textareas, and Selects: Crisp white, slate border, dark text */
+/* 10. Inputs, Textareas, and Selects */
 [data-theme="day"] input,
 [data-theme="day"] textarea,
 [data-theme="day"] select {
@@ -512,7 +575,19 @@
   color: #94a3b8 !important;
 }
 
-/* 10. Filter Pills in Day Mode: High aesthetic Apple-level sleekness */
+/* 11. Toggle Switches in Day Mode */
+[data-theme="day"] [class*="bg-white\/10"],
+[data-theme="day"] [class*="bg-white\/\[0\.08\]"],
+[data-theme="day"] [class*="bg-white\/\[0\.06\]"] {
+  background-color: #cbd5e1 !important; /* Slate 300 toggle off track */
+}
+
+[data-theme="day"] button .bg-white {
+  background-color: #ffffff !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* 12. Filter Pills in Day Mode: Apple-grade sleekness */
 [data-theme="day"] .filter-pill-active {
   background-color: #0f172a !important;
   color: #ffffff !important;
@@ -524,13 +599,13 @@
 [data-theme="day"] .filter-pill-inactive {
   background-color: #ffffff !important;
   color: #475569 !important;
-  border: 1px solid rgba(203, 213, 225, 0.8) !important;
+  border: 1px solid rgba(203, 213, 225, 0.9) !important;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.02) !important;
 }
 
 [data-theme="day"] .filter-pill-inactive:hover {
   background-color: #f1f5f9 !important;
   color: #0f172a !important;
-  border-color: rgba(148, 163, 184, 0.8) !important;
+  border-color: rgba(148, 163, 184, 0.9) !important;
 }
 

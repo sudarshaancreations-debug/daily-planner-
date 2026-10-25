@@ -866,7 +866,7 @@ export function SwipeableScheduleCard({
           <button
             type="button"
             onClick={handleEdit}
-            className="w-14 h-11 px-2 rounded-lg bg-[#162540] border border-white/[0.12] text-[#bef264] text-xs flex flex-col items-center justify-center shadow-sm active:scale-90 transition-transform cursor-pointer"
+            className="w-14 h-11 px-2 rounded-lg bg-[#162540] border border-white/[0.12] text-[#bef264] action-btn-edit text-xs flex flex-col items-center justify-center shadow-sm active:scale-90 transition-transform cursor-pointer"
             title="Edit Task"
           >
             <span className="material-symbols-outlined text-[17px]">edit</span>
@@ -875,7 +875,7 @@ export function SwipeableScheduleCard({
           <button
             type="button"
             onClick={handleDelete}
-            className="w-14 h-11 px-2 rounded-lg bg-rose-950/70 border border-rose-500/30 text-rose-300 text-xs flex flex-col items-center justify-center shadow-sm active:scale-90 transition-transform cursor-pointer"
+            className="w-14 h-11 px-2 rounded-lg bg-rose-950/70 border border-rose-500/30 text-rose-300 action-btn-delete text-xs flex flex-col items-center justify-center shadow-sm active:scale-90 transition-transform cursor-pointer"
             title="Delete Task"
           >
             <span className="material-symbols-outlined text-[17px]">delete</span>
@@ -892,7 +892,7 @@ export function SwipeableScheduleCard({
           <button
             type="button"
             onClick={handleEdit}
-            className="w-14 h-11 px-2 rounded-lg bg-[#162540] border border-white/[0.12] text-[#bef264] text-xs flex flex-col items-center justify-center shadow-sm active:scale-90 transition-transform cursor-pointer"
+            className="w-14 h-11 px-2 rounded-lg bg-[#162540] border border-white/[0.12] text-[#bef264] action-btn-edit text-xs flex flex-col items-center justify-center shadow-sm active:scale-90 transition-transform cursor-pointer"
             title="Edit Task"
           >
             <span className="material-symbols-outlined text-[17px]">edit</span>
@@ -901,7 +901,7 @@ export function SwipeableScheduleCard({
           <button
             type="button"
             onClick={handleDelete}
-            className="w-14 h-11 px-2 rounded-lg bg-rose-950/70 border border-rose-500/30 text-rose-300 text-xs flex flex-col items-center justify-center shadow-sm active:scale-90 transition-transform cursor-pointer"
+            className="w-14 h-11 px-2 rounded-lg bg-rose-950/70 border border-rose-500/30 text-rose-300 action-btn-delete text-xs flex flex-col items-center justify-center shadow-sm active:scale-90 transition-transform cursor-pointer"
             title="Delete Task"
           >
             <span className="material-symbols-outlined text-[17px]">delete</span>
@@ -1181,10 +1181,10 @@ export function Screen08DailyPlanner({
 
       {/* Swipe instruction hint with accessible text size & clear affordance */}
       <div className="px-4">
-        <div className="px-3.5 py-2 bg-[#171330]/80 border border-purple-500/20 rounded-xl flex items-center justify-between text-xs text-purple-200/80">
+        <div className="px-3.5 py-2 minimal-card-subtle rounded-xl flex items-center justify-between text-xs text-purple-200/80">
           <span className="flex items-center gap-2 font-mono">
             <span className="material-symbols-outlined text-sm text-[#bef264]">swipe</span>
-            <span>Swipe task card to <span className="text-white font-semibold">Edit</span> or <span className="text-rose-400 font-semibold">Delete</span></span>
+            <span>Swipe task card to <span className="text-white font-semibold swipe-hint-highlight">Edit</span> or <span className="text-rose-400 font-semibold">Delete</span></span>
           </span>
           <span className="text-xs text-purple-300/70 font-mono">Tap ••• for menu</span>
         </div>

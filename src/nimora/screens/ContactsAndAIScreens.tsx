@@ -86,8 +86,8 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
             className="minimal-card p-3 rounded-xl flex items-center justify-between hover:border-white/[0.18] transition-all cursor-pointer active:scale-[0.99]"
           >
             <div className="flex items-center gap-3">
-              <div className={`w-9 h-9 rounded-full ${contact.avatarColor} text-white font-bold flex items-center justify-center text-xs shadow-sm ring-1 ring-white/10 font-['Space_Grotesk']`}>
-                {contact.name.split(' ').map((n) => n[0]).join('')}
+              <div className={`w-9 h-9 rounded-full ${contact.avatarColor} font-bold flex items-center justify-center text-xs shadow-sm ring-1 ring-white/10 font-['Space_Grotesk'] text-white`}>
+                <span style={{ color: '#ffffff' }} className="font-bold">{contact.name.split(' ').map((n) => n[0]).join('')}</span>
               </div>
               <div>
                 <h4 className="text-xs font-semibold text-[#f8fafc] font-['Space_Grotesk']">{contact.name}</h4>
@@ -142,8 +142,8 @@ export function Screen12ContactDetails({ contacts, onNavigate, selectedContact }
         </div>
 
         <div className="flex items-center gap-3.5 mb-4">
-          <div className={`w-12 h-12 rounded-full ${contact.avatarColor} text-white font-bold flex items-center justify-center text-sm shadow-md ring-1 ring-white/10 font-['Space_Grotesk']`}>
-            {contact.name.split(' ').map((n) => n[0]).join('')}
+          <div className={`w-12 h-12 rounded-full ${contact.avatarColor} font-bold flex items-center justify-center text-sm shadow-md ring-1 ring-white/10 font-['Space_Grotesk'] text-white`}>
+            <span style={{ color: '#ffffff' }} className="font-bold">{contact.name.split(' ').map((n) => n[0]).join('')}</span>
           </div>
           <div>
             <h3 className="text-base font-bold text-[#f8fafc] font-['Space_Grotesk']">{contact.name}</h3>
