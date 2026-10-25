@@ -6,6 +6,8 @@ import { NimoraTask, NimoraNotification } from '../data';
 import { haptics } from '@/lib/haptics';
 import { downloadICS } from '@/lib/exportUtils';
 
+export type ThemeMode = 'auto' | 'day' | 'night';
+
 export interface WidgetAndSettingsProps {
   tasks: NimoraTask[];
   notifications: NimoraNotification[];
@@ -13,6 +15,8 @@ export interface WidgetAndSettingsProps {
   onAddTask?: (task: NimoraTask) => void;
   onResetData?: () => void;
   onDeleteAllData?: () => void;
+  themeMode?: ThemeMode;
+  onThemeChange?: (mode: ThemeMode) => void;
 }
 
 // 13. iOS Home Screen Widget
@@ -506,7 +510,14 @@ export function Screen17WhatsApp({ onNavigate }: WidgetAndSettingsProps) {
 }
 
 // 16. Settings & Privacy
-export function Screen18ProfileSettings({ tasks, onNavigate, onResetData, onDeleteAllData }: WidgetAndSettingsProps) {
+export function Screen18ProfileSettings({
+  tasks,
+  onNavigate,
+  onResetData,
+  onDeleteAllData,
+  themeMode = 'auto',
+  onThemeChange,
+}: WidgetAndSettingsProps) {
   const [mounted, setMounted] = useState(false);
   const [resetMessage, setResetMessage] = useState('');
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
@@ -676,6 +687,86 @@ export function Screen18ProfileSettings({ tasks, onNavigate, onResetData, onDele
               Plans <span className="text-[#8a938e]">›</span>
             </span>
           </button>
+
+          {/* Appearance & Atmosphere (Day / Night Switcher) */}
+          <div className="p-3.5 minimal-card rounded-2xl space-y-2.5 border border-white/[0.08]">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <span className="material-symbols-outlined text-[18px] text-[#bef264]">
+                  {themeMode === 'day' ? 'light_mode' : themeMode === 'night' ? 'dark_mode' : 'brightness_auto'}
+                </span>
+                <div>
+                  <span className="text-xs font-bold text-[#f8fafc] block font-['Space_Grotesk']">
+                    Appearance & Atmosphere
+                  </span>
+                  <span className="text-[10px] text-purple-300/70">
+                    {themeMode === 'auto'
+                      ? 'Automatic (Solar Day 6 AM – 6 PM, Midnight 6 PM – 6 AM)'
+                      : themeMode === 'day'
+                      ? 'Day Mode active (Daylight clarity & solar lime)'
+                      : 'Night Mode active (Midnight obsidian & soft glow)'}
+                  </span>
+                </div>
+              </div>
+              <span className="text-[10px] font-mono font-bold text-[#bef264] uppercase px-2 py-0.5 rounded-full bg-[#bef264]/10 border border-[#bef264]/20">
+                {themeMode}
+              </span>
+            </div>
+
+            {/* 3-Segment Control */}
+            <div className="grid grid-cols-3 gap-1.5 p-1 bg-black/20 rounded-xl border border-white/[0.06]">
+              <button
+                type="button"
+                onClick={() => {
+                  haptics.tick();
+                  onThemeChange?.('day');
+                }}
+                className={`py-2 px-2 rounded-lg text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5 ${
+                  themeMode === 'day'
+                    ? 'bg-[#bef264] text-[#0e0b1f] font-bold shadow-md'
+                    : 'text-purple-200/80 hover:text-white hover:bg-white/[0.06]'
+                }`}
+              >
+                <span className="text-sm">☀️</span>
+                <span className="text-[10px] font-mono font-semibold">Day</span>
+                <span className="text-[8px] opacity-75">Bright</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  haptics.tick();
+                  onThemeChange?.('night');
+                }}
+                className={`py-2 px-2 rounded-lg text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5 ${
+                  themeMode === 'night'
+                    ? 'bg-[#2b2257] text-[#f8fafc] border border-purple-400/40 font-bold shadow-md shadow-purple-900/40'
+                    : 'text-purple-200/80 hover:text-white hover:bg-white/[0.06]'
+                }`}
+              >
+                <span className="text-sm">🌙</span>
+                <span className="text-[10px] font-mono font-semibold">Night</span>
+                <span className="text-[8px] opacity-75">Soft</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  haptics.tick();
+                  onThemeChange?.('auto');
+                }}
+                className={`py-2 px-2 rounded-lg text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5 ${
+                  themeMode === 'auto'
+                    ? 'bg-purple-600/50 text-[#bef264] border border-[#bef264]/30 font-bold shadow-md'
+                    : 'text-purple-200/80 hover:text-white hover:bg-white/[0.06]'
+                }`}
+              >
+                <span className="text-sm">⚡</span>
+                <span className="text-[10px] font-mono font-semibold">Auto</span>
+                <span className="text-[8px] opacity-75">Time-sync</span>
+              </button>
+            </div>
+          </div>
 
           {/* Connected Calendars & Sync Button - Fully Interactive */}
           <button

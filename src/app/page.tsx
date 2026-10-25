@@ -33,6 +33,7 @@ import {
   Screen17WhatsApp,
   Screen18ProfileSettings,
   Screen19SubscriptionPlans,
+  ThemeMode,
 } from '@/nimora/screens/WidgetAndSettingsScreens';
 
 interface ThumbSliderNavProps {
@@ -231,6 +232,58 @@ export default function NimoraApp() {
   const [todayIso, setTodayIso] = useState('2026-10-24');
   const [globalToast, setGlobalToast] = useState<string | null>(null);
 
+  // Live Day / Night / Auto Theme Mode
+  const [themeMode, setThemeMode] = useState<ThemeMode>('auto');
+  const [resolvedTheme, setResolvedTheme] = useState<'day' | 'night'>('night');
+
+  // Load theme preference on mount
+  useEffect(() => {
+    try {
+      const savedTheme = localStorage.getItem('nimora_theme_mode') as ThemeMode | null;
+      if (savedTheme && (savedTheme === 'auto' || savedTheme === 'day' || savedTheme === 'night')) {
+        setThemeMode(savedTheme);
+      }
+    } catch {}
+  }, []);
+
+  // Compute resolved theme and update document element attribute
+  useEffect(() => {
+    const computeTheme = (): 'day' | 'night' => {
+      if (themeMode === 'auto') {
+        const h = new Date().getHours();
+        return h >= 6 && h < 18 ? 'day' : 'night';
+      }
+      return themeMode;
+    };
+    const active = computeTheme();
+    setResolvedTheme(active);
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', active);
+      document.body.setAttribute('data-theme', active);
+    }
+  }, [themeMode]);
+
+  const handleSetThemeMode = (mode: ThemeMode) => {
+    haptics.tick();
+    setThemeMode(mode);
+    try {
+      localStorage.setItem('nimora_theme_mode', mode);
+    } catch {}
+    showGlobalToast(
+      mode === 'auto'
+        ? '⚡ Auto theme: Solar Day (6 AM - 6 PM), Midnight (6 PM - 6 AM)'
+        : mode === 'day'
+        ? '☀️ Day Mode activated'
+        : '🌙 Night Mode activated'
+    );
+  };
+
+  const handleToggleTheme = () => {
+    const nextMode: ThemeMode =
+      themeMode === 'auto' ? 'day' : themeMode === 'day' ? 'night' : 'auto';
+    handleSetThemeMode(nextMode);
+  };
+
   useEffect(() => {
     try {
       const now = new Date().toISOString().split('T')[0];
@@ -420,7 +473,10 @@ export default function NimoraApp() {
     || tasks[0];
 
   return (
-    <div className="bg-[#0e0b1f] text-[#f8fafc] min-h-screen antialiased selection:bg-[#bef264]/30 selection:text-[#bef264] relative pb-32 max-w-md mx-auto shadow-2xl">
+    <div
+      data-theme={resolvedTheme}
+      className="bg-[#0e0b1f] text-[#f8fafc] min-h-screen antialiased selection:bg-[#bef264]/30 selection:text-[#bef264] relative pb-32 max-w-md mx-auto shadow-2xl transition-colors duration-200"
+    >
       {/* Top Navigation Shell (Liquid Glass Material) */}
       <nav className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-4 h-14 liquid-glass-header shadow-sm max-w-md left-1/2 -translate-x-1/2 border-b border-purple-500/20">
         <div className="flex items-center space-x-2">
@@ -447,7 +503,21 @@ export default function NimoraApp() {
           </div>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1.5">
+          {/* Day / Night Theme Switcher Pill */}
+          <button
+            type="button"
+            onClick={handleToggleTheme}
+            aria-label="Toggle Day / Night Mode"
+            className="px-2.5 h-8 rounded-full flex items-center justify-center gap-1 text-[11px] font-mono font-bold transition-all duration-150 active:scale-95 border border-purple-500/20 bg-[#171330] hover:border-[#bef264]/40 cursor-pointer shadow-sm"
+            title={`Current mode: ${themeMode.toUpperCase()} (${resolvedTheme} active). Tap to cycle: Auto → Day → Night.`}
+          >
+            <span className="text-sm">{resolvedTheme === 'day' ? '☀️' : '🌙'}</span>
+            <span className="text-[9px] text-[#bef264] font-mono tracking-wider">
+              {themeMode === 'auto' ? 'AUTO' : themeMode === 'day' ? 'DAY' : 'NIGHT'}
+            </span>
+          </button>
+
           <button
             onClick={() => setActiveTab('notifications')}
             aria-label="Notifications"
@@ -944,6 +1014,8 @@ export default function NimoraApp() {
           <Screen18ProfileSettings
             tasks={tasks}
             notifications={INITIAL_NOTIFICATIONS}
+            themeMode={themeMode}
+            onThemeChange={handleSetThemeMode}
             onNavigate={(mod) => {
               if (mod === 12) setActiveTab('widget');
               else if (mod === 13) setActiveTab('notifications');
