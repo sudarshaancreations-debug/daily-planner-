@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "ai.nimora.app",
+      "sha256_cert_fingerprints": [
+        "93:DE:74:63:5D:E7:75:F7:55:33:79:43:8F:DE:DA:07:2C:3F:5B:D8:0A:84:69:8C:C7:57:B2:5D:B7:B4:3D:B2"
+      ]
+    }
+  }
+]

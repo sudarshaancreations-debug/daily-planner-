@@ -195,7 +195,7 @@ export function MorgenWeekStrip({ selectedDate, onSelectDate, tasks = [] }: Morg
       <div className="flex items-center justify-between mb-2 px-1">
         <div className="flex items-center gap-2">
           <span className="material-symbols-outlined text-[17px] text-[#bef264]">date_range</span>
-          <span className="text-xs font-bold text-white font-['Space_Grotesk'] tracking-wide">
+          <span className="text-xs font-bold text-[#f8fafc] font-['Space_Grotesk'] tracking-wide">
             {currentMonthYear}
           </span>
           {/* Quick Date Picker to jump to any date to plan ahead */}

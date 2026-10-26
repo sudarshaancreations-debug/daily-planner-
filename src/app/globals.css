@@ -554,6 +554,21 @@
   color: #ffffff !important;
 }
 
+/* Primary CTA Buttons in Day Mode: Deep obsidian charcoal with crisp white text */
+[data-theme="day"] [class*="bg-gradient-to-r"][class*="from-\[\#0e3e30\]"],
+[data-theme="day"] .btn-accent-cta {
+  background: #0f172a !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border-color: #0f172a !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18) !important;
+}
+
+[data-theme="day"] [class*="bg-gradient-to-r"][class*="from-\[\#0e3e30\]"] span,
+[data-theme="day"] .btn-accent-cta span {
+  color: #ffffff !important;
+}
+
 /* Subtitles, hints, and muted descriptions across ALL screens */
 [data-theme="day"] [class*="text-purple-200"],
 [data-theme="day"] [class*="text-purple-300"],
@@ -637,5 +652,92 @@
   background-color: #f1f5f9 !important;
   color: #0f172a !important;
   border-color: rgba(148, 163, 184, 0.9) !important;
+}
+
+/* 13. Google Play In-App Purchase Modal: Verified Android Material Theme */
+.google-play-sheet,
+[data-theme="day"] .google-play-sheet {
+  background-color: #202124 !important;
+  color: #ffffff !important;
+}
+
+.google-play-sheet h2,
+.google-play-sheet h3,
+.google-play-sheet h4,
+[data-theme="day"] .google-play-sheet h2,
+[data-theme="day"] .google-play-sheet h3,
+[data-theme="day"] .google-play-sheet h4 {
+  color: #ffffff !important;
+}
+
+.google-play-sheet p,
+[data-theme="day"] .google-play-sheet p {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+.google-play-sheet .gplay-card,
+[data-theme="day"] .google-play-sheet .gplay-card {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+}
+
+.google-play-sheet .gplay-email,
+[data-theme="day"] .google-play-sheet .gplay-email {
+  color: #ffffff !important;
+}
+
+/* Google Play / GPay Success Animation */
+@keyframes gpay-pop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes gpay-ring {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes gpay-check {
+  0% {
+    stroke-dashoffset: 50;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+.animate-gpay-pop {
+  animation: gpay-pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.animate-gpay-ring {
+  animation: gpay-ring 1.4s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+}
+
+.animate-gpay-check {
+  stroke-dasharray: 50;
+  stroke-dashoffset: 50;
+  animation: gpay-check 0.6s cubic-bezier(0.65, 0, 0.45, 1) 0.25s forwards;
 }
 

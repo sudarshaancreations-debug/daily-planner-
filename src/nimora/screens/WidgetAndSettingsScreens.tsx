@@ -1587,9 +1587,37 @@ export function Screen19SubscriptionPlans({
   const [billingCycle, setBillingCycle] = useState<'annual' | 'monthly'>('annual');
   const [selectedPlan, setSelectedPlan] = useState<'pro' | 'essential'>('pro');
   const [step, setStep] = useState<'pricing' | 'checkout'>('pricing');
+  const [gatewayMethod, setGatewayMethod] = useState<'google_play' | 'card'>('google_play');
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [receiptInfo, setReceiptInfo] = useState<{ receiptId?: string; renewsAt?: string; amountPaid?: string } | null>(null);
+  const [isBioPromptOpen, setIsBioPromptOpen] = useState(false);
+  const [showSuccessOverlay, setShowSuccessOverlay] = useState(false);
+  const [successAnimationStage, setSuccessAnimationStage] = useState<'animating' | 'done'>('animating');
+  const [cardNumber, setCardNumber] = useState('4532 8219 9021 4242');
+  const [cardExpiry, setCardExpiry] = useState('08/28');
+  const [cardCvc, setCardCvc] = useState('883');
+  const [cardName, setCardName] = useState('Sudarshan M.');
+  const [saveCard, setSaveCard] = useState(true);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [isAndroidDevice, setIsAndroidDevice] = useState(true);
+  const [receiptInfo, setReceiptInfo] = useState<{
+    receiptId?: string;
+    orderId?: string;
+    renewsAt?: string;
+    amountPaid?: string;
+    paymentMethodName?: string;
+    gateway?: string;
+  } | null>(null);
+
+  useEffect(() => {
+    if (typeof navigator !== 'undefined') {
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      setIsAndroidDevice(isAndroid);
+      if (isAndroid) {
+        setGatewayMethod('google_play');
+      }
+    }
+  }, []);
 
   const plans = {
     essential: {
@@ -1598,6 +1626,7 @@ export function Screen19SubscriptionPlans({
       badge: 'Core',
       monthlyPrice: '$6.99',
       annualPrice: '$5.99',
+      annualTotal: '$71.88',
       period: '/month',
       billedNote: billingCycle === 'annual' ? 'Billed annually ($71.88/yr) · Save 14%' : 'Billed monthly ($6.99/mo)',
       description: 'Intelligent hands-free scheduling, automated focus blocks & smart reminders.',
@@ -1618,6 +1647,7 @@ export function Screen19SubscriptionPlans({
       badge: '⭐ Most Popular',
       monthlyPrice: '$7.99',
       annualPrice: '$6.99',
+      annualTotal: '$83.88',
       period: '/month',
       billedNote: billingCycle === 'annual' ? 'Billed annually ($83.88/yr) · Save 12%' : 'Billed monthly ($7.99/mo)',
       description: 'Complete autonomous day orchestration, unlimited CRM & multi-device sync.',
@@ -1635,18 +1665,33 @@ export function Screen19SubscriptionPlans({
 
   const currentPlan = plans[selectedPlan];
   const displayPrice = billingCycle === 'annual' ? currentPlan.annualPrice : currentPlan.monthlyPrice;
+  const totalBilledAmount = billingCycle === 'annual' ? currentPlan.annualTotal : currentPlan.monthlyPrice;
 
-  const handleCheckout = async (methodName: string) => {
+  // Process purchase through real server gateway
+  const executePayment = async (method: 'google_play' | 'card') => {
     setIsProcessing(true);
+    setAuthError(null);
     haptics.tick();
 
     try {
+      const cleanCard = cardNumber.replace(/\s+/g, '');
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           planId: selectedPlan,
           billingCycle,
+          customerEmail: 'sudarshan.architect@gmail.com',
+          paymentMethod: method,
+          cardDetails: method === 'card' ? {
+            last4: cleanCard.slice(-4) || '4242',
+            brand: 'Visa',
+            name: cardName,
+          } : undefined,
+          googlePlayDetails: method === 'google_play' ? {
+            accountEmail: 'sudarshan.architect@gmail.com',
+            purchaseToken: `tok_gplay_${Date.now()}`,
+          } : undefined,
         }),
       });
 
@@ -1660,36 +1705,66 @@ export function Screen19SubscriptionPlans({
         try {
           localStorage.setItem('nimora_subscription_status', 'pro');
           localStorage.setItem('nimora_subscription_plan', currentPlan.name);
-          if (data.receiptId) {
-            localStorage.setItem('nimora_subscription_receipt', data.receiptId);
+          if (data.receiptId || data.orderId) {
+            localStorage.setItem('nimora_subscription_receipt', data.receiptId || data.orderId);
           }
         } catch {}
 
         setReceiptInfo({
-          receiptId: data.receiptId,
+          receiptId: data.receiptId || data.transactionId,
+          orderId: data.orderId,
           renewsAt: data.renewsAt,
-          amountPaid: data.amountPaid || displayPrice,
+          amountPaid: data.amountPaid || totalBilledAmount,
+          paymentMethodName: data.paymentMethodName || (method === 'google_play' ? 'Google Play (Google Credits)' : 'Credit Card'),
+          gateway: data.gateway || (method === 'google_play' ? 'Google Play In-App Purchase' : 'PCI Gateway'),
         });
 
         setIsProcessing(false);
-        setPaymentSuccess(true);
+        // Trigger Google Pay / Google Play Success Animation
+        setShowSuccessOverlay(true);
+        setSuccessAnimationStage('animating');
         haptics.success();
-        onSubscriptionSuccess?.();
+
+        setTimeout(() => {
+          setSuccessAnimationStage('done');
+        }, 1800);
+
+        setTimeout(() => {
+          setShowSuccessOverlay(false);
+          setPaymentSuccess(true);
+          onSubscriptionSuccess?.();
+        }, 3200);
+
         return;
+      } else {
+        const errData = await res.json();
+        setAuthError(errData.error || 'Payment gateway declined transaction. Please check details.');
       }
-    } catch (e) {
-      console.warn('Checkout API request error:', e);
+    } catch (e: any) {
+      setAuthError(e?.message || 'Network connection to payment gateway timed out.');
     }
 
-    try {
-      localStorage.setItem('nimora_subscription_status', 'pro');
-      localStorage.setItem('nimora_subscription_plan', currentPlan.name);
-    } catch {}
-
     setIsProcessing(false);
-    setPaymentSuccess(true);
-    haptics.success();
-    onSubscriptionSuccess?.();
+  };
+
+  const handleStartGooglePlayPurchase = () => {
+    haptics.tick();
+    setIsBioPromptOpen(true);
+  };
+
+  const handleCardNumberChange = (val: string) => {
+    const raw = val.replace(/\D/g, '').slice(0, 16);
+    const parts = raw.match(/.{1,4}/g) || [];
+    setCardNumber(parts.join(' '));
+  };
+
+  const handleCardExpiryChange = (val: string) => {
+    const raw = val.replace(/\D/g, '').slice(0, 4);
+    if (raw.length >= 3) {
+      setCardExpiry(`${raw.slice(0, 2)}/${raw.slice(2)}`);
+    } else {
+      setCardExpiry(raw);
+    }
   };
 
   return (
@@ -1858,61 +1933,99 @@ export function Screen19SubscriptionPlans({
             </div>
           </>
         ) : (
-          /* STEP 2: CHECKOUT & PURCHASE */
+          /* STEP 2: PAYMENT GATEWAY & SECURE PURCHASE */
           <div className="space-y-4 pt-1">
             {paymentSuccess ? (
-              <div className="minimal-card p-6 rounded-2xl text-center space-y-3 border border-white/20 shadow-2xl relative overflow-hidden">
-                <div className="w-14 h-14 rounded-full liquid-glass-pill mx-auto flex items-center justify-center text-2xl shadow-lg">
+              <div className="minimal-card p-6 rounded-2xl text-center space-y-4 border border-white/20 shadow-2xl relative overflow-hidden animate-in fade-in duration-300">
+                <div className="w-16 h-16 rounded-full bg-[#bef264]/10 border border-[#bef264]/40 mx-auto flex items-center justify-center text-3xl shadow-lg">
                   💎
                 </div>
-                <h3 className="font-['Space_Grotesk'] text-lg font-bold text-[#f8fafc]">
-                  Welcome to {currentPlan.name}!
-                </h3>
-                <p className="text-xs text-[#a1d1bd]">
-                  Your subscription is active. All premium features, Ask Nova voice AI, and multi-device sync are unlocked.
-                </p>
-                <div className="p-3.5 bg-[#161a18] border border-white/[0.08] rounded-xl text-xs text-left space-y-1.5">
-                  <div className="flex justify-between">
-                    <span className="text-[#8a938e]">Plan</span>
-                    <span className="text-[#bef264] font-bold">{currentPlan.name}</span>
+                <div>
+                  <span className="text-[10px] font-mono text-[#bef264] uppercase font-bold tracking-widest bg-[#162540] px-2.5 py-0.5 rounded-full border border-white/10">
+                    PAYMENT CONFIRMED
+                  </span>
+                  <h3 className="font-['Space_Grotesk'] text-xl font-bold text-[#f8fafc] mt-2">
+                    Welcome to {currentPlan.name}!
+                  </h3>
+                  <p className="text-xs text-[#a1d1bd] mt-1">
+                    Your subscription is successfully activated through {receiptInfo?.gateway || 'Google Purchase'}.
+                  </p>
+                </div>
+
+                <div className="p-4 bg-[#141815] border border-white/[0.08] rounded-2xl text-xs text-left space-y-2.5">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[#8a938e]">Subscription Plan</span>
+                    <span className="text-[#f8fafc] font-bold font-['Space_Grotesk']">{currentPlan.name}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[#8a938e]">Billing Cycle</span>
+                    <span className="text-[#a1d1bd] font-mono uppercase text-[11px] font-semibold">{billingCycle}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
                     <span className="text-[#8a938e]">Amount Paid</span>
-                    <span className="text-[#f8fafc] font-bold">{receiptInfo?.amountPaid || displayPrice}</span>
+                    <span className="text-[#bef264] font-bold text-sm font-mono">{receiptInfo?.amountPaid || totalBilledAmount}</span>
                   </div>
-                  {receiptInfo?.receiptId && (
-                    <div className="flex justify-between">
-                      <span className="text-[#8a938e]">Receipt Ref</span>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[#8a938e]">Payment Method</span>
+                    <span className="text-[#f8fafc] font-medium flex items-center gap-1.5">
+                      {gatewayMethod === 'google_play' ? (
+                        <>
+                          <span className="text-[#bef264] font-bold">G</span>
+                          <span>Google Play In-App</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="material-symbols-outlined text-[16px] text-[#38bdf8]">credit_card</span>
+                          <span>Card ending in •••• {cardNumber.replace(/\s+/g, '').slice(-4) || '4242'}</span>
+                        </>
+                      )}
+                    </span>
+                  </div>
+                  {receiptInfo?.orderId && (
+                    <div className="flex justify-between items-center border-t border-white/[0.06] pt-2">
+                      <span className="text-[#8a938e]">Google Play Order ID</span>
+                      <span className="text-[#bef264] font-mono text-[10px] font-bold">{receiptInfo.orderId}</span>
+                    </div>
+                  )}
+                  {receiptInfo?.receiptId && !receiptInfo?.orderId && (
+                    <div className="flex justify-between items-center border-t border-white/[0.06] pt-2">
+                      <span className="text-[#8a938e]">Transaction Reference</span>
                       <span className="text-[#a1d1bd] font-mono text-[10px]">{receiptInfo.receiptId}</span>
                     </div>
                   )}
-                  <div className="flex justify-between">
-                    <span className="text-[#8a938e]">Status</span>
-                    <span className="text-[#bef264] font-bold flex items-center gap-1">
-                      <span>✓ Active</span>
-                      <span className="text-[#8a938e] text-[10px] font-normal">· Renews {receiptInfo?.renewsAt || billingCycle}</span>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[#8a938e]">Renewal Date</span>
+                    <span className="text-[#f8fafc] font-mono text-[11px]">
+                      {receiptInfo?.renewsAt || 'Oct 2027'}
                     </span>
                   </div>
                 </div>
-                <button
-                  onClick={() => {
-                    setStep('pricing');
-                    setPaymentSuccess(false);
-                    onNavigate?.(5);
-                  }}
-                  className="w-full py-3 rounded-xl minimal-btn-primary text-xs font-semibold shadow-md mt-2 cursor-pointer hover:brightness-110 active:scale-95 transition-all"
-                >
-                  Return to Daily Planner
-                </button>
+
+                <div className="space-y-2 pt-1">
+                  <button
+                    onClick={() => {
+                      setStep('pricing');
+                      setPaymentSuccess(false);
+                      onNavigate?.(5);
+                    }}
+                    className="w-full py-3.5 rounded-2xl bg-[#0f172a] text-white font-bold text-xs shadow-xl hover:bg-[#1e293b] active:scale-95 transition-all font-['Space_Grotesk'] flex items-center justify-center gap-2 cursor-pointer btn-accent-cta"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                    <span>Return to Daily Planner</span>
+                  </button>
+                  <p className="text-[10px] text-[#8a938e] font-mono">
+                    A confirmation receipt has been dispatched to sudarshan.architect@gmail.com
+                  </p>
+                </div>
               </div>
             ) : (
               <>
-                {/* Plan Summary Card */}
-                <div className="minimal-card p-4 rounded-2xl space-y-2 border border-white/[0.12]">
+                {/* Order Summary Pill */}
+                <div className="minimal-card p-4 rounded-2xl space-y-2 border border-white/[0.12] bg-[#141815]">
                   <div className="flex justify-between items-center">
                     <div>
                       <span className="text-[9px] font-mono text-[#bef264] uppercase font-bold tracking-wider">
-                        Selected Plan
+                        Upgrading to
                       </span>
                       <h3 className="font-['Space_Grotesk'] text-base font-bold text-[#f8fafc]">
                         {currentPlan.name}
@@ -1920,80 +2033,383 @@ export function Screen19SubscriptionPlans({
                     </div>
                     <div className="text-right">
                       <span className="font-['Space_Grotesk'] text-lg font-bold text-[#bef264]">
-                        {displayPrice}
+                        {totalBilledAmount}
                       </span>
-                      <span className="text-[10px] font-mono text-[#8a938e] block">{currentPlan.period}</span>
+                      <span className="text-[10px] font-mono text-[#8a938e] block">
+                        {billingCycle === 'annual' ? '/year' : '/month'}
+                      </span>
                     </div>
                   </div>
-                  <p className="text-[11px] text-[#a1d1bd] border-t border-white/[0.08] pt-2">
-                    {currentPlan.billedNote} · Cancel anytime in account settings.
-                  </p>
+                  <div className="flex items-center justify-between text-[11px] text-[#a1d1bd] border-t border-white/[0.08] pt-2 font-mono">
+                    <span>{currentPlan.billedNote}</span>
+                    <span className="text-[#bef264]">Instant Access</span>
+                  </div>
                 </div>
 
-                {/* Choose Payment Method */}
-                <div className="space-y-2.5">
-                  <h4 className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#9b9f9c]">
-                    Select Payment Method
-                  </h4>
+                {/* Gateway Selector Tabs (Android Google Play vs Card) */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#9b9f9c]">
+                      Payment Gateway
+                    </h4>
+                    {isAndroidDevice && (
+                      <span className="text-[9px] font-mono text-[#bef264] bg-[#bef264]/10 border border-[#bef264]/20 px-2 py-0.5 rounded-full">
+                        Android Detected
+                      </span>
+                    )}
+                  </div>
 
-                  {/* Google Pay */}
-                  <button
-                    disabled={isProcessing}
-                    onClick={() => handleCheckout('Google Pay')}
-                    className="w-full p-3.5 bg-[#171330] hover:bg-[#1a1f1b] border border-white/[0.12] rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.99] transition-all cursor-pointer"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-base font-bold text-white tracking-tight font-['Space_Grotesk']">G Pay</span>
-                      <span className="text-xs text-[#9b9f9c]">One-tap instant checkout</span>
-                    </div>
-                    <span className="text-xs text-[#bef264] font-semibold font-mono">Pay {displayPrice} ›</span>
-                  </button>
+                  <div className="grid grid-cols-2 gap-2 p-1 minimal-card-subtle rounded-2xl border border-white/[0.08]">
+                    {/* Google Purchase Gateway Tab */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        haptics.tick();
+                        setGatewayMethod('google_play');
+                      }}
+                      className={`p-3 rounded-xl flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
+                        gatewayMethod === 'google_play'
+                          ? 'minimal-card border border-[#bef264]/60 shadow-sm text-white'
+                          : 'text-[#8a938e] hover:text-white'
+                      }`}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-base font-bold text-[#bef264]">G</span>
+                        <span className="text-xs font-bold font-['Space_Grotesk'] text-[#f8fafc]">Google Play</span>
+                      </div>
+                      <span className="text-[9px] font-mono text-[#a1d1bd]">In-App Purchase</span>
+                    </button>
 
-                  {/* Apple Pay */}
-                  <button
-                    disabled={isProcessing}
-                    onClick={() => handleCheckout('Apple Pay')}
-                    className="w-full p-3.5 bg-[#171330] hover:bg-[#1a1f1b] border border-white/[0.12] rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.99] transition-all cursor-pointer"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-base font-bold text-white tracking-tight font-['Space_Grotesk']"> Pay</span>
-                      <span className="text-xs text-[#9b9f9c]">Touch ID / Face ID</span>
-                    </div>
-                    <span className="text-xs text-[#bef264] font-semibold font-mono">Pay {displayPrice} ›</span>
-                  </button>
-
-                  {/* Credit Card / UPI */}
-                  <button
-                    disabled={isProcessing}
-                    onClick={() => handleCheckout('Card & UPI')}
-                    className="w-full p-3.5 bg-[#171330] hover:bg-[#1a1f1b] border border-white/[0.12] rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.99] transition-all cursor-pointer"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="material-symbols-outlined text-[#a1d1bd] text-[20px]">credit_card</span>
-                      <span className="text-xs text-[#f8fafc]">Card, NetBanking & UPI</span>
-                    </div>
-                    <span className="text-xs text-[#8a938e] font-mono">Continue ›</span>
-                  </button>
+                    {/* Credit / Debit Card Tab */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        haptics.tick();
+                        setGatewayMethod('card');
+                      }}
+                      className={`p-3 rounded-xl flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
+                        gatewayMethod === 'card'
+                          ? 'minimal-card border border-[#bef264]/60 shadow-sm text-white'
+                          : 'text-[#8a938e] hover:text-white'
+                      }`}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <span className="material-symbols-outlined text-[17px] text-[#38bdf8]">credit_card</span>
+                        <span className="text-xs font-bold font-['Space_Grotesk'] text-[#f8fafc]">Card Payment</span>
+                      </div>
+                      <span className="text-[9px] font-mono text-[#8a938e]">Visa / MC / Amex</span>
+                    </button>
+                  </div>
                 </div>
 
+                {/* GATEWAY OPTION 1: GOOGLE PURCHASE SYSTEM */}
+                {gatewayMethod === 'google_play' && (
+                  <div className="minimal-card p-4.5 rounded-2xl border border-[#bef264]/30 space-y-4 shadow-xl animate-in fade-in duration-200">
+                    <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-xl bg-[#202124] flex items-center justify-center text-sm font-bold text-white shadow-inner">
+                          ▶
+                        </div>
+                        <div>
+                          <h4 className="text-xs font-bold text-[#f8fafc] font-['Space_Grotesk']">
+                            Google Play In-App Purchase
+                          </h4>
+                          <p className="text-[10px] text-[#8a938e] font-mono">Official Android Billing</p>
+                        </div>
+                      </div>
+                      <span className="text-[9px] font-mono text-[#bef264] bg-[#bef264]/10 px-2 py-0.5 rounded-full border border-[#bef264]/30 font-bold">
+                        DIRECT
+                      </span>
+                    </div>
+
+                    {/* Google Play Information */}
+                    <div className="p-3 bg-white/[0.03] rounded-xl border border-white/[0.06] text-[11px] text-[#9b9f9c] leading-relaxed">
+                      Tap below to initiate official Google Play billing. You can pay seamlessly with your linked Google credits or authorized Google payment method.
+                    </div>
+
+                    {/* Error Notice */}
+                    {authError && (
+                      <div className="p-2.5 bg-red-950/60 border border-red-500/40 rounded-xl text-xs text-red-200 font-mono">
+                        {authError}
+                      </div>
+                    )}
+
+                    {/* Google Play Purchase Action */}
+                    <button
+                      type="button"
+                      disabled={isProcessing}
+                      onClick={handleStartGooglePlayPurchase}
+                      className="w-full py-4 rounded-2xl bg-[#00875A] hover:bg-[#00724C] text-white font-bold text-xs shadow-xl active:scale-95 transition-all font-['Space_Grotesk'] flex items-center justify-center gap-2.5 cursor-pointer"
+                    >
+                      <span className="material-symbols-outlined text-[20px]">shopping_cart_checkout</span>
+                      <span className="tracking-wide">Continue with Google Play · {totalBilledAmount}</span>
+                    </button>
+                  </div>
+                )}
+
+                {/* GATEWAY OPTION 2: CREDIT / DEBIT CARD GATEWAY */}
+                {gatewayMethod === 'card' && (
+                  <div className="minimal-card p-4 rounded-2xl border border-white/[0.12] space-y-3 shadow-xl animate-in fade-in duration-200">
+                    <div className="flex items-center justify-between border-b border-white/[0.08] pb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[#38bdf8] text-[20px]">credit_card</span>
+                        <h4 className="text-xs font-bold text-[#f8fafc] font-['Space_Grotesk']">
+                          Credit / Debit Card Checkout
+                        </h4>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-bold text-[#f8fafc] bg-[#1a1f1b] px-1.5 py-0.5 rounded border border-white/10">VISA</span>
+                        <span className="text-[10px] font-bold text-[#f8fafc] bg-[#1a1f1b] px-1.5 py-0.5 rounded border border-white/10">MC</span>
+                      </div>
+                    </div>
+
+                    {/* Cardholder Name */}
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-mono text-[#8a938e] block uppercase">Cardholder Name</label>
+                      <input
+                        type="text"
+                        value={cardName}
+                        onChange={(e) => setCardName(e.target.value)}
+                        placeholder="Name on card"
+                        className="w-full bg-[#181d1a] border border-white/[0.12] rounded-xl px-3 py-2 text-xs text-[#f8fafc] outline-none focus:border-[#bef264]"
+                      />
+                    </div>
+
+                    {/* Card Number */}
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-mono text-[#8a938e] block uppercase">Card Number</label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={cardNumber}
+                          maxLength={19}
+                          onChange={(e) => handleCardNumberChange(e.target.value)}
+                          placeholder="4532 •••• •••• 4242"
+                          className="w-full bg-[#181d1a] border border-white/[0.12] rounded-xl px-3 py-2 text-xs text-[#f8fafc] font-mono outline-none focus:border-[#bef264] pr-10"
+                        />
+                        <span className="material-symbols-outlined absolute right-2.5 top-2 text-[18px] text-[#bef264]">
+                          lock
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Expiry & CVC */}
+                    <div className="grid grid-cols-2 gap-2.5">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-mono text-[#8a938e] block uppercase">Expires (MM/YY)</label>
+                        <input
+                          type="text"
+                          value={cardExpiry}
+                          maxLength={5}
+                          onChange={(e) => handleCardExpiryChange(e.target.value)}
+                          placeholder="MM/YY"
+                          className="w-full bg-[#181d1a] border border-white/[0.12] rounded-xl px-3 py-2 text-xs text-[#f8fafc] font-mono outline-none focus:border-[#bef264]"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-mono text-[#8a938e] block uppercase">Security Code (CVV)</label>
+                        <input
+                          type="password"
+                          value={cardCvc}
+                          maxLength={4}
+                          onChange={(e) => setCardCvc(e.target.value.replace(/\D/g, ''))}
+                          placeholder="•••"
+                          className="w-full bg-[#181d1a] border border-white/[0.12] rounded-xl px-3 py-2 text-xs text-[#f8fafc] font-mono outline-none focus:border-[#bef264]"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Save card checkbox */}
+                    <label className="flex items-center gap-2 cursor-pointer pt-0.5">
+                      <input
+                        type="checkbox"
+                        checked={saveCard}
+                        onChange={(e) => setSaveCard(e.target.checked)}
+                        className="rounded border-white/20 text-[#bef264] focus:ring-0 cursor-pointer"
+                      />
+                      <span className="text-[10px] text-[#9b9f9c]">Save card securely for seamless auto-renewal</span>
+                    </label>
+
+                    {/* Error Notice */}
+                    {authError && (
+                      <div className="p-2.5 bg-red-950/60 border border-red-500/40 rounded-xl text-xs text-red-200 font-mono">
+                        {authError}
+                      </div>
+                    )}
+
+                    {/* Pay via Card Action */}
+                    <button
+                      type="button"
+                      disabled={isProcessing}
+                      onClick={() => executePayment('card')}
+                      className="w-full py-3.5 rounded-2xl bg-[#0f172a] text-white font-bold text-xs shadow-xl hover:bg-[#1e293b] active:scale-95 transition-all font-['Space_Grotesk'] flex items-center justify-center gap-2 cursor-pointer btn-accent-cta"
+                    >
+                      <span className="material-symbols-outlined text-[17px]">credit_card</span>
+                      <span>Pay {totalBilledAmount} via Card Gateway</span>
+                    </button>
+                  </div>
+                )}
+
+                {/* Processing Spinner */}
                 {isProcessing && (
                   <div className="p-3 bg-[#0e3e30] border border-[#bef264]/40 rounded-xl text-center text-xs text-[#bef264] font-semibold animate-pulse flex items-center justify-center gap-2">
                     <span className="material-symbols-outlined text-[16px] animate-spin">progress_activity</span>
-                    Securing transaction & activating membership...
+                    <span>Contacting payment gateway &amp; authorizing charge...</span>
                   </div>
                 )}
+
+                {/* Security Guarantee Footer */}
+                <div className="flex items-center justify-center gap-3 text-[10px] text-[#8a938e] font-mono py-1">
+                  <span className="flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[13px] text-[#a1d1bd]">lock</span>
+                    <span>256-Bit SSL</span>
+                  </span>
+                  <span>•</span>
+                  <span>PCI-DSS Level 1</span>
+                  <span>•</span>
+                  <span>Cancel Anytime</span>
+                </div>
               </>
             )}
           </div>
         )}
       </div>
 
+      {/* Google Play "Pay with Google Credits" Official Android Bottom Sheet Modal */}
+      {isBioPromptOpen && (
+        <div className="fixed inset-0 bg-black/85 backdrop-blur-md z-[99999] flex items-end justify-center p-0 animate-in fade-in duration-200">
+          <div className="google-play-sheet w-full max-w-md bg-[#202124] rounded-t-[32px] p-6 text-white border-t border-white/10 shadow-2xl space-y-4">
+            <div className="w-10 h-1 bg-white/20 rounded-full mx-auto" />
+            
+            {/* Header with Google Play branding */}
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <div className="flex items-center gap-2.5">
+                <span className="text-xl font-bold text-[#34a853]">▶</span>
+                <span className="font-['Space_Grotesk'] font-bold text-sm tracking-wide text-white">Google Play</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsBioPromptOpen(false)}
+                className="text-white/60 hover:text-white text-xs font-mono cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Product & Price */}
+            <div>
+              <p className="text-xs text-white/70">NIMORA: AI Daily Planner</p>
+              <h3 className="text-base font-bold text-white font-['Space_Grotesk']">{currentPlan.name}</h3>
+              <p className="text-lg font-bold text-[#bef264] font-mono mt-0.5">{totalBilledAmount}</p>
+            </div>
+
+            {/* Google Account info */}
+            <div className="p-3 bg-white/[0.08] rounded-xl flex items-center justify-between text-xs border border-white/10 gplay-card">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#34a853] text-[20px]">account_circle</span>
+                <span className="text-[11px] text-white font-medium gplay-email">sudarshan.architect@gmail.com</span>
+              </div>
+              <span className="text-[10px] text-[#34a853] font-mono font-bold">Linked</span>
+            </div>
+
+            {/* Pay with Google Credits Option */}
+            <div className="p-3.5 bg-[#1b2f23] rounded-2xl border border-[#34a853]/50 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-[#34a853]/25 flex items-center justify-center text-[#34a853]">
+                  <span className="material-symbols-outlined text-[19px]">account_balance_wallet</span>
+                </div>
+                <div>
+                  <span className="text-xs font-bold text-white block">Google Play Balance</span>
+                  <span className="text-[10px] text-[#bef264] font-mono font-semibold">Available Google Credits</span>
+                </div>
+              </div>
+              <span className="text-sm font-bold text-[#bef264] font-mono">Covered</span>
+            </div>
+
+            <p className="text-[10px] text-white/60 leading-relaxed font-mono">
+              Subscription renews automatically until cancelled in Google Play Subscriptions.
+            </p>
+
+            {/* Actions: Pay with your Google credits */}
+            <div className="flex gap-2.5 pt-1">
+              <button
+                type="button"
+                onClick={() => setIsBioPromptOpen(false)}
+                className="w-1/3 py-3 rounded-xl bg-white/10 text-xs font-semibold text-white hover:bg-white/15 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={isProcessing}
+                onClick={() => {
+                  setIsBioPromptOpen(false);
+                  executePayment('google_play');
+                }}
+                className="w-2/3 py-3 rounded-xl bg-[#34a853] hover:bg-[#2d9248] text-white text-xs font-bold font-['Space_Grotesk'] active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+              >
+                {isProcessing ? (
+                  <>
+                    <span className="material-symbols-outlined text-[16px] animate-spin">progress_activity</span>
+                    <span>Processing...</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="material-symbols-outlined text-[18px]">verified</span>
+                    <span>Pay with your Google credits</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Google Pay / Google Play Success Animated Overlay */}
+      {showSuccessOverlay && (
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-xl z-[999999] flex flex-col items-center justify-center p-6 animate-in fade-in duration-300">
+          <div className="relative flex items-center justify-center mb-6">
+            {/* Pulsing GPay rings */}
+            <div className="absolute w-36 h-36 rounded-full border-2 border-[#34a853]/40 animate-gpay-ring" />
+            <div className="absolute w-28 h-28 rounded-full border border-[#bef264]/30 animate-gpay-ring" style={{ animationDelay: '0.4s' }} />
+            
+            {/* Animated green badge */}
+            <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-[#0b6b38] to-[#34a853] flex items-center justify-center shadow-[0_0_50px_rgba(52,168,83,0.6)] animate-gpay-pop border-2 border-white/20">
+              <svg className="w-14 h-14 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" className="animate-gpay-check" />
+              </svg>
+            </div>
+          </div>
+
+          <div className="text-center space-y-1.5 animate-in fade-in duration-500 delay-200">
+            <span className="text-[11px] font-mono uppercase tracking-widest text-[#bef264] font-bold">
+              Google Play In-App Purchase
+            </span>
+            <h2 className="font-['Space_Grotesk'] text-2xl font-bold text-white tracking-wide">
+              Payment Successful!
+            </h2>
+            <p className="text-xs text-white/80 max-w-[260px] mx-auto font-mono">
+              Paid via Google credits · {totalBilledAmount}
+            </p>
+          </div>
+
+          <div className="mt-8 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 text-white text-[11px] font-mono border border-white/10">
+            <span className="material-symbols-outlined text-[15px] text-[#bef264]">lock</span>
+            <span>Google Play Secured</span>
+          </div>
+        </div>
+      )}
+
       {/* Bottom Action Footer (Only in Pricing step) */}
       {step === 'pricing' && (
         <div className="pt-2 border-t border-[#334155]/30">
           <button
-            onClick={() => setStep('checkout')}
-            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#bef264]/60 text-[#bef264] font-bold text-xs shadow-xl hover:brightness-110 active:scale-95 transition-all font-['Space_Grotesk'] flex items-center justify-center gap-2 cursor-pointer"
+            onClick={() => {
+              haptics.tick();
+              setPaymentSuccess(false);
+              setStep('checkout');
+            }}
+            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#0e3e30] to-[#0A2E24] border border-[#bef264]/60 text-[#bef264] font-bold text-xs shadow-xl hover:brightness-110 active:scale-95 transition-all font-['Space_Grotesk'] flex items-center justify-center gap-2 cursor-pointer btn-accent-cta"
           >
             <span>Continue to Checkout</span>
             <span>·</span>

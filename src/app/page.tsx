@@ -539,7 +539,7 @@ export default function NimoraApp() {
 
       {/* Main View Area */}
       {activeTab === 'home' && (
-        <main className="pt-16 px-4 space-y-4">
+        <main className="pt-16 px-4 pb-36 space-y-4">
           {/* Executive Greeting & Persona Hierarchy (Utilitarian Minimalism) */}
           <section className="space-y-1">
             <div className="flex items-center justify-between">
@@ -863,7 +863,7 @@ export default function NimoraApp() {
 
       {/* Schedule View */}
       {activeTab === 'schedule' && (
-        <div className="pt-16 px-4">
+        <div className="pt-16 px-4 pb-36">
           <Screen08DailyPlanner
             tasks={tasks}
             contacts={contacts}
@@ -886,7 +886,7 @@ export default function NimoraApp() {
 
       {/* Add Task View */}
       {activeTab === 'add_task' && (
-        <div className="pt-16 px-4">
+        <div className="pt-16 px-4 pb-36">
           <Screen09AddTask
             tasks={tasks}
             contacts={contacts}
@@ -905,7 +905,7 @@ export default function NimoraApp() {
 
       {/* Task Details View */}
       {activeTab === 'task_details' && selectedTask && (
-        <div className="pt-16 px-4">
+        <div className="pt-16 px-4 pb-36">
           <Screen10TaskDetails
             tasks={tasks}
             contacts={contacts}
@@ -923,7 +923,7 @@ export default function NimoraApp() {
 
       {/* Voice Assistant View */}
       {activeTab === 'voice' && (
-        <div className="pt-16 px-4">
+        <div className="pt-16 px-4 pb-36">
           <Screen13VoiceAssistant
             contacts={contacts}
             tasks={tasks}
@@ -947,7 +947,7 @@ export default function NimoraApp() {
 
       {/* CRM & Contacts View */}
       {activeTab === 'contacts' && (
-        <div className="pt-16 px-4">
+        <div className="pt-16 px-4 pb-36">
           <Screen11Contacts
             contacts={contacts}
             suggestions={INITIAL_AI_SUGGESTIONS}
@@ -964,7 +964,7 @@ export default function NimoraApp() {
 
       {/* Contact Details View */}
       {activeTab === 'contact_details' && selectedContact && (
-        <div className="pt-16 px-4">
+        <div className="pt-16 px-4 pb-36">
           <Screen12ContactDetails
             contacts={contacts}
             suggestions={INITIAL_AI_SUGGESTIONS}
@@ -976,7 +976,7 @@ export default function NimoraApp() {
 
       {/* Notifications View */}
       {activeTab === 'notifications' && (
-        <div className="pt-16 px-4">
+        <div className="pt-16 px-4 pb-36">
           <Screen16Notifications
             tasks={tasks}
             notifications={INITIAL_NOTIFICATIONS}
@@ -987,7 +987,7 @@ export default function NimoraApp() {
 
       {/* Widget Preview View */}
       {activeTab === 'widget' && (
-        <div className="pt-16 px-4">
+        <div className="pt-16 px-4 pb-36">
           <Screen15Widget
             tasks={tasks}
             notifications={INITIAL_NOTIFICATIONS}
@@ -998,7 +998,7 @@ export default function NimoraApp() {
 
       {/* AI Suggestions View */}
       {activeTab === 'ai_suggestions' && (
-        <div className="pt-16 px-4">
+        <div className="pt-16 px-4 pb-36">
           <Screen14AISuggestions
             contacts={contacts}
             suggestions={INITIAL_AI_SUGGESTIONS}
@@ -1010,7 +1010,7 @@ export default function NimoraApp() {
 
       {/* Settings View */}
       {activeTab === 'settings' && (
-        <div className="pt-16 px-4">
+        <div className="pt-16 px-4 pb-36">
           <Screen18ProfileSettings
             tasks={tasks}
             notifications={INITIAL_NOTIFICATIONS}
@@ -1032,7 +1032,7 @@ export default function NimoraApp() {
 
       {/* Subscription & Pricing Plans View */}
       {activeTab === 'pricing' && (
-        <div className="pt-16 px-4">
+        <div className="pt-16 px-4 pb-36">
           <Screen19SubscriptionPlans
             onNavigate={() => setActiveTab('settings')}
             onSubscriptionSuccess={() => setIsProUser(true)}
@@ -1041,29 +1041,31 @@ export default function NimoraApp() {
       )}
 
       {/* Push-to-Talk Voice Command Dock ("Ask Nova...") [20% Liquid Glass Material] */}
-      <div className="fixed bottom-20 left-0 w-full px-4 z-40 flex justify-center pointer-events-none max-w-md left-1/2 -translate-x-1/2">
-        <div
-          onClick={() => setActiveTab('voice')}
-          className="pointer-events-auto voice-pulse liquid-glass-pill rounded-full py-2.5 px-5 flex items-center space-x-3 cursor-pointer hover:scale-[1.03] active:scale-95 transition-all shadow-xl"
-        >
-          <div className="w-8 h-8 rounded-full bg-white/10 border border-purple-400/30 flex items-center justify-center text-[#bef264] shadow-inner">
-            <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-              mic
+      {activeTab !== 'voice' && (
+        <div className="fixed bottom-20 left-0 w-full px-4 z-40 flex justify-center pointer-events-none max-w-md left-1/2 -translate-x-1/2">
+          <div
+            onClick={() => setActiveTab('voice')}
+            className="pointer-events-auto voice-pulse liquid-glass-pill rounded-full py-2.5 px-5 flex items-center space-x-3 cursor-pointer hover:scale-[1.03] active:scale-95 transition-all shadow-xl"
+          >
+            <div className="w-8 h-8 rounded-full bg-white/10 border border-purple-400/30 flex items-center justify-center text-[#bef264] shadow-inner">
+              <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                mic
+              </span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="text-xs text-[#f8fafc] font-semibold tracking-tight">Ask {assistantName}...</span>
+              <div className="flex space-x-0.5 items-center">
+                <span className="w-1 h-3 bg-[#bef264] rounded-full animate-bounce"></span>
+                <span className="w-1 h-5 bg-[#c084fc] rounded-full animate-bounce" style={{ animationDelay: '0.15s' }}></span>
+                <span className="w-1 h-2 bg-[#38bdf8] rounded-full animate-bounce" style={{ animationDelay: '0.3s' }}></span>
+              </div>
+            </div>
+            <span className="text-[9px] font-mono text-[#bef264] font-bold uppercase tracking-wider bg-white/10 px-1.5 py-0.5 rounded border border-purple-400/25">
+              AI
             </span>
           </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-xs text-[#f8fafc] font-semibold tracking-tight">Ask {assistantName}...</span>
-            <div className="flex space-x-0.5 items-center">
-              <span className="w-1 h-3 bg-[#bef264] rounded-full animate-bounce"></span>
-              <span className="w-1 h-5 bg-[#c084fc] rounded-full animate-bounce" style={{ animationDelay: '0.15s' }}></span>
-              <span className="w-1 h-2 bg-[#38bdf8] rounded-full animate-bounce" style={{ animationDelay: '0.3s' }}></span>
-            </div>
-          </div>
-          <span className="text-[9px] font-mono text-[#bef264] font-bold uppercase tracking-wider bg-white/10 px-1.5 py-0.5 rounded border border-purple-400/25">
-            AI
-          </span>
         </div>
-      </div>
+      )}
 
       {/* Global Toast Notification */}
       {globalToast && (

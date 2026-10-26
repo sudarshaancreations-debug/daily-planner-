@@ -1,0 +1,50 @@
+{
+  "packageId": "ai.nimora.app",
+  "host": "nimora-ai.vercel.app",
+  "name": "NIMORA — Your Day. Intelligently Organized.",
+  "launcherName": "NIMORA",
+  "display": "standalone",
+  "themeColor": "#0E0B1F",
+  "themeColorDark": "#0E0B1F",
+  "navigationColor": "#0E0B1F",
+  "navigationColorDark": "#0E0B1F",
+  "navigationDividerColor": "#0E0B1F",
+  "navigationDividerColorDark": "#0E0B1F",
+  "backgroundColor": "#0E0B1F",
+  "enableNotifications": true,
+  "startUrl": "/",
+  "iconUrl": "http://127.0.0.1:8089/icon-512.png",
+  "maskableIconUrl": "http://127.0.0.1:8089/icon-512.png",
+  "signingKey": {
+    "path": "/Users/darshaananvekar/.gemini/antgravity/scratch/daily-planner/android-keystore/nimora-release.keystore",
+    "alias": "nimora_release"
+  },
+  "appVersionName": "1.0.0",
+  "appVersionCode": 2,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "http://127.0.0.1:8089/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {
+    "playBilling": {
+      "enabled": true
+    },
+    "locationDelegation": {
+      "enabled": false
+    }
+  },
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://nimora-ai.vercel.app/",
+  "minSdkVersion": 24,
+  "orientation": "default",
+  "fingerprints": [],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "displayOverride": [],
+  "appVersion": "1.0.0"
+}

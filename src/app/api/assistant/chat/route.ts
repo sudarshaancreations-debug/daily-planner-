@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkRateLimit } from '@/lib/rateLimit';
 
 export interface AssistantChatRequest {
   prompt: string;
@@ -22,6 +23,14 @@ export interface AssistantChatRequest {
 
 export async function POST(req: NextRequest) {
   try {
+    const rateCheck = checkRateLimit(req, 40, 60000);
+    if (!rateCheck.success) {
+      return NextResponse.json(
+        { reply: 'You have sent many requests in a short time. Please wait a moment before asking Nova again.' },
+        { status: 429 }
+      );
+    }
+
     const body: AssistantChatRequest = await req.json();
     const {
       prompt,
