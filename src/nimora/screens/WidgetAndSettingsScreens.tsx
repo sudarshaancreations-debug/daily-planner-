@@ -194,10 +194,17 @@ export function Screen16Notifications({ notifications: initialList = [], onNavig
     <div className="w-full h-full min-h-[680px] bg-[#0e0b1f] text-[#f8fafc] flex flex-col justify-between select-none rounded-[38px] overflow-hidden relative">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="absolute top-16 left-4 right-4 z-50 animate-bounce">
+        <div className="absolute top-16 left-4 right-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="liquid-glass rounded-xl px-3.5 py-2.5 border border-[#bef264]/40 text-xs text-[#bef264] font-mono flex items-center justify-between shadow-2xl">
             <span>{toastMessage}</span>
-            <button onClick={() => setToastMessage(null)} className="text-purple-300/60 hover:text-white cursor-pointer">✕</button>
+            <button
+              type="button"
+              onClick={() => setToastMessage(null)}
+              aria-label="Dismiss message"
+              className="p-1 min-w-[24px] min-h-[24px] flex items-center justify-center text-purple-300/60 hover:text-white cursor-pointer rounded"
+            >
+              ✕
+            </button>
           </div>
         </div>
       )}

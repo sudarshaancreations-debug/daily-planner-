@@ -1100,13 +1100,20 @@ export function Screen08DailyPlanner({
     <div className="w-full h-full min-h-[680px] bg-[#0e0b1f] text-[#f8fafc] flex flex-col justify-between select-none rounded-[38px] overflow-hidden relative">
       {/* Toast Feedback Notification Banner */}
       {toastMessage && (
-        <div className="absolute top-16 left-4 right-4 z-40 animate-bounce">
+        <div className="absolute top-16 left-4 right-4 z-40 animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="liquid-glass rounded-xl px-3 py-2 border border-[#bef264]/40 text-xs text-[#bef264] font-mono flex items-center justify-between shadow-2xl">
             <span className="flex items-center gap-1.5">
               <span className="material-symbols-outlined text-[15px]">check_circle</span>
               <span>{toastMessage}</span>
             </span>
-            <button onClick={() => setToastMessage(null)} className="text-purple-300/60 hover:text-white cursor-pointer">✕</button>
+            <button
+              type="button"
+              onClick={() => setToastMessage(null)}
+              aria-label="Dismiss message"
+              className="p-1 min-w-[24px] min-h-[24px] flex items-center justify-center text-purple-300/60 hover:text-white cursor-pointer rounded"
+            >
+              ✕
+            </button>
           </div>
         </div>
       )}

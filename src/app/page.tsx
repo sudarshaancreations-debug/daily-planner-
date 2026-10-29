@@ -124,7 +124,7 @@ function ThumbSliderNav({ activeTab, onSelectTab }: ThumbSliderNavProps) {
   const currentHoveredTab = tabs[Math.max(0, Math.min(4, Math.round(sliderPos)))];
 
   return (
-    <div className="fixed bottom-0 inset-x-0 mx-auto w-full max-w-md z-50 px-3 pb-4 pointer-events-auto select-none">
+    <div className="fixed bottom-0 inset-x-0 mx-auto w-full max-w-md z-50 px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pointer-events-auto select-none">
       {/* Slider Interactive Guide Badge - Appears ONLY during active sliding gesture to keep UI clean */}
       {isDragging && (
         <div className="flex justify-center mb-1.5 pointer-events-none transition-opacity duration-150">
@@ -526,14 +526,16 @@ export default function NimoraApp() {
             <span className="material-symbols-outlined text-[19px]">notifications</span>
             <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#bef264] shadow-[0_0_6px_#bef264]"></span>
           </button>
-          <div
+          <button
+            type="button"
             onClick={() => setActiveTab('settings')}
-            className="w-9 h-9 rounded-full p-0.5 border border-purple-400/30 overflow-hidden bg-[#171330] cursor-pointer hover:border-[#bef264]/50 transition-colors"
+            aria-label="Open User Settings"
+            className="w-9 h-9 rounded-full p-0.5 border border-purple-400/30 overflow-hidden bg-[#171330] cursor-pointer hover:border-[#bef264]/50 transition-colors focus:outline-none focus:ring-2 focus:ring-[#bef264]"
           >
             <div className="w-full h-full rounded-full bg-[#251e4d] flex items-center justify-center text-[#bef264] font-['Space_Grotesk'] text-xs font-bold">
               SM
             </div>
-          </div>
+          </button>
         </div>
       </nav>
 
@@ -692,7 +694,7 @@ export default function NimoraApp() {
                   setSelectedTask(activeFocusTask);
                   setActiveTab('task_details');
                 }}
-                className="liquid-glass liquid-sheen rounded-2xl p-5 pb-5 border-l-4 border-l-[#bef264] shadow-2xl cursor-pointer hover:border-purple-300/40 transition-all"
+                className="liquid-glass liquid-sheen rounded-2xl p-5 pb-5 border border-[#bef264]/40 shadow-2xl cursor-pointer hover:border-[#bef264]/80 transition-all"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="space-y-1">
@@ -772,7 +774,7 @@ export default function NimoraApp() {
           <section className="space-y-2">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-sm font-semibold tracking-wide text-purple-200">
+                <h2 className="text-sm font-semibold tracking-wide text-[#f8fafc]">
                   {isSelectedDateToday ? "Today's Schedule" : `Schedule for ${formattedSelectedDate}`}
                 </h2>
                 {!isSelectedDateToday && (
@@ -1055,9 +1057,9 @@ export default function NimoraApp() {
             <div className="flex items-center space-x-2">
               <span className="text-xs text-[#f8fafc] font-semibold tracking-tight">Ask {assistantName}...</span>
               <div className="flex space-x-0.5 items-center">
-                <span className="w-1 h-3 bg-[#bef264] rounded-full animate-bounce"></span>
-                <span className="w-1 h-5 bg-[#c084fc] rounded-full animate-bounce" style={{ animationDelay: '0.15s' }}></span>
-                <span className="w-1 h-2 bg-[#38bdf8] rounded-full animate-bounce" style={{ animationDelay: '0.3s' }}></span>
+                <span className="w-1 h-3 bg-[#bef264] rounded-full animate-pulse"></span>
+                <span className="w-1 h-5 bg-[#c084fc] rounded-full animate-pulse" style={{ animationDelay: '0.15s' }}></span>
+                <span className="w-1 h-2 bg-[#38bdf8] rounded-full animate-pulse" style={{ animationDelay: '0.3s' }}></span>
               </div>
             </div>
             <span className="text-[9px] font-mono text-[#bef264] font-bold uppercase tracking-wider bg-white/10 px-1.5 py-0.5 rounded border border-purple-400/25">
@@ -1069,13 +1071,20 @@ export default function NimoraApp() {
 
       {/* Global Toast Notification */}
       {globalToast && (
-        <div className="fixed top-14 left-1/2 -translate-x-1/2 w-full max-w-sm px-4 z-[70] animate-bounce">
+        <div className="fixed top-14 left-1/2 -translate-x-1/2 w-full max-w-sm px-4 z-[70] animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="liquid-glass rounded-xl px-3 py-2 border border-[#bef264]/50 text-xs text-[#bef264] font-mono flex items-center justify-between shadow-2xl">
             <span className="flex items-center gap-1.5">
               <span className="material-symbols-outlined text-[15px]">check_circle</span>
               <span>{globalToast}</span>
             </span>
-            <button onClick={() => setGlobalToast(null)} className="text-purple-300/60 hover:text-white cursor-pointer">✕</button>
+            <button
+              type="button"
+              onClick={() => setGlobalToast(null)}
+              aria-label="Dismiss notification"
+              className="p-1 min-w-[24px] min-h-[24px] flex items-center justify-center text-purple-300/60 hover:text-white cursor-pointer rounded"
+            >
+              ✕
+            </button>
           </div>
         </div>
       )}

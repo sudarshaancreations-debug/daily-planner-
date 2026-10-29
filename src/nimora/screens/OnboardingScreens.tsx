@@ -30,7 +30,7 @@ export function Screen01Splash({ onNavigate }: ScreenProps) {
           <div className="absolute inset-0 rounded-3xl border border-[#D4AF37]/40 animate-ping opacity-25" />
         </div>
 
-        <h1 className="text-3xl font-extrabold tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-amber-100 via-amber-200 to-amber-400">
+        <h1 className="text-3xl font-extrabold tracking-[0.2em] text-[#F3E5AB] font-['Space_Grotesk']">
           NIMORA
         </h1>
         <p className="text-xs uppercase tracking-[0.25em] text-emerald-200/90 mt-2 font-medium">
