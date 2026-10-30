@@ -230,7 +230,8 @@ export default function NimoraApp() {
   const [isAnyDoMomentOpen, setIsAnyDoMomentOpen] = useState(false);
   const [selectedCalendarDate, setSelectedCalendarDate] = useState('2026-10-24');
   const [todayIso, setTodayIso] = useState('2026-10-24');
-  const [globalToast, setGlobalToast] = useState<string | null>(null);
+  const [isLoadingTasks, setIsLoadingTasks] = useState(true);
+  const [globalToast, setGlobalToast] = useState<{ message: string; onUndo?: () => void } | string | null>(null);
 
   // Live Day / Night / Auto Theme Mode
   const [themeMode, setThemeMode] = useState<ThemeMode>('auto');
@@ -292,11 +293,12 @@ export default function NimoraApp() {
     } catch {}
   }, []);
 
-  const showGlobalToast = (msg: string) => {
-    setGlobalToast(msg);
+  const showGlobalToast = (toast: { message: string; onUndo?: () => void } | string) => {
+    setGlobalToast(toast);
+    const duration = typeof toast === 'object' && toast.onUndo ? 4500 : 2800;
     setTimeout(() => {
-      setGlobalToast((prev) => (prev === msg ? null : prev));
-    }, 2800);
+      setGlobalToast((prev) => (prev === toast ? null : prev));
+    }, duration);
   };
 
   const handleShareAvailability = () => {
@@ -332,6 +334,8 @@ export default function NimoraApp() {
       }
     } catch (e) {
       console.warn('Could not read from localStorage', e);
+    } finally {
+      setIsLoadingTasks(false);
     }
   }, []);
 
@@ -399,6 +403,17 @@ export default function NimoraApp() {
 
   const handleDeleteTask = (id: string) => {
     haptics.warning();
+    const taskToDelete = tasks.find((t) => t.id === id);
+    if (taskToDelete) {
+      showGlobalToast({
+        message: `Deleted "${taskToDelete.title.length > 20 ? taskToDelete.title.slice(0, 20) + '…' : taskToDelete.title}"`,
+        onUndo: () => {
+          haptics.success();
+          handleAddTask(taskToDelete);
+          setGlobalToast(null);
+        },
+      });
+    }
     setTasks((prev) => {
       const updated = prev.filter((t) => t.id !== id);
       try {
@@ -813,7 +828,21 @@ export default function NimoraApp() {
               <span className="text-[#bef264] font-bold">‹ ›</span>
             </div>
 
-            {displayedTasks.length === 0 ? (
+            {isLoadingTasks ? (
+              /* Skeleton screen placeholder cards */
+              <div className="space-y-3 my-2 animate-pulse" aria-busy="true" aria-label="Loading schedule">
+                {[1, 2, 3].map((n) => (
+                  <div key={n} className="rounded-2xl p-4 bg-white/[0.04] border border-white/[0.06] space-y-2.5">
+                    <div className="flex justify-between items-center">
+                      <div className="h-3.5 bg-white/15 rounded w-1/4" />
+                      <div className="h-3.5 bg-white/10 rounded w-16" />
+                    </div>
+                    <div className="h-5 bg-white/20 rounded w-4/5" />
+                    <div className="h-3 bg-white/10 rounded w-1/2" />
+                  </div>
+                ))}
+              </div>
+            ) : displayedTasks.length === 0 ? (
               <div className="minimal-card rounded-2xl p-6 text-center space-y-3 border border-dashed border-white/10 my-2">
                 <div className="w-12 h-12 mx-auto rounded-full bg-[#bef264]/10 text-[#bef264] flex items-center justify-center">
                   <span className="material-symbols-outlined text-2xl">event_available</span>
@@ -1069,22 +1098,37 @@ export default function NimoraApp() {
         </div>
       )}
 
-      {/* Global Toast Notification */}
+      {/* Global Toast Notification with Undo Action */}
       {globalToast && (
         <div className="fixed top-14 left-1/2 -translate-x-1/2 w-full max-w-sm px-4 z-[70] animate-in fade-in slide-in-from-top-2 duration-200">
-          <div className="liquid-glass rounded-xl px-3 py-2 border border-[#bef264]/50 text-xs text-[#bef264] font-mono flex items-center justify-between shadow-2xl">
-            <span className="flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-[15px]">check_circle</span>
-              <span>{globalToast}</span>
+          <div className="liquid-glass rounded-xl px-3.5 py-2.5 border border-[#bef264]/50 text-xs text-[#bef264] font-mono flex items-center justify-between gap-2 shadow-2xl">
+            <span className="flex items-center gap-1.5 min-w-0 truncate">
+              <span className="material-symbols-outlined text-[15px] shrink-0">check_circle</span>
+              <span className="truncate">
+                {typeof globalToast === 'string' ? globalToast : globalToast.message}
+              </span>
             </span>
-            <button
-              type="button"
-              onClick={() => setGlobalToast(null)}
-              aria-label="Dismiss notification"
-              className="p-1 min-w-[24px] min-h-[24px] flex items-center justify-center text-purple-300/60 hover:text-white cursor-pointer rounded"
-            >
-              ✕
-            </button>
+            <div className="flex items-center gap-2 shrink-0">
+              {typeof globalToast === 'object' && globalToast?.onUndo && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    globalToast.onUndo?.();
+                  }}
+                  className="px-2 py-0.5 rounded bg-[#bef264] text-[#0e0b1f] font-bold text-[10px] uppercase tracking-wider hover:brightness-110 active:scale-95 transition-all cursor-pointer shadow-sm"
+                >
+                  Undo
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => setGlobalToast(null)}
+                aria-label="Dismiss notification"
+                className="p-1 min-w-[24px] min-h-[24px] flex items-center justify-center text-purple-300/60 hover:text-white cursor-pointer rounded"
+              >
+                ✕
+              </button>
+            </div>
           </div>
         </div>
       )}

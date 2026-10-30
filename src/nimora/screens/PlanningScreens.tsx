@@ -1447,11 +1447,11 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask, selectedDate 
 
         {/* Form Inputs - Clean 80% Utilitarian Minimal */}
         <div className="space-y-3">
-          {/* Title with AI speech dictation button */}
+          {/* Title with AI speech dictation button & Inline Validation */}
           <div>
             <div className="flex justify-between items-center mb-1">
               <label className="text-[9px] font-mono tracking-wider text-[#9b9f9c] uppercase block">
-                Task Title *
+                Task Title <span className="text-rose-400 font-bold">* Required</span>
               </label>
               <button
                 type="button"
@@ -1470,19 +1470,24 @@ export function Screen09AddTask({ contacts, onNavigate, onAddTask, selectedDate 
             <input
               type="text"
               value={title}
+              onBlur={() => {
+                if (!title.trim()) {
+                  setErrorMessage('Task title is required to schedule a focus block');
+                }
+              }}
               onChange={(e) => {
                 setTitle(e.target.value);
                 if (errorMessage) setErrorMessage('');
               }}
               placeholder="e.g. Site inspection at Skyline Tower B"
               className={`w-full bg-[#171330] border rounded-xl px-3.5 py-2.5 text-xs text-[#f8fafc] outline-none shadow-sm placeholder-[#555d58] transition-colors ${
-                errorMessage ? 'border-rose-500 ring-1 ring-rose-500' : 'border-white/[0.08] focus:border-[#bef264]/50'
+                errorMessage ? 'border-rose-500 ring-1 ring-rose-500 bg-rose-950/10' : 'border-white/[0.08] focus:border-[#bef264]/50'
               }`}
             />
             {errorMessage && (
-              <p className="text-[10px] text-rose-400 mt-1 flex items-center gap-1 font-mono">
+              <p className="text-[10px] text-rose-400 mt-1 flex items-center gap-1 font-mono animate-in fade-in duration-150">
                 <span className="material-symbols-outlined text-[12px]">error</span>
-                {errorMessage}
+                <span>{errorMessage}</span>
               </p>
             )}
           </div>

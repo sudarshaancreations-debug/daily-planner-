@@ -56,27 +56,67 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
           <span className="material-symbols-outlined absolute left-2.5 top-2.5 text-[18px] text-[#8a938e]">search</span>
         </div>
 
-        {/* Filter Pills */}
+        {/* Filter Pills with Removable Chip Affordance */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
           {(['all', 'client', 'lead', 'team'] as const).map((cat) => (
             <button
               key={cat}
-              onClick={() => setFilter(cat)}
-              className={`px-3 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer ${
+              onClick={() => setFilter(filter === cat && cat !== 'all' ? 'all' : cat)}
+              className={`px-3 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer flex items-center gap-1 ${
                 filter === cat
                   ? 'filter-pill-active'
                   : 'filter-pill-inactive'
               }`}
             >
-              {cat === 'all' ? 'All' : `${cat}s`}
+              <span>{cat === 'all' ? 'All' : `${cat}s`}</span>
+              {filter === cat && cat !== 'all' && <span className="text-[11px] leading-none opacity-80">✕</span>}
             </button>
           ))}
         </div>
+
+        {/* Active Search Removable Chip */}
+        {search && (
+          <div className="mt-2 flex items-center gap-1.5 animate-in fade-in duration-150">
+            <span className="text-[10px] font-mono text-[#8a938e]">Active search:</span>
+            <button
+              type="button"
+              onClick={() => setSearch('')}
+              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#bef264]/10 text-[#bef264] border border-[#bef264]/30 text-[10px] font-mono hover:bg-[#bef264]/20 transition-colors cursor-pointer"
+            >
+              <span>"{search}"</span>
+              <span className="text-xs">✕</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Contact Cards List (Minimalist Editorial Stream) */}
       <div className="flex-1 overflow-y-auto p-4 space-y-2">
-        {filtered.map((contact) => (
+        {filtered.length === 0 ? (
+          <div className="p-8 text-center space-y-3 minimal-card rounded-2xl border border-dashed border-white/10 my-4">
+            <div className="w-12 h-12 mx-auto rounded-full bg-[#bef264]/10 text-[#bef264] flex items-center justify-center">
+              <span className="material-symbols-outlined text-2xl">person_search</span>
+            </div>
+            <div>
+              <p className="text-sm font-bold text-[#f8fafc] font-['Space_Grotesk']">No contacts found</p>
+              <p className="text-xs text-[#8a938e] mt-1 font-mono">
+                {search ? `No matches for "${search}"` : `No contacts registered under ${filter}s`}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setSearch('');
+                setFilter('all');
+              }}
+              className="px-4 py-2 rounded-xl bg-[#bef264] text-[#0e0b1f] text-xs font-bold font-mono hover:brightness-110 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-sm"
+            >
+              <span className="material-symbols-outlined text-sm">restart_alt</span>
+              <span>Reset Filters</span>
+            </button>
+          </div>
+        ) : (
+          filtered.map((contact) => (
           <div
             key={contact.id}
             onClick={() => {
@@ -117,7 +157,7 @@ export function Screen11Contacts({ contacts, onNavigate, onSelectContact }: Cont
               <span className="text-[#8a938e] text-xs font-mono">›</span>
             </div>
           </div>
-        ))}
+        )))}
       </div>
     </div>
   );
