@@ -159,8 +159,12 @@ export default function PrivacyPolicyPage() {
         </section>
 
         {/* Footer */}
-        <div className="pt-6 border-t border-white/[0.08] text-center text-xs text-[#9b9f9c] font-mono">
-          © 2026 NIMORA Technologies. All rights reserved.
+        <div className="pt-6 border-t border-white/[0.08] flex items-center justify-between text-xs text-[#9b9f9c] font-mono">
+          <span>© 2026 NIMORA Technologies. All rights reserved.</span>
+          <div className="flex gap-4">
+            <Link href="/terms" className="hover:text-white underline">Terms of Service</Link>
+            <Link href="/delete-account" className="hover:text-white underline">Delete Account</Link>
+          </div>
         </div>
 
       </div>

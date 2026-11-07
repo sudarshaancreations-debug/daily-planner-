@@ -180,8 +180,12 @@ export default function DeleteAccountPage() {
           </form>
         )}
 
-        <div className="pt-4 border-t border-white/[0.08] text-center text-xs text-[#9b9f9c] font-mono">
-          © 2026 NIMORA Technologies · <Link href="/privacy" className="text-[#bef264] hover:underline">Privacy Policy</Link>
+        <div className="pt-4 border-t border-white/[0.08] text-center text-xs text-[#9b9f9c] font-mono space-x-3">
+          <span>© 2026 NIMORA Technologies</span>
+          <span>·</span>
+          <Link href="/privacy" className="text-[#bef264] hover:underline">Privacy Policy</Link>
+          <span>·</span>
+          <Link href="/terms" className="text-[#bef264] hover:underline">Terms of Service</Link>
         </div>
 
       </div>

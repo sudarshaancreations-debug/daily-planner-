@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { createPortal } from 'react-dom';
 import { NimoraTask, NimoraNotification } from '../data';
 import { haptics } from '@/lib/haptics';
@@ -893,6 +894,56 @@ export function Screen18ProfileSettings({
             </div>
             <span className="text-purple-300/60 group-hover:text-[#bef264] group-hover:translate-x-0.5 transition-all font-mono text-xs">›</span>
           </button>
+        </div>
+
+        {/* Legal, Policies & Store Compliance */}
+        <div className="p-4 pt-2 space-y-2">
+          <h4 className="text-[9px] font-mono font-bold uppercase tracking-wider text-[#8a938e] mb-1">
+            Legal &amp; Compliance
+          </h4>
+
+          <div className="p-2 minimal-card rounded-2xl border border-white/[0.08] space-y-1">
+            <Link
+              href="/privacy"
+              className="w-full p-2.5 rounded-xl flex items-center justify-between hover:bg-white/[0.05] transition-colors group"
+            >
+              <div className="flex items-center gap-2.5">
+                <span className="material-symbols-outlined text-[17px] text-[#bef264]">shield</span>
+                <span className="text-xs text-[#f8fafc] font-medium group-hover:text-white">Privacy Policy</span>
+              </div>
+              <span className="text-[11px] font-mono text-[#8a938e] group-hover:text-[#bef264] transition-colors">›</span>
+            </Link>
+
+            <div className="h-px bg-white/[0.06] mx-2" />
+
+            <Link
+              href="/terms"
+              className="w-full p-2.5 rounded-xl flex items-center justify-between hover:bg-white/[0.05] transition-colors group"
+            >
+              <div className="flex items-center gap-2.5">
+                <span className="material-symbols-outlined text-[17px] text-[#38bdf8]">gavel</span>
+                <span className="text-xs text-[#f8fafc] font-medium group-hover:text-white">Terms of Service &amp; Subscriptions</span>
+              </div>
+              <span className="text-[11px] font-mono text-[#8a938e] group-hover:text-[#bef264] transition-colors">›</span>
+            </Link>
+
+            <div className="h-px bg-white/[0.06] mx-2" />
+
+            <Link
+              href="/delete-account"
+              className="w-full p-2.5 rounded-xl flex items-center justify-between hover:bg-white/[0.05] transition-colors group"
+            >
+              <div className="flex items-center gap-2.5">
+                <span className="material-symbols-outlined text-[17px] text-rose-400">delete_sweep</span>
+                <span className="text-xs text-[#f8fafc] font-medium group-hover:text-white">Account &amp; Data Erasure</span>
+              </div>
+              <span className="text-[11px] font-mono text-[#8a938e] group-hover:text-rose-400 transition-colors">›</span>
+            </Link>
+          </div>
+
+          <div className="pt-2 text-center text-[10px] text-[#8a938e] font-mono">
+            NIMORA v1.0.0 (Build 2) · Google Play Edition
+          </div>
         </div>
       </div>
 
@@ -2276,6 +2327,19 @@ export function Screen19SubscriptionPlans({
                   <span>•</span>
                   <span>Cancel Anytime</span>
                 </div>
+
+                {/* Subscription Legal & Renewal Disclosure */}
+                <p className="text-[10px] text-[#8a938e] text-center leading-relaxed font-mono px-2">
+                  By continuing, you agree to our{' '}
+                  <Link href="/terms" target="_blank" className="text-[#bef264] underline hover:text-white">
+                    Terms of Service
+                  </Link>{' '}
+                  and{' '}
+                  <Link href="/privacy" target="_blank" className="text-[#bef264] underline hover:text-white">
+                    Privacy Policy
+                  </Link>
+                  . Subscriptions renew automatically until cancelled in Google Play.
+                </p>
               </>
             )}
           </div>
@@ -2423,8 +2487,11 @@ export function Screen19SubscriptionPlans({
             <span>{displayPrice} {currentPlan.period}</span>
             <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
           </button>
-          <p className="text-[10px] text-[#8a938e] text-center mt-1.5">
-            Prices in USD. Cancel anytime from profile settings.
+          <p className="text-[10px] text-[#8a938e] text-center mt-1.5 font-mono">
+            Renews automatically · Cancel anytime via Google Play ·{' '}
+            <Link href="/terms" className="text-[#bef264] underline hover:text-white">Terms</Link>
+            {' · '}
+            <Link href="/privacy" className="text-[#bef264] underline hover:text-white">Privacy</Link>
           </p>
         </div>
       )}
