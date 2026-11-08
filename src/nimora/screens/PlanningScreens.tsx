@@ -4,6 +4,7 @@ import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { NimoraTask, Contact } from '../data';
 import { downloadICS } from '@/lib/exportUtils';
 import { haptics } from '@/lib/haptics';
+import { plannerEngine } from '@/engines/plannerEngine';
 
 export interface PlanningProps {
   tasks: NimoraTask[];
@@ -1030,6 +1031,10 @@ export function Screen08DailyPlanner({
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [showCompletedList, setShowCompletedList] = useState(true);
 
+  const conflicts = useMemo(() => {
+    return plannerEngine.detectConflicts(tasks as any);
+  }, [tasks]);
+
   useEffect(() => {
     try {
       const nowIso = new Date().toISOString().split('T')[0];
@@ -1199,6 +1204,26 @@ export function Screen08DailyPlanner({
 
       {/* Main Schedule Content: Timeline OR List - with pb-36 ensuring no overlap with bottom nav */}
       <div className="flex-1 overflow-y-auto px-4 py-2 pb-36 space-y-2">
+        {/* Planner Engine: Real-Time Conflict Detection Banner */}
+        {conflicts.length > 0 && (
+          <div className="p-3 rounded-2xl bg-amber-950/40 border border-amber-500/40 text-amber-200 text-xs flex items-center justify-between shadow-lg animate-in fade-in">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-amber-400 text-lg">warning</span>
+              <div>
+                <p className="font-bold text-white text-[11px] font-['Space_Grotesk']">
+                  Schedule Conflict Detected ({conflicts.length})
+                </p>
+                <p className="text-[10px] text-amber-200/80 font-mono">
+                  {conflicts[0].message}
+                </p>
+              </div>
+            </div>
+            <span className="text-[9px] font-mono bg-amber-500/20 px-2 py-0.5 rounded text-amber-300 font-bold border border-amber-500/30">
+              Overlap
+            </span>
+          </div>
+        )}
+
         {orderedTasks.length === 0 ? (
           <div className="minimal-card rounded-2xl p-6 text-center space-y-3 border border-dashed border-white/10 my-4">
             <div className="w-12 h-12 mx-auto rounded-full bg-[#bef264]/10 text-[#bef264] flex items-center justify-center">

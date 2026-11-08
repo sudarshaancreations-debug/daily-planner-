@@ -6,6 +6,7 @@ import { createPortal } from 'react-dom';
 import { NimoraTask, NimoraNotification } from '../data';
 import { haptics } from '@/lib/haptics';
 import { downloadICS } from '@/lib/exportUtils';
+import { dataEngine, voiceEngine, aiEngine } from '@/engines';
 
 export type ThemeMode = 'auto' | 'day' | 'night';
 
@@ -894,6 +895,65 @@ export function Screen18ProfileSettings({
             </div>
             <span className="text-purple-300/60 group-hover:text-[#bef264] group-hover:translate-x-0.5 transition-all font-mono text-xs">›</span>
           </button>
+        </div>
+
+        {/* System Engines & Data Backup */}
+        <div className="p-4 pt-2 space-y-2">
+          <h4 className="text-[9px] font-mono font-bold uppercase tracking-wider text-[#8a938e] mb-1">
+            System Engines &amp; Backup
+          </h4>
+
+          <div className="p-3 minimal-card rounded-2xl border border-white/[0.08] space-y-3">
+            {/* Backup JSON */}
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-xs font-semibold text-white block">Export Complete Backup</span>
+                <span className="text-[10px] text-purple-200/70">Download tasks, habits, and preferences (JSON)</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  haptics.success();
+                  dataEngine.downloadBackupFile();
+                }}
+                className="px-3 py-1.5 rounded-xl bg-[#bef264] text-[#0e0b1f] text-xs font-mono font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer flex items-center gap-1 shadow-sm"
+              >
+                <span className="material-symbols-outlined text-[15px]">download</span>
+                <span>Export JSON</span>
+              </button>
+            </div>
+
+            <div className="h-px bg-white/[0.06]" />
+
+            {/* Voice Engine TTS Test */}
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-xs font-semibold text-white block">Speech Engine (TTS)</span>
+                <span className="text-[10px] text-purple-200/70">Local browser speech synthesis (100% offline)</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  haptics.tick();
+                  voiceEngine.speak('NIMORA Text-to-Speech Engine is operational and independent.');
+                }}
+                className="px-2.5 py-1.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.15] text-[#bef264] text-xs font-mono transition-all cursor-pointer flex items-center gap-1"
+              >
+                <span className="material-symbols-outlined text-[15px]">volume_up</span>
+                <span>Test TTS</span>
+              </button>
+            </div>
+
+            <div className="h-px bg-white/[0.06]" />
+
+            {/* AI Engine Status */}
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-purple-200/70">AI Planning Engine</span>
+              <span className="font-mono text-[10px] text-[#bef264] bg-[#bef264]/10 border border-[#bef264]/20 px-2 py-0.5 rounded-full">
+                Gemini + Heuristic Fallback
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Legal, Policies & Store Compliance */}
