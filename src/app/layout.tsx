@@ -16,13 +16,60 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://nimora-ai.vercel.app"),
   title: "NIMORA — Your Day. Intelligently Organized.",
-  description: "AI-Powered Daily Planning, CRM Follow-ups, and MCP Hub",
+  description:
+    "Executive AI Daily Planner with hands-free voice scheduling, focus time-blocking, stakeholder CRM, and calendar sync.",
+  applicationName: "NIMORA",
+  authors: [{ name: "NIMORA Technologies" }],
+  generator: "Next.js",
+  keywords: [
+    "AI Daily Planner",
+    "Voice Assistant",
+    "Time Blocking",
+    "Executive Productivity",
+    "Smart Calendar",
+    "NIMORA",
+  ],
   manifest: "/manifest.json",
+  icons: {
+    icon: "/icon-192.png",
+    apple: "/icon-192.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "NIMORA",
+  },
+  openGraph: {
+    title: "NIMORA — Your Day. Intelligently Organized.",
+    description:
+      "Executive AI Daily Planner with hands-free voice scheduling, focus time-blocking, stakeholder CRM, and calendar sync.",
+    url: "https://nimora-ai.vercel.app",
+    siteName: "NIMORA AI Daily Planner",
+    locale: "en_US",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1024,
+        height: 500,
+        alt: "NIMORA AI Daily Planner — Executive Interface",
+        type: "image/jpeg",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "NIMORA — Your Day. Intelligently Organized.",
+    description:
+      "Executive AI Daily Planner with hands-free voice scheduling, focus time-blocking, and calendar sync.",
+    images: ["/og-image.jpg"],
+    creator: "@nimora_app",
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 

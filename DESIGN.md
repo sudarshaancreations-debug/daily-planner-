@@ -129,6 +129,33 @@
 | **Cloud Sync / Background Ops** | Blocking loading overlay | **Ambient Pill Indicator:** Compact status label (e.g. *"Synced 2m ago"*) that never interrupts user flow. |
 | **Payment Authorization** | Infinite generic wheel | **Staged Progress Steps:** Transparent steps (*"Contacting Google Play"* ➔ *"Secured"* ➔ Animated green tick). |
 
+---
+
+## 🔗 9. Social Share & WhatsApp Rich Link Previews (The "Plain Blue Link" Rule)
+
+> [!IMPORTANT]
+> **The Plain Blue Link Trap (Reel #5: @codingontherocks):**
+> When users share your web application link on WhatsApp, iMessage, Twitter/X, Slack, or LinkedIn, and it renders as a naked blue URL without a thumbnail, headline, or summary, click-through rates plunge by over 70%. Rich OpenGraph cards establish immediate brand credibility.
+
+### WhatsApp & OpenGraph Crawler Requirements
+
+1. **Absolute Canonical URLs (`metadataBase`):**
+   * WhatsApp and Telegram web crawlers **do not resolve relative URLs**. An `og:image` set to `/og-image.jpg` will fail silently, causing WhatsApp to fall back to a plain blue link.
+   * In Next.js App Router, `metadataBase: new URL('https://nimora-ai.vercel.app')` is mandated in `src/app/layout.tsx` so all image and canonical links resolve into valid absolute HTTPS addresses.
+
+2. **The 300KB File Size Ceiling:**
+   * WhatsApp's crawler has a strict payload limit: images exceeding **300 KB** are often dropped or rejected by the link parser, resulting in a broken card or plain text URL.
+   * NIMORA provides `/og-image.jpg` (1024×500, 121 KB, JPEG Q=85), guaranteeing instant load and 100% preview reliability.
+
+3. **Required Meta Tag Architecture:**
+   * `og:title`: High-impact headline ("NIMORA — Your Day. Intelligently Organized.").
+   * `og:description`: Concise 1-2 sentence value proposition with key keywords (Voice assistant, focus time-blocking, stakeholder CRM).
+   * `og:image`: 1024×500 / 1200×630 image asset under 300KB with explicit `og:image:width`, `og:image:height`, and `og:image:type`.
+   * `og:type`: `"website"`.
+   * `og:site_name`: `"NIMORA AI Daily Planner"`.
+   * `twitter:card`: `"summary_large_image"` for large card rendering across Twitter/X and modern messengers.
+
+
 
 
 
