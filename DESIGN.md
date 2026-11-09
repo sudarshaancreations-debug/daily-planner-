@@ -155,6 +155,34 @@
    * `og:site_name`: `"NIMORA AI Daily Planner"`.
    * `twitter:card`: `"summary_large_image"` for large card rendering across Twitter/X and modern messengers.
 
+---
+
+## 🏛️ 10. The 10 Layout & Aesthetics Design Archetypes Matrix
+
+Modern digital product design is governed by pairing the right **structural layout archetype** with the corresponding **visual aesthetic system**. Below is the canonical industry taxonomy, detailing token rules, layout mechanics, and their architectural application:
+
+| # | Layout Archetype | Visual Aesthetic | Target Industry & Use-Case | CSS & Token Implementation Rules | NIMORA Application |
+| :-: | :--- | :--- | :--- | :--- | :--- |
+| **01** | **Split Screen** | **Glassmorphism** | Startups & SaaS Mobile Apps | `grid-cols-1 lg:grid-cols-2`, `backdrop-blur-md`, `bg-white/[0.04]`, hairline border `border-white/10` | **Interactive Onboarding & Demo**: Left hero pitch, right interactive live schedule simulator. |
+| **02** | **Bento Grid** | **Dark Luxury (Obsidian)** | Portfolios, Executive Dashboards & Premium Tools | Modular CSS grid (`grid-cols-1 md:grid-cols-3 gap-4`), deep obsidian ground (`#0e0b1f`), midnight card surfaces (`#141815`), vibrant Solar Lime focal points (`#bef264`) | **NIMORA Core Dashboard**: Foundation of Today's view — Timeline capsule, priority quadrants, focus timer, and CRM follow-up blocks. |
+| **03** | **Full-Screen Hero** | **Aurora Gradient** | Product Launches & AI Announcements | `min-h-screen flex items-center justify-center`, radial mesh blurs (`blur-3xl`), iridescent indigo/emerald gradient shifts | **NIMORA Voice Orb**: Acoustic voice assistant visualizer with breathing radial illumination. |
+| **04** | **Card Grid** | **Flat Design** | Online Stores, Food Menus & Catalogs | Uniform multi-column (`grid-cols-2 sm:grid-cols-4 gap-4`), 0px blur, solid high-contrast backgrounds, crisp semantic badges | **Settings & Integrations Shelf**: Clean modular grid for toggling Google Calendar, Outlook, and MCP tools. |
+| **05** | **Editorial Layout** | **Skeuomorphism** | Long-form Blogs, Journals & Storytelling | Multi-column fluid serif body, drop caps, tactile paper textures, debossed timestamps, physical notebook margins | **Habit Reflection Log**: Personal retrospective journal entries with tactile timeline markers. |
+| **06** | **Big Typography** | **Neo-Brutalism** | Creative Youth Brands & Web3 Platforms | Bold display headers (`text-6xl tracking-tighter`), stark black drop shadows (`shadow-[4px_4px_0px_#000]`), 2px solid borders | **Marketing Banners & Special Campaigns**: High-impact promotional announcements. |
+| **07** | **Sidebar Navigation** | **Material Design** | Enterprise Dashboards & Complex B2B SaaS | Fixed/collapsible left nav drawer (`w-64 shrink-0`), standardized 8dp elevation (`shadow-md`), ripple touch feedback | **Desktop Management Console**: Expandable navigation when accessing NIMORA from 1440px+ enterprise workstations. |
+| **08** | **Z-Pattern** | **Claymorphism** | Explainer Landing Pages & Service Guides | Alternating left-to-right eye scanning path, 3D inflated pill containers, dual inner shadows (`inset -4px -4px ...`) | **Features Walkthrough**: Illustrating automated schedule rebalancing and conflict resolution to new executives. |
+| **09** | **Single-Column Scroll** | **Neumorphism / Soft Emboss** | Focused Landing Pages & Bio Links | Centered narrow container (`max-w-xl mx-auto`), soft monochromatic embossed surfaces (`shadow-[6px_6px_12px_#..._-6px_-6px_12px_#...]`) | **Legal & Privacy Policies**: Frictionless single-column reading on `/privacy`, `/terms`, and `/delete-account`. |
+| **10** | **Asymmetric Grid** | **Swiss Minimal** | Design Agencies, Art Studios & Architecture | Strict mathematical baseline grid, intentional whitespace asymmetry, Neue Haas / Grotesque type, zero decorative gradients | **Executive Summary & Analytics Reports**: Utilitarian data density displaying weekly focus hours and output velocity. |
+
+---
+
+### 👑 Why NIMORA Anchors on Archetype #02 (Bento Grid + Dark Luxury)
+
+1. **Information Density without Clutter:** Bento grids allow high-density executive data (Voice Orb, Calendar Timeline, Overdue Alerts, Stakeholder CRM) to live harmoniously in balanced visual hierarchy without overwhelming cognitive load.
+2. **Night-Owl Executive Focus:** The Dark Luxury palette (`#0e0b1f` canvas with Solar Lime `#bef264` micro-accents) reduces eye fatigue during early-morning and late-night planning sessions while projecting prestige and precision craftsmanship.
+3. **Responsive Modular Reflow:** Bento cells naturally adapt from a 3-column desktop layout to an ergonomic single-column vertical stack on mobile screens (360px–430px) without any layout distortion or horizontal scrollbars.
+
+
 
 
 
