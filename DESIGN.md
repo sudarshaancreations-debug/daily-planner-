@@ -113,5 +113,22 @@
 * **Icon & Text Cohesion:** Action icons and text labels are grouped with `flex items-center gap-1.5` so icons never detach from their labels.
 * **Touch Target Buffer:** Interactive height maintains a minimum of `40px` (or `44px` on mobile) to ensure comfortable finger landing without accidental double-clicks.
 
+---
+
+## ⏳ 8. Contextual Loading Hierarchy (The "No Generic Spinners" Rule)
+
+> [!TIP]
+> **Not Every Loading State Needs a Spinner:**
+> Generic full-screen spinning wheels cause cognitive fatigue, feel unresponsive, and induce anxiety. Loading states must match the context of the user action.
+
+| Scenario | Anti-Pattern | Recommended Loading Pattern in NIMORA |
+| :--- | :--- | :--- |
+| **Initial Content / Schedule Load** | Full-screen modal spinner | **Skeleton Screens / Shimmer Placeholders (`animate-pulse`)** matching timeline card dimensions. Zero Cumulative Layout Shift (CLS). |
+| **Instant Action (Check task / Delete)** | Spinner replacing the checkbox | **Optimistic UI:** State updates immediately with tactile haptic tick + Toast with Undo action. |
+| **AI Voice & Speech Parsing** | Circular loading spinner | **Pulsing Acoustic Orb:** Organic breathing waveform visualizer showing live voice activity. |
+| **Cloud Sync / Background Ops** | Blocking loading overlay | **Ambient Pill Indicator:** Compact status label (e.g. *"Synced 2m ago"*) that never interrupts user flow. |
+| **Payment Authorization** | Infinite generic wheel | **Staged Progress Steps:** Transparent steps (*"Contacting Google Play"* ➔ *"Secured"* ➔ Animated green tick). |
+
+
 
 
