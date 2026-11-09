@@ -68,3 +68,19 @@
   padding-top: max(0.75rem, env(safe-area-inset-top));
   ```
 * **Viewport Config:** Always configure `viewportFit: "cover"` to extend dark immersion behind translucent status and navigation bars.
+
+---
+
+## 🛡️ 5. Semantic vs. Brand Tokens (The "Payment Failed" Rule)
+
+> [!CAUTION]
+> **The Classic Rebrand Anti-Pattern:**
+> Never bind functional/semantic states (`error`, `danger`, `warning`, `success`) to brand color tokens (`primary`, `accent`). If a brand rebrands to lime/green and uses brand tokens for status messages, "Payment Failed" accidentally renders in green!
+
+| Intent | Semantic Token | Color Family | Strict Usage |
+| :--- | :--- | :--- | :--- |
+| **Error / Failed** | `--color-danger` | Rose / Red (`#f43f5e` / `#ef4444`) | Payment failure, card authentication errors, input validation alerts, account deletion. |
+| **Warning / Collision** | `--color-warning` | Amber (`#f59e0b`) | Schedule overlap conflicts, destructive confirmation warnings. |
+| **Success / Approved** | `--color-success` | Emerald (`#10b981`) | Verified payments, completed sync, task completion checks. |
+| **Brand Accent** | `--brand-accent` | Solar Lime (`#bef264`) | Interactive buttons, thumb slider capsule, focal UI elements ONLY. |
+
