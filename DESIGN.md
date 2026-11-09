@@ -84,3 +84,20 @@
 | **Success / Approved** | `--color-success` | Emerald (`#10b981`) | Verified payments, completed sync, task completion checks. |
 | **Brand Accent** | `--brand-accent` | Solar Lime (`#bef264`) | Interactive buttons, thumb slider capsule, focal UI elements ONLY. |
 
+---
+
+## 💻 6. Viewport Adaptability (The "1366px Laptop" Rule)
+
+> [!TIP]
+> **The 1920px vs 1366px Trap:**
+> Designing solely for 1920px desktop monitors breaks when clients open the app on standard 1366×768 laptops or mobile devices.
+
+* **Mobile-First Core Container:**
+  * Native Phone Viewports (360px – 430px): 100% full-width immersive immersion.
+  * Desktop & Laptop Viewports (1366px, 1440px, 1920px): Centered ergonomic viewport capsule (`max-w-md mx-auto`) with ambient deep obsidian canvas. Eliminates horizontal scrolling and prevents UI stretching.
+* **Fluid Legal & Web Pages:**
+  * Document pages (`/privacy`, `/terms`, `/delete-account`) use responsive max-widths (`max-w-3xl mx-auto px-4 md:px-8`) so content reflows naturally from 320px to 4K displays.
+* **Overflow Protection:**
+  * Zero fixed-width overflows; all flex containers use `min-w-0` and text truncation (`truncate`, `break-words`).
+
+
