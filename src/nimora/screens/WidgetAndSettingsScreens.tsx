@@ -937,10 +937,39 @@ export function Screen18ProfileSettings({
                   haptics.tick();
                   voiceEngine.speak('NIMORA Text-to-Speech Engine is operational and independent.');
                 }}
-                className="px-2.5 py-1.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.15] text-[#bef264] text-xs font-mono transition-all cursor-pointer flex items-center gap-1"
+                className="px-2.5 py-1.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.15] text-[#bef264] text-xs font-mono transition-all cursor-pointer whitespace-nowrap inline-flex items-center gap-1"
               >
                 <span className="material-symbols-outlined text-[15px]">volume_up</span>
                 <span>Test TTS</span>
+              </button>
+            </div>
+
+            <div className="h-px bg-white/[0.06]" />
+
+            {/* Share NIMORA via WhatsApp / Social (Reel #5 Rich OpenGraph Preview) */}
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-xs font-semibold text-white block">Share NIMORA App</span>
+                <span className="text-[10px] text-purple-200/70">Share on WhatsApp with rich OpenGraph preview card</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  haptics.tick();
+                  if (typeof navigator !== 'undefined' && navigator.share) {
+                    navigator.share({
+                      title: 'NIMORA — Your Day. Intelligently Organized.',
+                      text: 'Experience executive AI daily planning with voice scheduling, focus time-blocking, and CRM follow-ups:',
+                      url: 'https://nimora-ai.vercel.app',
+                    }).catch(() => {});
+                  } else {
+                    window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent('Check out NIMORA AI Daily Planner: https://nimora-ai.vercel.app'), '_blank');
+                  }
+                }}
+                className="px-3 py-1.5 rounded-xl bg-[#25D366] text-[#0c151d] text-xs font-mono font-bold hover:brightness-110 active:scale-95 transition-all cursor-pointer whitespace-nowrap inline-flex items-center gap-1 shadow-sm"
+              >
+                <span className="material-symbols-outlined text-[15px]">share</span>
+                <span>Share App</span>
               </button>
             </div>
 
@@ -1402,14 +1431,14 @@ export function Screen18ProfileSettings({
               <button
                 type="button"
                 onClick={() => setIsDeleteModalOpen(false)}
-                className="flex-1 py-2.5 px-3 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] text-xs font-semibold text-purple-200 transition-all cursor-pointer"
+                className="flex-1 py-2.5 px-3 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] text-xs font-semibold text-purple-200 transition-all cursor-pointer whitespace-nowrap inline-flex items-center justify-center"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleConfirmDeleteAll}
-                className="flex-1 py-2.5 px-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition-all cursor-pointer shadow-lg shadow-rose-950"
+                className="flex-1 py-2.5 px-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition-all cursor-pointer shadow-lg shadow-rose-950 whitespace-nowrap inline-flex items-center justify-center"
               >
                 Permanently Erase
               </button>
@@ -2409,7 +2438,7 @@ export function Screen19SubscriptionPlans({
       {/* Google Play "Pay with Google Credits" Official Android Bottom Sheet Modal */}
       {isBioPromptOpen && (
         <div className="fixed inset-0 bg-black/85 backdrop-blur-md z-[99999] flex items-end justify-center p-0 animate-in fade-in duration-200">
-          <div className="google-play-sheet w-full max-w-md bg-[#202124] rounded-t-[32px] p-6 text-white border-t border-white/10 shadow-2xl space-y-4">
+          <div className="google-play-sheet w-full max-w-md bg-[#202124] rounded-t-[32px] p-6 text-white border-t border-white/10 shadow-2xl space-y-4 max-h-[88vh] overflow-y-auto">
             <div className="w-10 h-1 bg-white/20 rounded-full mx-auto" />
             
             {/* Header with Google Play branding */}
@@ -2466,7 +2495,7 @@ export function Screen19SubscriptionPlans({
               <button
                 type="button"
                 onClick={() => setIsBioPromptOpen(false)}
-                className="w-1/3 py-3 rounded-xl bg-white/10 text-xs font-semibold text-white hover:bg-white/15 transition-colors cursor-pointer"
+                className="w-1/3 py-3 rounded-xl bg-white/10 text-xs font-semibold text-white hover:bg-white/15 transition-colors cursor-pointer whitespace-nowrap inline-flex items-center justify-center"
               >
                 Cancel
               </button>
@@ -2477,7 +2506,7 @@ export function Screen19SubscriptionPlans({
                   setIsBioPromptOpen(false);
                   executePayment('google_play');
                 }}
-                className="w-2/3 py-3 rounded-xl bg-[#34a853] hover:bg-[#2d9248] text-white text-xs font-bold font-['Space_Grotesk'] active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+                className="w-2/3 py-3 rounded-xl bg-[#34a853] hover:bg-[#2d9248] text-white text-xs font-bold font-['Space_Grotesk'] active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
               >
                 {isProcessing ? (
                   <>
@@ -2487,7 +2516,7 @@ export function Screen19SubscriptionPlans({
                 ) : (
                   <>
                     <span className="material-symbols-outlined text-[18px]">verified</span>
-                    <span>Pay with your Google credits</span>
+                    <span>Pay with Google credits</span>
                   </>
                 )}
               </button>

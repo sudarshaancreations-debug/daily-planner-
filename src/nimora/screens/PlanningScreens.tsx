@@ -502,7 +502,7 @@ export function AnyDoMomentModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-[#0e0b1f]/85 backdrop-blur-md flex items-center justify-center p-4">
-      <div className="w-full max-w-sm rounded-3xl bg-[#171330] border border-purple-400/30 shadow-2xl p-5 relative overflow-hidden select-none">
+      <div className="w-full max-w-sm rounded-3xl bg-[#171330] border border-purple-400/30 shadow-2xl p-5 relative overflow-hidden select-none max-h-[90vh] overflow-y-auto">
         {/* Glow ambient background */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-[#bef264]/10 rounded-full blur-2xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl pointer-events-none" />
@@ -523,7 +523,7 @@ export function AnyDoMomentModal({
             <button
               type="button"
               onClick={onClose}
-              className="w-full py-3 rounded-2xl bg-[#bef264] text-[#0e0b1f] font-mono text-xs font-bold uppercase tracking-wider hover:brightness-110 active:scale-95 transition-all cursor-pointer shadow-lg"
+              className="w-full py-3 rounded-2xl bg-[#bef264] text-[#0e0b1f] font-mono text-xs font-bold uppercase tracking-wider hover:brightness-110 active:scale-95 transition-all cursor-pointer shadow-lg whitespace-nowrap inline-flex items-center justify-center"
             >
               Start My Day 🚀
             </button>
