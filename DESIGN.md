@@ -100,4 +100,18 @@
 * **Overflow Protection:**
   * Zero fixed-width overflows; all flex containers use `min-w-0` and text truncation (`truncate`, `break-words`).
 
+---
+
+## 🔘 7. Button Integrity & Text-Wrap Safeguard (The "Do Tukde" Rule)
+
+> [!WARNING]
+> **The Split Button Anti-Pattern:**
+> Client: *"Bhai, ye Save button ke do tukde kyun hain?"*  
+> When flex parents shrink or button containers lack `whitespace-nowrap`, button labels or icon-text pairs awkwardly split across multiple lines on smaller viewports.
+
+* **Enforced `whitespace-nowrap`:** All interactive buttons (`.minimal-btn-primary`, `.minimal-btn-secondary`, `.btn-accent-cta`) strictly enforce `white-space: nowrap;` and `display: inline-flex;`.
+* **Icon & Text Cohesion:** Action icons and text labels are grouped with `flex items-center gap-1.5` so icons never detach from their labels.
+* **Touch Target Buffer:** Interactive height maintains a minimum of `40px` (or `44px` on mobile) to ensure comfortable finger landing without accidental double-clicks.
+
+
 

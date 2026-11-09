@@ -65,6 +65,10 @@
   background-color: #bef264;
   color: #0e0b1f;
   font-weight: 700;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition: transform 0.1s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -82,7 +86,15 @@
   background-color: #221b44;
   color: #f8fafc;
   border: 1px solid rgba(192, 132, 252, 0.20);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition: transform 0.1s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.btn-accent-cta {
+  white-space: nowrap;
 }
 
 .minimal-btn-secondary:hover {
