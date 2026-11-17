@@ -54,4 +54,13 @@ export const haptics = {
       } catch {}
     }
   },
+
+  // Error haptic feedback (double buzz)
+  error: () => {
+    if (typeof window !== 'undefined' && typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate([40, 50, 40]);
+      } catch {}
+    }
+  },
 };

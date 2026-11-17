@@ -13,8 +13,8 @@
   "backgroundColor": "#0E0B1F",
   "enableNotifications": true,
   "startUrl": "/",
-  "iconUrl": "http://127.0.0.1:8089/icon-512.png",
-  "maskableIconUrl": "http://127.0.0.1:8089/icon-512.png",
+  "iconUrl": "https://nimora-ai.vercel.app/icon-512.png",
+  "maskableIconUrl": "https://nimora-ai.vercel.app/icon-512.png",
   "signingKey": {
     "path": "/Users/darshaananvekar/.gemini/antgravity/scratch/daily-planner/android-keystore/nimora-release.keystore",
     "alias": "nimora_release"
@@ -23,7 +23,7 @@
   "appVersionCode": 2,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
-  "webManifestUrl": "http://127.0.0.1:8089/manifest.json",
+  "webManifestUrl": "https://nimora-ai.vercel.app/manifest.json",
   "fallbackType": "customtabs",
   "features": {
     "playBilling": {

@@ -172,10 +172,37 @@ export function Screen02Onboarding({ onNavigate }: ScreenProps) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-2 pt-2">
-                <button className="flex items-center justify-center py-2 bg-white border border-gray-200 rounded-xl text-xs hover:bg-gray-50">🍏</button>
-                <button className="flex items-center justify-center py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-red-500 hover:bg-gray-50">G</button>
-                <button className="flex items-center justify-center py-2 bg-white border border-gray-200 rounded-xl text-xs hover:bg-gray-50">🪟</button>
+              <div className="space-y-2 pt-1">
+                <a
+                  href="/login"
+                  className="w-full py-2.5 px-3 rounded-xl bg-white border border-gray-200 text-xs font-semibold text-gray-800 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 shadow-sm"
+                >
+                  <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.65v3h3.88c2.27-2.09 3.66-5.17 3.66-9.09z" />
+                    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.1C3.27 21.43 7.34 24 12 24z" />
+                    <path fill="#FBBC05" d="M5.28 14.32c-.25-.72-.38-1.49-.38-2.32s.13-1.6.38-2.32V6.58H1.25C.45 8.17 0 9.99 0 12s.45 3.83 1.25 5.42l4.03-3.1z" />
+                    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.27 2.57 1.25 6.58l4.03 3.1c.95-2.83 3.6-4.93 6.72-4.93z" />
+                  </svg>
+                  <span>Sign in with Google</span>
+                </a>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <a
+                    href="/login"
+                    className="py-2 px-3 rounded-xl bg-black text-white text-xs font-semibold hover:bg-neutral-900 transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+                  >
+                    <svg className="w-3.5 h-3.5 shrink-0 fill-current" viewBox="0 0 170 170">
+                      <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.74 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.04-7.69-7.79-11.97-14.24-6.3-9.54-11.19-20.24-14.67-32.09-3.48-11.85-5.22-23.07-5.22-33.68 0-14.28 3.56-26.12 10.68-35.53 7.12-9.41 16.03-14.28 26.73-14.61 4.71 0 10.05 1.25 16.03 3.75 5.98 2.5 9.77 3.86 11.38 4.08 1.95-.33 5.92-1.79 11.91-4.39 5.99-2.6 11.31-3.79 15.96-3.57 11.85.65 21.36 4.78 28.53 12.4-10.43 6.3-15.54 14.99-15.32 26.07.22 8.7 3.48 16.08 9.78 22.16 6.3 6.09 13.91 9.46 22.82 10.11-1.95 6.09-4.35 12.06-7.18 17.91zm-32.61-105.1c0-6.96 2.45-13.59 7.34-19.89 4.89-6.3 11.14-10.33 18.75-12.08.43 1.09.65 2.28.65 3.59 0 6.96-2.5 13.7-7.5 20.21-5 6.52-11.25 10.55-18.75 12.08-.11-1.3-.49-2.6-.49-3.91z" />
+                    </svg>
+                    <span>Apple</span>
+                  </a>
+                  <a
+                    href="/login"
+                    className="py-2 px-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+                  >
+                    <span>Microsoft</span>
+                  </a>
+                </div>
               </div>
             </div>
           </div>

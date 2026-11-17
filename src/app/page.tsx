@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import {
   INITIAL_CONTACTS,
   INITIAL_TASKS,
@@ -541,6 +542,15 @@ export default function NimoraApp() {
             <span className="material-symbols-outlined text-[19px]">notifications</span>
             <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#bef264] shadow-[0_0_6px_#bef264]"></span>
           </button>
+          <Link
+            href="/login"
+            aria-label="Account Login & Switcher"
+            className="w-9 h-9 rounded-full flex items-center justify-center text-purple-200/80 hover:text-[#bef264] transition-colors duration-150 active:scale-95 border border-purple-500/20 bg-[#171330] relative"
+            title="Sign in with Google / Social"
+          >
+            <span className="material-symbols-outlined text-[19px]">account_circle</span>
+          </Link>
+
           <button
             type="button"
             onClick={() => setActiveTab('settings')}

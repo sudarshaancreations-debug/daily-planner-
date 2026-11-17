@@ -1373,23 +1373,33 @@ export function Screen18ProfileSettings({
                 </div>
               </div>
 
-              <div className="pt-2 flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsProfileModalOpen(false);
-                    onNavigate?.(99);
-                  }}
-                  className="flex-1 py-2 px-3 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] text-xs font-semibold text-purple-200 hover:text-white transition-all cursor-pointer text-center"
+              <div className="pt-2 flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsProfileModalOpen(false);
+                      onNavigate?.(99);
+                    }}
+                    className="flex-1 py-2 px-3 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] text-xs font-semibold text-purple-200 hover:text-white transition-all cursor-pointer text-center whitespace-nowrap"
+                  >
+                    Manage Plan
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 py-2 px-3 rounded-xl bg-[#bef264] text-[#0e0b1f] text-xs font-bold hover:brightness-105 active:scale-95 transition-all cursor-pointer text-center whitespace-nowrap"
+                  >
+                    Save Profile
+                  </button>
+                </div>
+
+                <a
+                  href="/login"
+                  className="w-full py-2 px-3 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-xs font-semibold text-purple-200 hover:text-white transition-all cursor-pointer text-center flex items-center justify-center gap-1.5 border border-white/[0.08] whitespace-nowrap"
                 >
-                  Manage Plan
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 py-2 px-3 rounded-xl bg-[#bef264] text-[#0e0b1f] text-xs font-bold hover:brightness-105 active:scale-95 transition-all cursor-pointer text-center"
-                >
-                  Save Profile
-                </button>
+                  <span className="material-symbols-outlined text-[16px] text-[#bef264]">login</span>
+                  <span>Switch Account / Sign In with Google</span>
+                </a>
               </div>
             </form>
           </div>
