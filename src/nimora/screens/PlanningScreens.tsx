@@ -5,6 +5,8 @@ import { NimoraTask, Contact } from '../data';
 import { downloadICS } from '@/lib/exportUtils';
 import { haptics } from '@/lib/haptics';
 import { plannerEngine } from '@/engines/plannerEngine';
+import { parseNaturalLanguageScheduleDump, analyzeMealText } from '@/engines/aiEngine';
+import { voiceEngine } from '@/engines/voiceEngine';
 
 export interface PlanningProps {
   tasks: NimoraTask[];
@@ -350,6 +352,35 @@ export function AnyDoQuickAddBar({ onAddTask, selectedDate }: AnyDoQuickAddBarPr
   const [isFocused, setIsFocused] = useState(false);
   const [selectedTimeChip, setSelectedTimeChip] = useState('09:00 AM');
   const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium');
+  const [batchNotice, setBatchNotice] = useState<string | null>(null);
+  const [isListening, setIsListening] = useState(false);
+
+  const toggleListening = () => {
+    if (isListening) {
+      voiceEngine.stopListening();
+      setIsListening(false);
+      haptics.tick();
+      return;
+    }
+
+    setIsListening(true);
+    haptics.success();
+    const started = voiceEngine.startListening({
+      onResult: (transcript) => {
+        setInputVal(transcript);
+      },
+      onError: () => {
+        setIsListening(false);
+      },
+      onEnd: () => {
+        setIsListening(false);
+      },
+    });
+
+    if (!started) {
+      setIsListening(false);
+    }
+  };
 
   const chips = [
     { label: '⚡ 9:00 AM', time: '09:00 AM', priority: 'medium' as const },
@@ -358,16 +389,61 @@ export function AnyDoQuickAddBar({ onAddTask, selectedDate }: AnyDoQuickAddBarPr
     { label: '🔥 Urgent', time: '11:00 AM', priority: 'high' as const },
   ];
 
+  // Analyze multi-item stream / BetterCal note in real time
+  const streamPreview = useMemo(() => {
+    const trimmed = inputVal.trim();
+    if (!trimmed) return null;
+    const hasDelimiters = /[,;\n]|\band then\b|\bthen\b/i.test(trimmed);
+    const mealCheck = analyzeMealText(trimmed);
+    if (mealCheck.isMealNote || hasDelimiters) {
+      const parsed = parseNaturalLanguageScheduleDump(trimmed, selectedDate);
+      if (parsed.length > 0) {
+        return {
+          count: parsed.length,
+          isMeal: mealCheck.isMealNote,
+          mealSummary: mealCheck.formattedSummary,
+          tasks: parsed,
+        };
+      }
+    }
+    return null;
+  }, [inputVal, selectedDate]);
+
   const handleQuickSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (!inputVal.trim()) return;
+    const trimmed = inputVal.trim();
+    if (!trimmed) return;
 
-    haptics.success();
     const dateStr = selectedDate || new Date().toISOString().split('T')[0];
 
+    // BetterCal Multi-Item Stream Execution
+    if (streamPreview && (streamPreview.count > 1 || streamPreview.isMeal)) {
+      haptics.success();
+      streamPreview.tasks.forEach((task, idx) => {
+        const uniqueTask = {
+          ...task,
+          id: `${task.id}_${idx}_${Date.now()}`,
+          date: dateStr,
+        };
+        onAddTask?.(uniqueTask);
+      });
+
+      const notice = streamPreview.isMeal
+        ? `🍱 Logged meal with BetterCal AI: ${streamPreview.mealSummary}`
+        : `🪄 Batch scheduled ${streamPreview.count} timeline events from note!`;
+
+      setBatchNotice(notice);
+      setTimeout(() => setBatchNotice(null), 4000);
+      setInputVal('');
+      setIsFocused(false);
+      return;
+    }
+
+    // Single item fallback
+    haptics.success();
     const newTask: NimoraTask = {
       id: `t_${Date.now()}`,
-      title: inputVal.trim(),
+      title: trimmed,
       category: 'task',
       date: dateStr,
       startTime: selectedTimeChip,
@@ -388,34 +464,85 @@ export function AnyDoQuickAddBar({ onAddTask, selectedDate }: AnyDoQuickAddBarPr
     <div className="w-full select-none my-2">
       <form
         onSubmit={handleQuickSubmit}
-        className={`p-2 bg-[#171330] rounded-xl border transition-all ${
-          isFocused ? 'border-[#bef264]/60 shadow-[0_0_14px_rgba(190,242,100,0.15)]' : 'border-purple-500/20'
+        className={`p-2.5 bg-[#171330] rounded-xl border transition-all ${
+          streamPreview
+            ? 'border-[#bef264]/70 shadow-[0_0_18px_rgba(190,242,100,0.22)]'
+            : isFocused
+            ? 'border-[#bef264]/60 shadow-[0_0_14px_rgba(190,242,100,0.15)]'
+            : 'border-purple-500/20'
         }`}
       >
         <div className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-[18px] text-[#bef264]">add_circle</span>
+          <span className={`material-symbols-outlined text-[18px] transition-colors ${streamPreview ? 'text-[#bef264] animate-pulse' : 'text-[#bef264]'}`}>
+            {streamPreview ? 'auto_awesome' : 'add_circle'}
+          </span>
           <input
             type="text"
             value={inputVal}
             onChange={(e) => setInputVal(e.target.value)}
             onFocus={() => setIsFocused(true)}
-            placeholder="＋ Quick add task (e.g. Client call at 4pm)..."
+            placeholder="＋ Dump note or task (e.g. 10am standup, 1pm lunch with Priya, workout at 6pm)..."
             className="w-full bg-transparent text-xs text-[#f8fafc] placeholder-purple-300/40 outline-none font-mono"
           />
+
+          {/* Voice Dictate Button */}
+          <button
+            type="button"
+            onClick={toggleListening}
+            aria-label={isListening ? "Stop listening" : "Dictate note or meal"}
+            className={`p-1 rounded-lg transition-all shrink-0 cursor-pointer ${
+              isListening
+                ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse'
+                : 'text-purple-300/60 hover:text-[#bef264]'
+            }`}
+            title="Voice dictate note or meal"
+          >
+            <span className="material-symbols-outlined text-[16px]">
+              {isListening ? 'mic' : 'mic_none'}
+            </span>
+          </button>
+
           {inputVal.trim() && (
             <button
               type="submit"
-              className="px-2.5 py-1 rounded-lg bg-[#bef264] text-[#0e0b1f] font-mono text-[10px] font-bold tracking-wider hover:brightness-110 active:scale-95 transition-all cursor-pointer shrink-0"
+              className="px-2.5 py-1 rounded-lg bg-[#bef264] text-[#0e0b1f] font-mono text-[10px] font-bold tracking-wider hover:brightness-110 active:scale-95 transition-all cursor-pointer shrink-0 flex items-center gap-1 shadow-sm"
             >
-              ADD
+              {streamPreview && streamPreview.count > 1 ? (
+                <>
+                  <span className="material-symbols-outlined text-[12px]">playlist_add</span>
+                  <span>ADD {streamPreview.count}</span>
+                </>
+              ) : streamPreview && streamPreview.isMeal ? (
+                <>
+                  <span className="material-symbols-outlined text-[12px]">restaurant</span>
+                  <span>LOG MEAL</span>
+                </>
+              ) : (
+                'ADD'
+              )}
             </button>
           )}
         </div>
 
-        {/* Any.do Smart Express Chips */}
+        {/* Real-time BetterCal Stream Parser Indicator */}
+        {streamPreview && (
+          <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#bef264]/20 bg-[#bef264]/8 px-2.5 py-1.5 rounded-lg">
+            <span className="flex items-center gap-1.5 text-[10px] font-mono text-[#bef264]">
+              <span className="material-symbols-outlined text-[14px]">bolt</span>
+              {streamPreview.isMeal ? (
+                <span>BetterCal AI: <strong>{streamPreview.mealSummary}</strong></span>
+              ) : (
+                <span>Stream-of-Consciousness: <strong>{streamPreview.count} events detected</strong></span>
+              )}
+            </span>
+            <span className="text-[9px] font-mono text-purple-200/70 hidden sm:inline">Tap ADD to batch spawn</span>
+          </div>
+        )}
+
+        {/* Interactive Example Pills & Smart Chips */}
         {(isFocused || inputVal) && (
-          <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-purple-500/15 overflow-x-auto">
-            <span className="text-[8px] font-mono uppercase text-purple-300/50 shrink-0">Time:</span>
+          <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-purple-500/15 overflow-x-auto pb-0.5">
+            <span className="text-[8px] font-mono uppercase text-purple-300/50 shrink-0">Chips:</span>
             {chips.map((chip) => (
               <button
                 key={chip.label}
@@ -434,9 +561,46 @@ export function AnyDoQuickAddBar({ onAddTask, selectedDate }: AnyDoQuickAddBarPr
                 {chip.label}
               </button>
             ))}
+
+            {/* BetterCal Example Presets */}
+            <button
+              type="button"
+              onClick={() => {
+                haptics.tick();
+                setInputVal('paneer tikka, 3 rotis, dal, a cold coffee');
+              }}
+              className="text-[9px] font-mono px-2 py-0.5 rounded-md bg-[#132c25] text-emerald-300 border border-emerald-500/30 hover:bg-emerald-900/40 transition-all shrink-0 cursor-pointer flex items-center gap-1"
+            >
+              <span>🍱 Meal Note</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                haptics.tick();
+                setInputVal('10am team standup, 1pm client lunch with Priya, 3pm design review, workout at 6pm');
+              }}
+              className="text-[9px] font-mono px-2 py-0.5 rounded-md bg-[#251e4d] text-purple-300 border border-purple-500/30 hover:bg-purple-900/40 transition-all shrink-0 cursor-pointer flex items-center gap-1"
+            >
+              <span>⚡ Schedule Dump</span>
+            </button>
           </div>
         )}
       </form>
+
+      {/* Dynamic Success Toast */}
+      {batchNotice && (
+        <div className="mt-2 p-2.5 rounded-xl bg-gradient-to-r from-[#171330] to-[#122c22] border border-[#bef264]/40 flex items-center gap-2 text-xs font-mono text-[#bef264] shadow-[0_4px_16px_rgba(0,0,0,0.4)] animate-in fade-in slide-in-from-top-2 duration-200">
+          <span className="material-symbols-outlined text-[16px] text-[#bef264]">verified</span>
+          <span className="flex-1 text-[11px] leading-tight text-white">{batchNotice}</span>
+          <button
+            type="button"
+            onClick={() => setBatchNotice(null)}
+            className="text-purple-300 hover:text-white text-xs cursor-pointer"
+          >
+            ✕
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -966,6 +1130,14 @@ export function SwipeableScheduleCard({
             </h3>
             {task.subtitle && (
               <p className="text-xs text-purple-200/70 mt-0.5 truncate">{task.subtitle}</p>
+            )}
+            {task.notes?.includes('BetterCal') && (
+              <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[10px]">restaurant</span>
+                  <span>BetterCal Macro Fuel</span>
+                </span>
+              </div>
             )}
           </div>
         </div>
@@ -1840,6 +2012,31 @@ export function Screen10TaskDetails({
             </span>
           </div>
         </div>
+
+        {/* BetterCal Nutrition & Macro Detail Card if meal note */}
+        {task?.notes && (task.notes.includes('BetterCal') || task.notes.includes('kcal')) ? (
+          <div className="minimal-card rounded-2xl p-4 shadow-sm mb-3 border border-emerald-500/30 bg-gradient-to-br from-[#171330] to-[#122c22]">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-[14px]">restaurant</span>
+                <span>BetterCal Macro Breakdown</span>
+              </span>
+              <span className="text-[9px] font-mono text-[#bef264] bg-[#bef264]/10 px-2 py-0.5 rounded border border-[#bef264]/20">
+                AI Verified
+              </span>
+            </div>
+            <pre className="text-xs font-mono text-purple-200/90 whitespace-pre-wrap leading-relaxed bg-[#0e0b1f]/60 p-3 rounded-xl border border-white/[0.06]">
+              {task.notes}
+            </pre>
+          </div>
+        ) : task?.notes ? (
+          <div className="minimal-card rounded-2xl p-4 shadow-sm mb-3">
+            <span className="text-[9px] font-mono text-[#9b9f9c] uppercase tracking-wider block mb-1">
+              Executive Notes
+            </span>
+            <p className="text-xs text-[#f8fafc] font-mono leading-relaxed whitespace-pre-wrap">{task.notes}</p>
+          </div>
+        ) : null}
 
         {/* Related Contact Card */}
         {contact && (

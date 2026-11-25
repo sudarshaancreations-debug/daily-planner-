@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import {
   INITIAL_CONTACTS,
@@ -483,6 +483,32 @@ export default function NimoraApp() {
     }
   })();
 
+  // BetterCal Executive Daily Fuel & Nutrition Aggregator
+  const dailyNutrition = useMemo(() => {
+    let calories = 0;
+    let protein = 0;
+    let carbs = 0;
+    let fat = 0;
+    let mealCount = 0;
+
+    displayedTasks.forEach((t) => {
+      if (t.notes?.includes('BetterCal') || t.subtitle?.includes('kcal')) {
+        mealCount++;
+        const calMatch = (t.subtitle || t.notes || '').match(/(\d+)\s*kcal/i);
+        const protMatch = (t.subtitle || t.notes || '').match(/(\d+)g\s*protein/i);
+        const carbMatch = (t.subtitle || t.notes || '').match(/(\d+)g\s*carbs/i);
+        const fatMatch = (t.subtitle || t.notes || '').match(/(\d+)g\s*fat/i);
+
+        if (calMatch) calories += parseInt(calMatch[1], 10);
+        if (protMatch) protein += parseInt(protMatch[1], 10);
+        if (carbMatch) carbs += parseInt(carbMatch[1], 10);
+        if (fatMatch) fat += parseInt(fatMatch[1], 10);
+      }
+    });
+
+    return { calories, protein, carbs, fat, mealCount };
+  }, [displayedTasks]);
+
   // Active high priority task: picks active high-priority task, then any active task, fallback to first task
   const activeFocusTask = tasks.find((t) => t.priority === 'high' && t.status !== 'completed')
     || tasks.find((t) => t.status !== 'completed')
@@ -794,6 +820,32 @@ export default function NimoraApp() {
             </div>
             <AnyDoQuickAddBar onAddTask={handleAddTask} selectedDate={selectedCalendarDate} />
           </section>
+
+          {/* BetterCal Executive Fuel & Macro Tracker */}
+          {dailyNutrition.mealCount > 0 && (
+            <section className="p-3 rounded-2xl bg-gradient-to-r from-[#171330] via-[#122c22] to-[#171330] border border-emerald-500/30 shadow-sm flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+                  <span className="material-symbols-outlined text-[18px]">restaurant</span>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold">Executive Fuel & Macros</span>
+                    <span className="text-[9px] font-mono text-purple-300/60">• BetterCal AI</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-xs font-mono font-medium text-white mt-0.5">
+                    <span className="text-[#bef264]">🔥 {dailyNutrition.calories} kcal</span>
+                    <span className="text-emerald-300">💪 {dailyNutrition.protein}g P</span>
+                    <span className="text-amber-300">🌾 {dailyNutrition.carbs}g C</span>
+                    <span className="text-purple-300">🥑 {dailyNutrition.fat}g F</span>
+                  </div>
+                </div>
+              </div>
+              <span className="text-[10px] font-mono text-emerald-300 bg-emerald-950/60 px-2 py-1 rounded-lg border border-emerald-500/30">
+                {dailyNutrition.mealCount} {dailyNutrition.mealCount === 1 ? 'Meal' : 'Meals'}
+              </span>
+            </section>
+          )}
 
           {/* Upcoming Tasks Section (80% Utilitarian Minimalism) */}
           <section className="space-y-2">
