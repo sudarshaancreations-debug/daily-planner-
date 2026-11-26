@@ -831,7 +831,7 @@ export default function NimoraApp() {
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold">Executive Fuel & Macros</span>
-                    <span className="text-[9px] font-mono text-purple-300/60">• BetterCal AI</span>
+                    <span className="text-[9px] font-mono text-purple-300/60">• NIMORA AI Fuel</span>
                   </div>
                   <div className="flex items-center gap-3 text-xs font-mono font-medium text-white mt-0.5">
                     <span className="text-[#bef264]">🔥 {dailyNutrition.calories} kcal</span>

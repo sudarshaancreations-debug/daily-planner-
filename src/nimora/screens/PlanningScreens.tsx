@@ -429,7 +429,7 @@ export function AnyDoQuickAddBar({ onAddTask, selectedDate }: AnyDoQuickAddBarPr
       });
 
       const notice = streamPreview.isMeal
-        ? `🍱 Logged meal with BetterCal AI: ${streamPreview.mealSummary}`
+        ? `🍱 Logged meal with NIMORA AI: ${streamPreview.mealSummary}`
         : `🪄 Batch scheduled ${streamPreview.count} timeline events from note!`;
 
       setBatchNotice(notice);
@@ -524,13 +524,13 @@ export function AnyDoQuickAddBar({ onAddTask, selectedDate }: AnyDoQuickAddBarPr
           )}
         </div>
 
-        {/* Real-time BetterCal Stream Parser Indicator */}
+        {/* Real-time NIMORA Stream Parser Indicator */}
         {streamPreview && (
           <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#bef264]/20 bg-[#bef264]/8 px-2.5 py-1.5 rounded-lg">
             <span className="flex items-center gap-1.5 text-[10px] font-mono text-[#bef264]">
               <span className="material-symbols-outlined text-[14px]">bolt</span>
               {streamPreview.isMeal ? (
-                <span>BetterCal AI: <strong>{streamPreview.mealSummary}</strong></span>
+                <span>NIMORA AI Fuel: <strong>{streamPreview.mealSummary}</strong></span>
               ) : (
                 <span>Stream-of-Consciousness: <strong>{streamPreview.count} events detected</strong></span>
               )}
@@ -1131,11 +1131,11 @@ export function SwipeableScheduleCard({
             {task.subtitle && (
               <p className="text-xs text-purple-200/70 mt-0.5 truncate">{task.subtitle}</p>
             )}
-            {task.notes?.includes('BetterCal') && (
+            {(task.notes?.includes('BetterCal') || task.subtitle?.includes('kcal') || task.notes?.includes('kcal')) && (
               <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
                 <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
                   <span className="material-symbols-outlined text-[10px]">restaurant</span>
-                  <span>BetterCal Macro Fuel</span>
+                  <span>NIMORA Fuel & Macros</span>
                 </span>
               </div>
             )}
@@ -2013,16 +2013,16 @@ export function Screen10TaskDetails({
           </div>
         </div>
 
-        {/* BetterCal Nutrition & Macro Detail Card if meal note */}
-        {task?.notes && (task.notes.includes('BetterCal') || task.notes.includes('kcal')) ? (
+        {/* NIMORA Nutrition & Macro Detail Card if meal note */}
+        {task?.notes && (task.notes.includes('BetterCal') || task.notes.includes('kcal') || task.notes.includes('NIMORA')) ? (
           <div className="minimal-card rounded-2xl p-4 shadow-sm mb-3 border border-emerald-500/30 bg-gradient-to-br from-[#171330] to-[#122c22]">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-[14px]">restaurant</span>
-                <span>BetterCal Macro Breakdown</span>
+                <span>NIMORA Nutrition & Macro Breakdown</span>
               </span>
               <span className="text-[9px] font-mono text-[#bef264] bg-[#bef264]/10 px-2 py-0.5 rounded border border-[#bef264]/20">
-                AI Verified
+                NIMORA AI Verified
               </span>
             </div>
             <pre className="text-xs font-mono text-purple-200/90 whitespace-pre-wrap leading-relaxed bg-[#0e0b1f]/60 p-3 rounded-xl border border-white/[0.06]">

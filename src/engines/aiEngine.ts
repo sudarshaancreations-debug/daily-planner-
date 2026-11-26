@@ -231,9 +231,9 @@ export function parseNaturalLanguageScheduleDump(rawInput: string, selectedDate?
 
     return [
       {
-        id: `t_bettercal_${Date.now()}`,
+        id: `t_nimora_fuel_${Date.now()}`,
         title: `🍱 Meal: ${cleanMealTitle} + ${fullMealAnalysis.items.length - 1} items`,
-        subtitle: `${fullMealAnalysis.formattedSummary} (BetterCal AI)`,
+        subtitle: `${fullMealAnalysis.formattedSummary} (NIMORA Fuel AI)`,
         category: 'note',
         date: dateStr,
         startTime: '01:00 PM',
@@ -242,7 +242,7 @@ export function parseNaturalLanguageScheduleDump(rawInput: string, selectedDate?
         priority: 'medium',
         status: 'upcoming',
         color: 'green',
-        notes: `BetterCal Stream Breakdown:\n${itemLines}\n\nTotal: ${fullMealAnalysis.formattedSummary}\nGenerated via BetterCal stream-of-consciousness natural note parser.`,
+        notes: `NIMORA Fuel Stream Breakdown:\n${itemLines}\n\nTotal: ${fullMealAnalysis.formattedSummary}\nAnalyzed via NIMORA stream-of-consciousness natural note engine.`,
       },
     ];
   }
@@ -299,7 +299,7 @@ export function parseNaturalLanguageScheduleDump(rawInput: string, selectedDate?
       category = 'note';
       color = 'green';
       durationMinutes = 40;
-      subtitle = `${mealAnalysis.formattedSummary} (BetterCal AI)`;
+      subtitle = `${mealAnalysis.formattedSummary} (NIMORA Fuel AI)`;
       notes = `Nutrition Enrichment:\n${mealAnalysis.formattedSummary}\nItems: ${mealAnalysis.items.map((m) => m.raw).join(', ')}`;
     } else if (/\b(call|meeting|sync|standup|interview|catchup|1:1|zoom|huddle|client)\b/i.test(lower)) {
       category = 'call';
@@ -539,7 +539,7 @@ class AIEngineImpl {
     if (mealCheck.isMealNote) {
       const parsedMealTasks = parseNaturalLanguageScheduleDump(prompt, currentDate);
       const mealTask = parsedMealTasks[0];
-      const reply = `I've analyzed your meal with BetterCal AI: ${mealCheck.totalMacros.calories} kcal, ${mealCheck.totalMacros.protein}g protein, ${mealCheck.totalMacros.carbs}g carbs, and ${mealCheck.totalMacros.fat}g fat.`;
+      const reply = `I've analyzed your meal with NIMORA AI: ${mealCheck.totalMacros.calories} kcal, ${mealCheck.totalMacros.protein}g protein, ${mealCheck.totalMacros.carbs}g carbs, and ${mealCheck.totalMacros.fat}g fat.`;
       const spoken = `Logged your meal: ${mealCheck.totalMacros.calories} calories with ${mealCheck.totalMacros.protein} grams of protein.`;
 
       const proposal: AIProposalAction = {
@@ -559,7 +559,7 @@ class AIEngineImpl {
           status: 'not_started',
           category: 'health',
         },
-        explanation: 'Enriched with calories and macronutrient ratios via BetterCal natural input engine.',
+        explanation: 'Enriched with calories and macronutrient ratios via NIMORA natural input engine.',
         createdAt: new Date().toISOString(),
       };
 

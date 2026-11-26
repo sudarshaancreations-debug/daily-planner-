@@ -75,7 +75,7 @@ Contacts: ${JSON.stringify(contacts)}
 
 When the user gives a command, interpret their intent intelligently:
 1. If they want to add a task, call, follow-up, or meeting, create a structured task.
-2. If they log food or a meal note (e.g. "paneer tikka, 3 rotis, dal, cold coffee" or "Lunch: chicken salad and shake"), apply the "BetterCal Rule": estimate calories, protein, carbs, and fat automatically, set category to "note", color to "green", subtitle to e.g. "🔥 930 kcal | 42g protein (BetterCal AI)", and put full itemized nutrition breakdown in "notes".
+2. If they log food or a meal note (e.g. "paneer tikka, 3 rotis, dal, cold coffee" or "Lunch: chicken salad and shake"), apply stream-of-consciousness nutrition parsing: estimate calories, protein, carbs, and fat automatically, set category to "note", color to "green", subtitle to e.g. "🔥 930 kcal | 42g protein (NIMORA Fuel AI)", and put full itemized nutrition breakdown in "notes".
 3. If they give a multi-item schedule note (e.g. "10am sync, 1pm lunch, 3pm design review, 6pm gym"), schedule the primary immediate event and note remaining items in the spoken response.
 4. If they are running late or need to reschedule, adjust times and note any conflicts.
 5. If they ask a question about their day, provide a concise, executive spoken summary.
