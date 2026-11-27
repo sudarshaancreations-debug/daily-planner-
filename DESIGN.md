@@ -242,6 +242,21 @@ NIMORA enforces all 4 security pillars in [`src/lib/authSecurity.ts`](file:///Us
 | **Rate Limiting & Abuse** | Sliding-window per-IP rate limiting (`src/lib/rateLimit.ts`) across `/api/auth`, `/api/assistant/chat`, and `/api/checkout` |
 | **Automated Verification** | Headless verification suites (`scripts/test-bettercal.mjs`, `scripts/test-auth-security.mjs`, `scripts/stress-test-100-users.mjs`) |
 
+---
+
+## 🛡️ 14. Edge WAF & Active Probe Defense (Reel #9: `@vikasbuildsapp`)
+
+> [!IMPORTANT]
+> **Real-World Attack Surface (4,000+ Monthly Probes):**  
+> Automated scanners relentlessly probe live apps for `.env` files, `.git` folders, `wp-login.php`, `.php` backdoors, `.sql` backups, `.aws`/`.ssh` keys, `/admin` panels, and `../` path traversals.
+
+NIMORA's Edge WAF ([`src/proxy.ts`](file:///Users/darshaananvekar/.gemini/antgravity/scratch/daily-planner/src/proxy.ts)) intercepts and blocks all 9 automated probe categories at the edge with `403 Forbidden` + `X-WAF-Blocked: nimora-edge-shield` and emits structured JSON security logs.
+* **Recommended Pre-Release Tooling Stack:**
+  1. **MobSF** (`Mobile-Security-Framework-MobSF`) for static/dynamic scanning of `playstore-assets/app-release.apk` & `.aab`
+  2. **OWASP ZAP** (`zaproxy/zaproxy`) for automated DAST scanning of `/api/*` endpoints
+  3. **SafeLine WAF / NIMORA Edge WAF** for continuous 24/7 bot & probe mitigation
+
+
 
 
 
