@@ -57,8 +57,10 @@ export default function LoginPage() {
     setLoadingStage(`Connecting to ${providerNames[provider]} OAuth...`);
 
     try {
-      // Simulate real OAuth authorization exchange
-      await new Promise((r) => setTimeout(r, 600));
+      // Request single-use OAuth CSRF state token
+      const stateRes = await fetch('/api/auth?action=oauth_state');
+      const stateData = stateRes.ok ? await stateRes.json() : {};
+
       setLoadingStage(`Verifying ${providerNames[provider]} security tokens...`);
 
       const res = await fetch('/api/auth', {
@@ -67,6 +69,7 @@ export default function LoginPage() {
         body: JSON.stringify({
           action: 'social_auth',
           provider,
+          state: stateData.state,
           name: provider === 'google' ? 'Sudarshan Mehta' : 'Executive User',
           email: provider === 'google' ? 'sudarshan.architect@gmail.com' : `user@${provider}.com`,
         }),
@@ -77,13 +80,13 @@ export default function LoginPage() {
         throw new Error(data.error || 'Social authentication failed.');
       }
 
-      setLoadingStage('Establishing encrypted local session...');
-      await new Promise((r) => setTimeout(r, 400));
+      setLoadingStage('Establishing HttpOnly encrypted session...');
+      await new Promise((r) => setTimeout(r, 300));
 
-      // Persist auth user to localStorage
+      // Persist only non-sensitive UI profile (session JWT stays in HttpOnly cookie)
       if (typeof window !== 'undefined') {
         localStorage.setItem('nimora_auth_user', JSON.stringify(data.user));
-        localStorage.setItem('nimora_auth_token', data.token);
+        localStorage.removeItem('nimora_auth_token');
       }
 
       haptics.success();
@@ -116,8 +119,8 @@ export default function LoginPage() {
       return;
     }
 
-    if (password.length < 6) {
-      setErrorMsg('Password must be at least 6 characters long.');
+    if (password.length < 8) {
+      setErrorMsg('Password must be at least 8 characters long.');
       return;
     }
 
@@ -129,7 +132,7 @@ export default function LoginPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          action: mode,
+          action: mode === 'signin' ? 'login' : 'signup',
           name: name.trim(),
           email: email.trim(),
           password,
@@ -141,12 +144,12 @@ export default function LoginPage() {
         throw new Error(data.error || 'Authentication failed. Please verify credentials.');
       }
 
-      setLoadingStage('Synchronizing planner encryption keys...');
-      await new Promise((r) => setTimeout(r, 400));
+      setLoadingStage('Synchronizing HttpOnly session...');
+      await new Promise((r) => setTimeout(r, 300));
 
       if (typeof window !== 'undefined') {
         localStorage.setItem('nimora_auth_user', JSON.stringify(data.user));
-        localStorage.setItem('nimora_auth_token', data.token);
+        localStorage.removeItem('nimora_auth_token');
       }
 
       haptics.success();

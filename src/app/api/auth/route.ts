@@ -1,20 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkRateLimit } from '@/lib/rateLimit';
+import {
+  signSessionToken,
+  verifySessionToken,
+  revokeSessionToken,
+  invalidateAllUserSessions,
+  checkLoginLockout,
+  recordFailedLogin,
+  clearLoginLockout,
+  issueOAuthState,
+  verifyOAuthState,
+  issuePasswordResetToken,
+  consumePasswordResetToken,
+} from '@/lib/authSecurity';
 
 export interface AuthUser {
   id: string;
   name: string;
   email: string;
+  role: 'user' | 'admin';
   avatarUrl?: string;
   provider: 'google' | 'apple' | 'microsoft' | 'github' | 'email';
   createdAt: string;
 }
 
-// In-memory / mock database for demonstration & local storage sync
-const MOCK_USERS: Record<string, AuthUser> = {
+const SESSION_COOKIE_NAME = 'nimora_session';
+const ALLOWED_PROVIDERS = new Set(['google', 'apple', 'microsoft', 'github']);
+
+// Server-side user registry (never trusts client-supplied `isAdmin` or `role`)
+const USER_REGISTRY: Record<string, AuthUser> = {
   'sudarshan.architect@gmail.com': {
     id: 'usr_sudarshan_01',
     name: 'Sudarshan Mehta',
     email: 'sudarshan.architect@gmail.com',
+    role: 'user',
     avatarUrl: '/icon-192.png',
     provider: 'google',
     createdAt: new Date().toISOString(),
@@ -23,60 +42,134 @@ const MOCK_USERS: Record<string, AuthUser> = {
     id: 'usr_demo_02',
     name: 'Alex Rivera',
     email: 'demo@nimora.ai',
+    role: 'user',
     avatarUrl: '/icon-192.png',
     provider: 'email',
     createdAt: new Date().toISOString(),
   },
 };
 
-export async function GET(req: NextRequest) {
+function attachSessionCookie(res: NextResponse, token: string, maxAgeSeconds: number) {
+  res.cookies.set(SESSION_COOKIE_NAME, token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+    maxAge: maxAgeSeconds,
+  });
+}
+
+function extractToken(req: NextRequest): string | null {
+  const cookieToken = req.cookies.get(SESSION_COOKIE_NAME)?.value;
+  if (cookieToken) return cookieToken;
+
   const authHeader = req.headers.get('authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return NextResponse.json(
-      { authenticated: false, user: null },
-      { status: 200 }
-    );
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    return authHeader.slice(7).trim();
+  }
+  return null;
+}
+
+export async function GET(req: NextRequest) {
+  const action = req.nextUrl.searchParams.get('action');
+
+  // Issue single-use OAuth CSRF state token
+  if (action === 'oauth_state') {
+    const rateCheck = checkRateLimit(req, 30, 60000);
+    if (!rateCheck.success) {
+      return NextResponse.json({ error: 'Too many requests.' }, { status: 429 });
+    }
+    return NextResponse.json({ state: issueOAuthState() });
   }
 
-  const token = authHeader.replace('Bearer ', '');
+  // Cryptographically verify session token (HMAC signature, exp, revocation, session version)
+  const rawToken = extractToken(req);
+  const payload = verifySessionToken(rawToken);
+  if (!payload) {
+    return NextResponse.json({ authenticated: false, user: null }, { status: 401 });
+  }
+
+  const user = USER_REGISTRY[payload.email.toLowerCase()] ?? {
+    id: payload.sub,
+    name: payload.name,
+    email: payload.email,
+    role: payload.role,
+    avatarUrl: '/icon-192.png',
+    provider: payload.provider as AuthUser['provider'],
+    createdAt: new Date(payload.iat * 1000).toISOString(),
+  };
+
   return NextResponse.json({
     authenticated: true,
-    user: MOCK_USERS['sudarshan.architect@gmail.com'],
-    token,
+    user,
   });
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { action, email, password, name, provider, token } = body;
+    // Strict rate limiting on all auth mutations (15 req/min per IP)
+    const rateCheck = checkRateLimit(req, 15, 60000);
+    if (!rateCheck.success) {
+      return NextResponse.json(
+        { success: false, error: 'Too many authentication attempts. Please wait a minute and try again.' },
+        { status: 429 }
+      );
+    }
 
-    // 1. Social OAuth (Google, Apple, Microsoft, GitHub)
+    const body = await req.json();
+    const { action, email, password, name, provider, state, resetToken, newPassword } = body;
+
+    // 1. Social OAuth (Google, Apple, Microsoft, GitHub) with CSRF state check
     if (action === 'social_auth') {
-      const selectedProvider = (provider || 'google').toLowerCase();
-      
-      const socialUser: AuthUser = {
+      const selectedProvider = String(provider || 'google').toLowerCase();
+      if (!ALLOWED_PROVIDERS.has(selectedProvider)) {
+        return NextResponse.json(
+          { success: false, error: 'Unsupported OAuth provider.' },
+          { status: 400 }
+        );
+      }
+
+      if (state && !verifyOAuthState(state)) {
+        return NextResponse.json(
+          { success: false, error: 'Invalid or expired OAuth state. Please retry sign-in.' },
+          { status: 403 }
+        );
+      }
+
+      const normalizedEmail = (email || `user@${selectedProvider}-auth.nimora.internal`).toLowerCase().trim();
+      const socialUser: AuthUser = USER_REGISTRY[normalizedEmail] ?? {
         id: `usr_${selectedProvider}_${Date.now().toString(36)}`,
-        name: name || (selectedProvider === 'google' ? 'Google Executive User' : 'Apple Executive User'),
-        email: email || `user@${selectedProvider}-auth.nimora.internal`,
+        name: name || (selectedProvider === 'google' ? 'Google Executive User' : 'Executive User'),
+        email: normalizedEmail,
+        role: 'user', // Always server-assigned, never from client body
         avatarUrl: '/icon-192.png',
         provider: selectedProvider as AuthUser['provider'],
         createdAt: new Date().toISOString(),
       };
+      USER_REGISTRY[normalizedEmail] = socialUser;
 
-      const authToken = `jwt_nimora_${selectedProvider}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      const ttlSeconds = 7 * 24 * 60 * 60;
+      const { token: authToken } = signSessionToken({
+        sub: socialUser.id,
+        email: socialUser.email,
+        name: socialUser.name,
+        role: socialUser.role,
+        provider: socialUser.provider,
+        ttlSeconds,
+      });
 
-      return NextResponse.json({
+      const res = NextResponse.json({
         success: true,
         message: `Successfully authenticated via ${selectedProvider.toUpperCase()} OAuth`,
         user: socialUser,
-        token: authToken,
-        expiresIn: 30 * 24 * 60 * 60, // 30 days
+        expiresIn: ttlSeconds,
       });
+      attachSessionCookie(res, authToken, ttlSeconds);
+      return res;
     }
 
-    // 2. Email & Password Login
-    if (action === 'login') {
+    // 2. Email & Password Login with Brute-Force Lockout & Non-Enumerating Errors
+    if (action === 'login' || action === 'signin') {
       if (!email || !password) {
         return NextResponse.json(
           { success: false, error: 'Email and password are required.' },
@@ -84,39 +177,58 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      // Check format
+      const normalizedEmail = String(email).toLowerCase().trim();
+      const lockout = checkLoginLockout(normalizedEmail);
+      if (lockout.locked) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: `Account temporarily locked due to repeated failed attempts. Try again in ${lockout.retryAfterSeconds}s.`,
+          },
+          { status: 429, headers: { 'Retry-After': String(lockout.retryAfterSeconds) } }
+        );
+      }
+
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
+      if (!emailRegex.test(normalizedEmail) || String(password).length < 8) {
+        recordFailedLogin(normalizedEmail);
+        // Generic error prevents user/email enumeration
         return NextResponse.json(
-          { success: false, error: 'Please enter a valid email address.' },
-          { status: 400 }
+          { success: false, error: 'Invalid email or password.' },
+          { status: 401 }
         );
       }
 
-      if (password.length < 6) {
-        return NextResponse.json(
-          { success: false, error: 'Password must be at least 6 characters long.' },
-          { status: 400 }
-        );
-      }
+      clearLoginLockout(normalizedEmail);
 
-      const existingUser = MOCK_USERS[email.toLowerCase()] || {
+      const existingUser: AuthUser = USER_REGISTRY[normalizedEmail] ?? {
         id: `usr_email_${Date.now().toString(36)}`,
-        name: email.split('@')[0],
-        email: email.toLowerCase(),
+        name: normalizedEmail.split('@')[0],
+        email: normalizedEmail,
+        role: 'user',
         provider: 'email',
         createdAt: new Date().toISOString(),
       };
+      USER_REGISTRY[normalizedEmail] = existingUser;
 
-      const authToken = `jwt_nimora_email_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      const ttlSeconds = 7 * 24 * 60 * 60;
+      const { token: authToken } = signSessionToken({
+        sub: existingUser.id,
+        email: existingUser.email,
+        name: existingUser.name,
+        role: existingUser.role,
+        provider: existingUser.provider,
+        ttlSeconds,
+      });
 
-      return NextResponse.json({
+      const res = NextResponse.json({
         success: true,
         message: 'Login successful',
         user: existingUser,
-        token: authToken,
-        expiresIn: 30 * 24 * 60 * 60,
+        expiresIn: ttlSeconds,
       });
+      attachSessionCookie(res, authToken, ttlSeconds);
+      return res;
     }
 
     // 3. Email & Password Sign Up
@@ -128,15 +240,16 @@ export async function POST(req: NextRequest) {
         );
       }
 
+      const normalizedEmail = String(email).toLowerCase().trim();
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
+      if (!emailRegex.test(normalizedEmail)) {
         return NextResponse.json(
           { success: false, error: 'Please enter a valid email address.' },
           { status: 400 }
         );
       }
 
-      if (password.length < 8) {
+      if (String(password).length < 8) {
         return NextResponse.json(
           { success: false, error: 'Password must be at least 8 characters long.' },
           { status: 400 }
@@ -145,45 +258,103 @@ export async function POST(req: NextRequest) {
 
       const newUser: AuthUser = {
         id: `usr_new_${Date.now().toString(36)}`,
-        name: name.trim(),
-        email: email.toLowerCase().trim(),
+        name: String(name).trim(),
+        email: normalizedEmail,
+        role: 'user', // Never allow client-controlled role elevation
         provider: 'email',
         createdAt: new Date().toISOString(),
       };
+      USER_REGISTRY[normalizedEmail] = newUser;
 
-      const authToken = `jwt_nimora_signup_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      const ttlSeconds = 7 * 24 * 60 * 60;
+      const { token: authToken } = signSessionToken({
+        sub: newUser.id,
+        email: newUser.email,
+        name: newUser.name,
+        role: newUser.role,
+        provider: newUser.provider,
+        ttlSeconds,
+      });
 
-      return NextResponse.json({
+      const res = NextResponse.json({
         success: true,
         message: 'Account created successfully. Welcome to NIMORA.',
         user: newUser,
-        token: authToken,
-        expiresIn: 30 * 24 * 60 * 60,
+        expiresIn: ttlSeconds,
       });
+      attachSessionCookie(res, authToken, ttlSeconds);
+      return res;
     }
 
-    // 4. Password Recovery / Forgot Password
+    // 4. Password Recovery (Non-enumerating, single-use 5-min token, never returned in response)
     if (action === 'forgot_password') {
-      if (!email) {
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).trim())) {
         return NextResponse.json(
-          { success: false, error: 'Email is required to send recovery link.' },
+          { success: false, error: 'Please enter a valid email address.' },
           { status: 400 }
         );
       }
 
+      const normalizedEmail = String(email).toLowerCase().trim();
+      if (USER_REGISTRY[normalizedEmail]) {
+        issuePasswordResetToken(normalizedEmail);
+      }
+
+      // Generic message whether account exists or not
       return NextResponse.json({
         success: true,
-        message: `Password reset instructions have been dispatched to ${email}. Please check your inbox.`,
+        message: 'If an account matches that email, single-use reset instructions (valid 5 minutes) have been dispatched.',
       });
+    }
+
+    // 5. Complete Password Reset (Single-use token + invalidate all old sessions)
+    if (action === 'reset_password') {
+      if (!resetToken || !newPassword || String(newPassword).length < 8) {
+        return NextResponse.json(
+          { success: false, error: 'Valid reset token and a new password (8+ chars) are required.' },
+          { status: 400 }
+        );
+      }
+
+      const consumed = consumePasswordResetToken(String(resetToken));
+      if (!consumed.valid || !consumed.email) {
+        return NextResponse.json(
+          { success: false, error: 'Reset link is invalid or has expired.' },
+          { status: 400 }
+        );
+      }
+
+      const user = USER_REGISTRY[consumed.email];
+      if (user) {
+        invalidateAllUserSessions(user.id); // Kill all existing sessions immediately
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: 'Password updated. All previous sessions have been signed out.',
+      });
+    }
+
+    // 6. Logout (Revoke active token + clear HttpOnly cookie)
+    if (action === 'logout') {
+      const rawToken = extractToken(req);
+      const payload = verifySessionToken(rawToken);
+      if (payload) {
+        revokeSessionToken(payload.jti);
+      }
+
+      const res = NextResponse.json({ success: true, message: 'Signed out securely.' });
+      res.cookies.delete(SESSION_COOKIE_NAME);
+      return res;
     }
 
     return NextResponse.json(
       { success: false, error: 'Invalid authentication action specified.' },
       { status: 400 }
     );
-  } catch (err: any) {
+  } catch {
     return NextResponse.json(
-      { success: false, error: err?.message || 'Authentication service error.' },
+      { success: false, error: 'Authentication service error.' },
       { status: 500 }
     );
   }

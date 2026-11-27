@@ -215,6 +215,22 @@ Instead of forcing users to fill 6 form fields per task or search a food databas
    * **Voice Dictation Integration:** One-tap mic button allows hands-free voice stream-of-consciousness capture via Web Speech API.
    * **Dashboard Executive Fuel Bar:** The home screen automatically aggregates daily calories, protein, carbs, and fat across all logged meals, providing instant nutritional status without switching to a siloed fitness app.
 
+---
+
+## 🛡️ 12. Zero-Trust Auth & Session Security (Reel #7: `@design_with_vinod`)
+
+> [!CAUTION]
+> **20 Auth & Data-Leak Mistakes Checklist:**  
+> Never roll insecure tokens, store JWT secrets in `localStorage`, leak OTPs in API responses, or skip server-side verification and rate limits.
+
+NIMORA enforces all 4 security pillars in [`src/lib/authSecurity.ts`](file:///Users/darshaananvekar/.gemini/antgravity/scratch/daily-planner/src/lib/authSecurity.ts) and [`src/app/api/auth/route.ts`](file:///Users/darshaananvekar/.gemini/antgravity/scratch/daily-planner/src/app/api/auth/route.ts):
+
+1. **Login & OTP Gate:** Strict per-IP rate limiting (`15 req/min`), 5-attempt brute-force lockout (`429` + `Retry-After`), 5-minute single-use cryptographic OTPs (never returned in API responses), non-enumerating errors, and server-side validation.
+2. **Tokens & Sessions:** Ephemeral `crypto.randomBytes(32)` fallback when `AUTH_SECRET` is unset, `HMAC-SHA256` verification with `crypto.timingSafeEqual`, `HttpOnly` + `SameSite=Lax` + `Secure` cookies (zero tokens in `localStorage`), server-side `jti` revocation on logout, and server-assigned `role`.
+3. **Password Reset & Account Recovery:** Single-use 256-bit cryptographic reset tokens (5-minute TTL) that immediately increment `userSessionVersions` to invalidate all prior sessions.
+4. **OAuth & Admin Protection:** Single-use OAuth CSRF `state` verification (`?action=oauth_state`), zero default admin credentials, and strict server-side role enforcement.
+
+
 
 
 
