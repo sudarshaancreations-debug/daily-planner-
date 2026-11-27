@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rateLimit';
+import { logSecurityEvent } from '@/lib/auditLogger';
 import {
   signSessionToken,
   verifySessionToken,
@@ -130,6 +131,7 @@ export async function POST(req: NextRequest) {
       }
 
       if (state && !verifyOAuthState(state)) {
+        logSecurityEvent({ event: 'auth.social.csrf_blocked', meta: { provider: selectedProvider } });
         return NextResponse.json(
           { success: false, error: 'Invalid or expired OAuth state. Please retry sign-in.' },
           { status: 403 }
@@ -180,6 +182,7 @@ export async function POST(req: NextRequest) {
       const normalizedEmail = String(email).toLowerCase().trim();
       const lockout = checkLoginLockout(normalizedEmail);
       if (lockout.locked) {
+        logSecurityEvent({ event: 'auth.login.locked', email: normalizedEmail });
         return NextResponse.json(
           {
             success: false,
@@ -192,6 +195,7 @@ export async function POST(req: NextRequest) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(normalizedEmail) || String(password).length < 8) {
         recordFailedLogin(normalizedEmail);
+        logSecurityEvent({ event: 'auth.login.failed', email: normalizedEmail });
         // Generic error prevents user/email enumeration
         return NextResponse.json(
           { success: false, error: 'Invalid email or password.' },
@@ -341,6 +345,7 @@ export async function POST(req: NextRequest) {
       const payload = verifySessionToken(rawToken);
       if (payload) {
         revokeSessionToken(payload.jti);
+        logSecurityEvent({ event: 'auth.logout', userId: payload.sub, email: payload.email });
       }
 
       const res = NextResponse.json({ success: true, message: 'Signed out securely.' });

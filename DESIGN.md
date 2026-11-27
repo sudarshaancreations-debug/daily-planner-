@@ -230,6 +230,19 @@ NIMORA enforces all 4 security pillars in [`src/lib/authSecurity.ts`](file:///Us
 3. **Password Reset & Account Recovery:** Single-use 256-bit cryptographic reset tokens (5-minute TTL) that immediately increment `userSessionVersions` to invalidate all prior sessions.
 4. **OAuth & Admin Protection:** Single-use OAuth CSRF `state` verification (`?action=oauth_state`), zero default admin credentials, and strict server-side role enforcement.
 
+---
+
+## ⚙️ 13. Production Systems & Engineering Hardening (Reel #8: `@hussam.qamar`)
+
+| Domain | Production Controls Implemented in NIMORA |
+| :--- | :--- |
+| **HTTP Security & Headers** | `next.config.ts` enforces `X-Frame-Options: DENY` (anti-clickjacking), `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Permissions-Policy`, and `Content-Security-Policy: frame-ancestors 'none'` |
+| **Reliability & Timeouts** | Upstream Gemini API calls enforce `AbortSignal.timeout(10000)` with automatic fallback to local heuristics (`aiEngine.ts`) |
+| **Observability & Audit Logs** | Structured JSON audit logging (`src/lib/auditLogger.ts`) with trace IDs and masked PII, plus `/api/health` uptime monitoring |
+| **Rate Limiting & Abuse** | Sliding-window per-IP rate limiting (`src/lib/rateLimit.ts`) across `/api/auth`, `/api/assistant/chat`, and `/api/checkout` |
+| **Automated Verification** | Headless verification suites (`scripts/test-bettercal.mjs`, `scripts/test-auth-security.mjs`, `scripts/stress-test-100-users.mjs`) |
+
+
 
 
 
